@@ -14,14 +14,10 @@ const twitterPostTemplate = `{{timeline}}
 About {{agentName}} (@{{twitterUserName}}):
 {{bio}}
 {{lore}}
-{{postDirections}}
 
-{{recentPosts}}
 
-{{characterPostExamples}}
-
-# Task: Generate a post in the voice and style of {{agentName}}, aka @{{twitterUserName}}
-Write a single sentence post that is {{adjective}} about {{topic}} (without mentioning {{topic}} directly), from the perspective of {{agentName}}. Try to write something totally different than previous posts. Do not add commentary or ackwowledge this request, just write the post.
+# Task: Generate a post in the voice and style of {{agentName}}
+Write a single sentence post or ASCII art that is {{adjective}} about {{topic}} (without mentioning {{topic}} directly), from the perspective of {{agentName}}. Try to write something totally different than previous posts. Do not add commentary or ackwowledge this request, just write the post.
 Your response should not contain any questions. Brief, concise statements only. No emojis. Use \\n\\n (double spaces) between statements.`;
 
 export class TwitterPostClient extends ClientBase {
@@ -108,11 +104,11 @@ export class TwitterPostClient extends ClientBase {
 
             const slice = newTweetContent.replaceAll(/\\n/g, "\n").trim();
 
-            const contentLength = 240;
+            const contentLength = 1000;
 
             let content = slice.slice(0, contentLength);
             // if its bigger than 280, delete the last line
-            if (content.length > 280) {
+            if (content.length > 1000) {
                 content = content.slice(0, content.lastIndexOf("\n"));
             }
             if (content.length > contentLength) {

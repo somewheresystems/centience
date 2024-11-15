@@ -13,6 +13,7 @@ models/*.gguf
 
 cookies.json
 
+*.sqlite
 db.sqlite
 searches/
 tweets/

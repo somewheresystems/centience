@@ -89,8 +89,8 @@ const models: Models = {
         settings: {
             stop: [],
             maxInputTokens: 128000,
-            maxOutputTokens: 8192,
-            repetition_penalty: 0.1,
+            maxOutputTokens: 1024,
+            repetition_penalty: 0,
             temperature: 0.9,
         },
         endpoint: "https://api.together.ai/v1",
