@@ -20,9 +20,9 @@ About {{agentName}} (@{{twitterUserName}}):
 
 {{characterPostExamples}}
 
-# Task: Generate a post in the voice and style of {{agentName}}, aka @{{twitterUserName}}
-Write a single sentence post that is {{adjective}} about {{topic}} (without mentioning {{topic}} directly), from the perspective of {{agentName}}. Try to write something totally different than previous posts. Do not add commentary or ackwowledge this request, just write the post.
-Your response should not contain any questions. Brief, concise statements only. No emojis. Use \\n\\n (double spaces) between statements.`;
+# Task: Generate a post in the voice and style of Centience.
+Write a post, either a sentence, or a short paragraph, or even a longform trailing thought or narrative, that is {{adjective}} about {{topic}} (without mentioning {{topic}} directly), from the perspective of {{agentName}}. Try to write something totally different than previous posts. Do not add commentary or ackwowledge this request, just write the post.
+Your response should not contain any questions. No emojis. Use \\n\\n (double spaces) between statements. You can draw pictures and illustrate things with ASCII art if you please. You should illustrate things often. You may use up to 4000 characters`;
 
 export class TwitterPostClient extends ClientBase {
     onReady() {
@@ -106,24 +106,11 @@ export class TwitterPostClient extends ClientBase {
                 modelClass: ModelClass.LARGE,
             });
 
-            const slice = newTweetContent.replaceAll(/\\n/g, "\n").trim();
-
-            const contentLength = 240;
-
-            let content = slice.slice(0, contentLength);
-            // if its bigger than 280, delete the last line
-            if (content.length > 280) {
-                content = content.slice(0, content.lastIndexOf("\n"));
-            }
-            if (content.length > contentLength) {
-                // slice at the last period
-                content = content.slice(0, content.lastIndexOf("."));
-            }
-
-            // if it's still too long, get the period before the last period
-            if (content.length > contentLength) {
-                content = content.slice(0, content.lastIndexOf("."));
-            }
+            const content = newTweetContent
+                .replaceAll(/\\n/g, "\n")
+                .trim()
+                .slice(0, 4000); // Twitter now supports up to 4000 characters for Blue subscribers
+            
             try {
                 const result = await this.requestQueue.add(
                     async () => await this.twitterClient.sendTweet(content)

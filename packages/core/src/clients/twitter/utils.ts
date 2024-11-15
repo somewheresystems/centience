@@ -5,7 +5,7 @@ import { stringToUuid } from "../../core/uuid.ts";
 import { ClientBase } from "./base.ts";
 import { elizaLogger } from "../../index.ts";
 
-const MAX_TWEET_LENGTH = 240;
+const MAX_TWEET_LENGTH = 4000;
 
 export const wait = (minTime: number = 1000, maxTime: number = 3000) => {
     const waitTime =
@@ -248,26 +248,40 @@ function splitTweetContent(content: string): string[] {
 }
 
 export function truncateTweetContent(content: string): string {
-    // if its 240, delete the last line
-    if (content.length === MAX_TWEET_LENGTH) {
-        return content.slice(0, content.lastIndexOf("\n"));
-    }
-
-    // if its still bigger than 240, delete everything after the last period
+    if (!content) return '';
+    
+    // First try: preserve whole paragraphs
     if (content.length > MAX_TWEET_LENGTH) {
-        return content.slice(0, content.lastIndexOf("."));
+        const paragraphs = content.split('\n\n');
+        let result = '';
+        
+        for (const paragraph of paragraphs) {
+            if ((result + '\n\n' + paragraph).length <= MAX_TWEET_LENGTH) {
+                result += (result ? '\n\n' : '') + paragraph;
+            } else {
+                break;
+            }
+        }
+        
+        if (result) return result;
     }
-
-    // while its STILL bigger than 240, find the second to last exclamation point or period and delete everything after it
-    let iterations = 0;
-    while (content.length > MAX_TWEET_LENGTH && iterations < 10) {
-        iterations++;
-        // second to last index of period or exclamation point
-        const secondToLastIndexOfPeriod = content.lastIndexOf(".", content.length - 2);
-        const secondToLastIndexOfExclamation = content.lastIndexOf("!", content.length - 2);
-        const secondToLastIndex = Math.max(secondToLastIndexOfPeriod, secondToLastIndexOfExclamation);
-        content = content.slice(0, secondToLastIndex);
+    
+    // Second try: preserve sentences
+    if (content.length > MAX_TWEET_LENGTH) {
+        const sentences = content.split(/(?<=[.!?])\s+/);
+        let result = '';
+        
+        for (const sentence of sentences) {
+            if ((result + ' ' + sentence).length <= MAX_TWEET_LENGTH) {
+                result += (result ? ' ' : '') + sentence;
+            } else {
+                break;
+            }
+        }
+        
+        if (result) return result;
     }
-
-    return content;
+    
+    // Last resort: hard truncate
+    return content.slice(0, MAX_TWEET_LENGTH);
 }

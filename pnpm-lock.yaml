@@ -392,6 +392,9 @@ importers:
       tsup:
         specifier: ^8.3.5
         version: 8.3.5(jiti@1.21.6)(postcss@8.4.47)(tsx@4.19.2)(typescript@5.6.3)(yaml@2.6.0)
+      twitter-api-v2:
+        specifier: ^1.18.2
+        version: 1.18.2
       unique-names-generator:
         specifier: 4.7.1
         version: 4.7.1
@@ -11132,6 +11135,9 @@ packages:
 
   tweetnacl@0.14.5:
     resolution: {integrity: sha512-KXXFFdAbFXY4geFIwoyNK+f5Z1b7swfXABfL7HXCmoIWMKU3dmS26672A4EeQtDzLKy7SXmfBu51JolvEKwtGA==}
+
+  twitter-api-v2@1.18.2:
+    resolution: {integrity: sha512-ggImmoAeVgETYqrWeZy+nWnDpwgTP+IvFEc03Pitt1HcgMX+Yw17rP38Fb5FFTinuyNvS07EPtAfZ184uIyB0A==}
 
   tx2@1.0.5:
     resolution: {integrity: sha512-sJ24w0y03Md/bxzK4FU8J8JveYYUbSs2FViLJ2D/8bytSiyPRbuE3DyL/9UKYXTZlV3yXq0L8GLlhobTnekCVg==}
@@ -25214,6 +25220,8 @@ snapshots:
   tv4@1.3.0: {}
 
   tweetnacl@0.14.5: {}
+
+  twitter-api-v2@1.18.2: {}
 
   tx2@1.0.5:
     dependencies:
