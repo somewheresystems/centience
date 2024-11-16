@@ -33,8 +33,11 @@
         "node": ">=22"
     },
     "dependencies": {
+        "@octokit/rest": "^21.0.2",
+        "better-sqlite3": "11.5.0",
         "ollama-ai-provider": "^0.16.1",
         "optional": "^0.1.4",
-        "sharp": "^0.33.5"
+        "sharp": "^0.33.5",
+        "sqlite-vss": "^0.1.2"
     }
 }

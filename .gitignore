@@ -35,7 +35,10 @@ timeline_cache.json
 
 *.sqlite
 characters/
+db.sqlite
 
 packages/core/src/providers/cache
 packages/core/src/providers/cache/*
 cache/*
+
+twitter_archive

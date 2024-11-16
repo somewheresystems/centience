@@ -2,6 +2,7 @@
 import { ActionResponse } from "./types.ts";
 
 const jsonBlockPattern = /```json\n([\s\S]*?)\n```/;
+const htmlBlockPattern = /```html\n([\s\S]*?)\n```/;
 
 export const messageCompletionFooter = `\nResponse format should be formatted in a JSON block like this:
 \`\`\`json
@@ -82,6 +83,45 @@ export const parseActionResponseFromText = (text: string): { actions: ActionResp
 };
 
 
+
+/**
+ * Parses HTML content from a given text. The function looks for an HTML block wrapped in triple backticks
+ * with `html` language identifier, and if not found, it searches for HTML patterns within the text.
+ * It then attempts to extract and clean the HTML content. If extraction is successful, it returns the 
+ * HTML string; otherwise, it returns null.
+ *
+ * @param text - The input text from which to extract the HTML content.
+ * @returns A string containing the HTML content if successful; otherwise, null.
+ */
+export function parseHtmlFromText(text: string): string | null {
+    let htmlContent = null;
+
+    const htmlBlockMatch = text.match(htmlBlockPattern);
+
+    if (htmlBlockMatch) {
+        htmlContent = htmlBlockMatch[1].trim();
+    } else {
+        // Look for HTML-like patterns if no code block is found
+        const htmlPattern = /<[^>]+>[\s\S]*<\/[^>]+>/;
+        const htmlMatch = text.match(htmlPattern);
+
+        if (htmlMatch) {
+            htmlContent = htmlMatch[0].trim();
+        }
+    }
+
+    if (htmlContent) {
+        // Basic validation - check for balanced tags
+        const openTags = htmlContent.match(/<[^/][^>]*>/g) || [];
+        const closeTags = htmlContent.match(/<\/[^>]+>/g) || [];
+        
+        if (openTags.length === closeTags.length) {
+            return htmlContent;
+        }
+    }
+
+    return null;
+}
 
 /**
  * Parses a JSON array from a given text. The function looks for a JSON block wrapped in triple backticks

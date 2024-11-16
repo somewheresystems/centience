@@ -2,7 +2,7 @@ import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGroq } from "@ai-sdk/groq";
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText as aiGenerateText } from "ai";
-import { createOllama } from 'ollama-ai-provider';
+import { createOllama } from "ollama-ai-provider";
 import { default as tiktoken, TiktokenModel } from "tiktoken";
 import { elizaLogger } from "../index.ts";
 import models from "./models.ts";
@@ -76,13 +76,15 @@ export async function generateText({
             case ModelProvider.OPENAI:
             case ModelProvider.LLAMACLOUD: {
                 elizaLogger.log("Initializing OpenAI/Together model.");
-                const apiKeyToUse = provider === ModelProvider.LLAMACLOUD 
-                    ? runtime.getSetting("TOGETHER_API_KEY") || settings.TOGETHER_API_KEY
-                    : apiKey;
+                const apiKeyToUse =
+                    provider === ModelProvider.LLAMACLOUD
+                        ? runtime.getSetting("TOGETHER_API_KEY") ||
+                          settings.TOGETHER_API_KEY
+                        : apiKey;
 
-                const openai = createOpenAI({ 
-                    apiKey: apiKeyToUse, 
-                    baseURL: endpoint 
+                const openai = createOpenAI({
+                    apiKey: apiKeyToUse,
+                    baseURL: endpoint,
                 });
 
                 const { text: openaiResponse } = await aiGenerateText({
@@ -209,27 +211,28 @@ export async function generateText({
                 break;
             }
 
-            case ModelProvider.OLLAMA: {
-                console.log("Initializing Ollama model.");
-                    
-                const ollamaProvider = createOllama({
-                    baseURL: models[provider].endpoint + "/api",
-                })
-                const ollama = ollamaProvider(model);
-                
-                console.log('****** MODEL\n', model)
+            case ModelProvider.OLLAMA:
+                {
+                    console.log("Initializing Ollama model.");
 
-                const { text: ollamaResponse } = await aiGenerateText({
-                    model: ollama,
-                    prompt: context,
-                    temperature: temperature,
-                    maxTokens: max_response_length,
-                    frequencyPenalty: frequency_penalty,
-                    presencePenalty: presence_penalty,
-                });
+                    const ollamaProvider = createOllama({
+                        baseURL: models[provider].endpoint + "/api",
+                    });
+                    const ollama = ollamaProvider(model);
 
-                response = ollamaResponse;
-            }
+                    console.log("****** MODEL\n", model);
+
+                    const { text: ollamaResponse } = await aiGenerateText({
+                        model: ollama,
+                        prompt: context,
+                        temperature: temperature,
+                        maxTokens: max_response_length,
+                        frequencyPenalty: frequency_penalty,
+                        presencePenalty: presence_penalty,
+                    });
+
+                    response = ollamaResponse;
+                }
                 console.log("Received response from Ollama model.");
                 break;
 
@@ -444,6 +447,7 @@ export async function generateTrueOrFalse({
     context: string;
     modelClass: string;
 }): Promise<boolean> {
+    elizaLogger.log("Generating true or false...", models[modelClass]);
     let retryDelay = 1000;
 
     const stop = Array.from(

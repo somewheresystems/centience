@@ -131,6 +131,7 @@ export class WalletProvider {
             }));
 
             const totalSol = totalUsd.div(solPriceInUSD);
+            console.log("totalSol", totalSol.toString());
 
             return {
                 totalUsd: totalUsd.toString(),
