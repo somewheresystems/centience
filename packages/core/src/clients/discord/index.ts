@@ -22,6 +22,7 @@ import { MessageManager } from "./messages.ts";
 import channelStateProvider from "./providers/channelState.ts";
 import voiceStateProvider from "./providers/voiceState.ts";
 import { VoiceManager } from "./voice.ts";
+import { discordImageGeneration } from './actions/generateImage';
 
 export class DiscordClient extends EventEmitter {
     apiToken: string;
@@ -68,6 +69,7 @@ export class DiscordClient extends EventEmitter {
         this.runtime.registerAction(chat_with_attachments);
         this.runtime.registerAction(transcribe_media);
         this.runtime.registerAction(download_media);
+        this.runtime.registerAction(discordImageGeneration);
 
         this.runtime.providers.push(channelStateProvider);
         this.runtime.providers.push(voiceStateProvider);
