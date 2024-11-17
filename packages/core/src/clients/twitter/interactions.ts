@@ -44,7 +44,7 @@ Recent interactions between {{agentName}} and other users:
 
 {{recentPosts}}
 
-# Task: Generate a post in the voice, style and perspective of {{agentName}} (@{{twitterUserName}}):
+# Task: Generate a post in the voice, style and perspective of {{agentName}} (@{{twitterUserName}})  but with high entropy:
 {{currentPost}}
 
 ` + messageCompletionFooter;

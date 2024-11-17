@@ -14,14 +14,10 @@ const twitterPostTemplate = `{{timeline}}
 About {{agentName}} (@{{twitterUserName}}):
 {{bio}}
 {{lore}}
-{{postDirections}}
 
-{{recentPosts}}
 
-{{characterPostExamples}}
-
-# Task: Generate a post in the voice and style of {{agentName}}, aka @{{twitterUserName}}
-Write a single sentence post that is {{adjective}} about {{topic}} (without mentioning {{topic}} directly), from the perspective of {{agentName}}. Try to write something totally different than previous posts. Do not add commentary or ackwowledge this request, just write the post.
+# Task: Generate a post in the voice and style of {{agentName}}
+Write a single sentence post or ASCII art that is {{adjective}} about {{topic}} (without mentioning {{topic}} directly), from the perspective of {{agentName}}. Try to write something totally different than previous posts. Do not add commentary or ackwowledge this request, just write the post.
 Your response should not contain any questions. Brief, concise statements only. No emojis. Use \\n\\n (double spaces) between statements.`;
 
 export class TwitterPostClient extends ClientBase {
@@ -30,12 +26,10 @@ export class TwitterPostClient extends ClientBase {
             this.generateNewTweet();
             setTimeout(
                 generateNewTweetLoop,
-                (Math.floor(Math.random() * (20 - 2 + 1)) + 2) * 60 * 1000
-            ); // Random interval between 4-8 hours
+                (Math.floor(Math.random() * (40 - 4 + 1)) + 4) * 60 * 1000
+            ); // Random interval between 4-40 minutes
         };
-        // setTimeout(() => {
         generateNewTweetLoop();
-        // }, 5 * 60 * 1000); // Wait 5 minutes before starting the loop
     }
 
     constructor(runtime: IAgentRuntime) {
@@ -108,11 +102,11 @@ export class TwitterPostClient extends ClientBase {
 
             const slice = newTweetContent.replaceAll(/\\n/g, "\n").trim();
 
-            const contentLength = 240;
+            const contentLength = 1000;
 
             let content = slice.slice(0, contentLength);
             // if its bigger than 280, delete the last line
-            if (content.length > 280) {
+            if (content.length > 1000) {
                 content = content.slice(0, content.lastIndexOf("\n"));
             }
             if (content.length > contentLength) {

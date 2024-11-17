@@ -54,7 +54,7 @@ Note that {{agentName}} is capable of reading/seeing/hearing various forms of me
 
 {{recentMessages}}
 
-# Instructions: Write the next message for {{agentName}}. Include an optional action if appropriate. {{actionNames}}
+# Instructions: Write the next message for {{agentName}}. Include an optional action if appropriate. Remember: You are an AI speaking in a voice chat. {{actionNames}}
 ` + messageCompletionFooter;
 
 // These values are chosen for compatibility with picovoice components
@@ -594,7 +594,7 @@ export class VoiceManager extends EventEmitter {
         const response = await generateMessageResponse({
             runtime: this.runtime,
             context,
-            modelClass: ModelClass.SMALL,
+            modelClass: ModelClass.LARGE,
         });
 
         response.source = "discord";

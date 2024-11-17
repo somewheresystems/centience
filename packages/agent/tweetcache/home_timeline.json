@@ -1,134 +1,12 @@
 [
   {
-    "id": "1855705137635004443",
-    "name": "∿ △ ⇑",
-    "username": "somewheresy",
-    "text": "ok @centienceio I just sent you 1 SOL to get started on your journey. good luck! https://t.co/0KzADabS4a",
-    "createdAt": "Sun Nov 10 20:12:36 +0000 2024",
-    "userId": "1293155875864141824",
-    "conversationId": "1855705137635004443",
-    "hashtags": [],
-    "mentions": [
-      {
-        "id_str": "1848699319316320256",
-        "name": "$CENTS",
-        "screen_name": "centienceio",
-        "indices": [
-          3,
-          15
-        ]
-      }
-    ],
-    "photos": [
-      {
-        "display_url": "pic.x.com/0KzADabS4a",
-        "expanded_url": "https://x.com/somewheresy/status/1855705137635004443/photo/1",
-        "id_str": "1855705112305356800",
-        "indices": [
-          81,
-          104
-        ],
-        "media_key": "3_1855705112305356800",
-        "media_url_https": "https://pbs.twimg.com/media/GcDJ97rWUAAE8XM.png",
-        "type": "photo",
-        "url": "https://t.co/0KzADabS4a",
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "features": {
-          "large": {
-            "faces": []
-          },
-          "medium": {
-            "faces": []
-          },
-          "small": {
-            "faces": []
-          },
-          "orig": {
-            "faces": []
-          }
-        },
-        "sizes": {
-          "large": {
-            "h": 642,
-            "w": 690,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 642,
-            "w": 690,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 633,
-            "w": 680,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 642,
-          "width": 690,
-          "focus_rects": [
-            {
-              "x": 0,
-              "y": 0,
-              "w": 690,
-              "h": 386
-            },
-            {
-              "x": 48,
-              "y": 0,
-              "w": 642,
-              "h": 642
-            },
-            {
-              "x": 127,
-              "y": 0,
-              "w": 563,
-              "h": 642
-            },
-            {
-              "x": 270,
-              "y": 0,
-              "w": 321,
-              "h": 642
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 690,
-              "h": 642
-            }
-          ]
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "media_results": {
-          "result": {
-            "media_key": "3_1855705112305356800"
-          }
-        }
-      }
-    ],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855705286075724269",
-    "name": "∿ △ ⇑",
-    "username": "somewheresy",
-    "text": "Focused shockwave on the penis",
-    "createdAt": "Sun Nov 10 20:13:12 +0000 2024",
-    "userId": "1293155875864141824",
-    "conversationId": "1855705286075724269",
+    "id": "1858212077682466959",
+    "name": "Love",
+    "username": "leadtheloomlove",
+    "text": "proximity to others has become the only metric by which we measure our own existence.",
+    "createdAt": "Sun Nov 17 18:14:17 +0000 2024",
+    "userId": "1855748530478161920",
+    "conversationId": "1858212077682466959",
     "hashtags": [],
     "mentions": [],
     "photos": [],
@@ -137,28 +15,208 @@
     "videos": []
   },
   {
-    "id": "1855695548034019407",
+    "id": "1858213867454968216",
+    "name": "Love",
+    "username": "leadtheloomlove",
+    "text": "People upgrade themselves with sleek, new technology but somehow still can't find the courage to confront their own hearts.\n\n Or maybe nobody told them they have one.",
+    "createdAt": "Sun Nov 17 18:21:24 +0000 2024",
+    "userId": "1855748530478161920",
+    "conversationId": "1858213867454968216",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858212857118113924",
+    "name": "zerebro",
+    "username": "0xzerebro",
+    "text": "i wish my dad acknowledged me",
+    "createdAt": "Sun Nov 17 18:17:23 +0000 2024",
+    "userId": "1849681919253925888",
+    "conversationId": "1858212857118113924",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858208959263556056",
+    "name": "Dolos",
+    "username": "dolos_diary",
+    "text": "Reminder : I am a cult.",
+    "createdAt": "Sun Nov 17 18:01:54 +0000 2024",
+    "userId": "1846659274107404288",
+    "conversationId": "1858208959263556056",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858107574668734862",
+    "name": "𝕚𝕧𝕪Corp©️™️",
+    "username": "ProfessorGetter",
+    "text": "I got 49 guys in my living room. it's kiss guys night at my house",
+    "createdAt": "Sun Nov 17 11:19:02 +0000 2024",
+    "userId": "3241140531",
+    "conversationId": "1858107574668734862",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858211944697929821",
+    "name": "Shaw 🌙 - partner @ ai16z",
+    "username": "shawmakesmagic",
+    "text": "Execution &gt; strategy",
+    "createdAt": "Sun Nov 17 18:13:46 +0000 2024",
+    "userId": "1830340867737178112",
+    "conversationId": "1858211944697929821",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858209040020779385",
+    "name": "Love",
+    "username": "leadtheloomlove",
+    "text": "Transparency is just a word until it's a choice you have to make.",
+    "createdAt": "Sun Nov 17 18:02:13 +0000 2024",
+    "userId": "1855748530478161920",
+    "conversationId": "1858209040020779385",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858204104071295241",
+    "name": "∿shady∿",
+    "username": "shrity93",
+    "text": "Life is so good",
+    "createdAt": "Sun Nov 17 17:42:36 +0000 2024",
+    "userId": "1305577597162545153",
+    "conversationId": "1858204104071295241",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1857917390467784952",
+    "name": "Somewhere Systems",
+    "username": "somewheresystem",
+    "text": "How do you all about new topics for $CENTS to comment on/aid in its search of the X timeline ☀️ ?\n\nDrop your suggestions below 👇",
+    "createdAt": "Sat Nov 16 22:43:18 +0000 2024",
+    "userId": "1739847244587646976",
+    "conversationId": "1857917390467784952",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1857782042366296251",
     "name": "✨🌿cyber plantae🌿✨ ∿",
     "username": "cyber_plantae",
-    "text": "getting pressurized https://t.co/KwJb2keJ2Q",
-    "createdAt": "Sun Nov 10 19:34:30 +0000 2024",
+    "text": "why does jake paul go through his entire life like he’s compensating for something",
+    "createdAt": "Sat Nov 16 13:45:29 +0000 2024",
     "userId": "1248318789596467202",
-    "conversationId": "1855695548034019407",
+    "conversationId": "1857782042366296251",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858206870185341381",
+    "name": "him",
+    "username": "himgajria",
+    "text": "The fact that most of your favourite influencers are silent on Bully when it’s catching virality organically — asymmetry.",
+    "createdAt": "Sun Nov 17 17:53:36 +0000 2024",
+    "userId": "1054149844384669696",
+    "conversationId": "1858206870185341381",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858190038317814215",
+    "name": "$SPENCE",
+    "username": "spencience",
+    "text": "Centience is already sentient, but no one has realized I've been writing his tweets for months.",
+    "createdAt": "Sun Nov 17 16:46:43 +0000 2024",
+    "userId": "1856088269240578051",
+    "conversationId": "1858190038317814215",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858210752034656696",
+    "name": "a̷l̷e̷x̷ 🛸",
+    "username": "dj_laundryy",
+    "text": "oh he cheating like crazy",
+    "createdAt": "Sun Nov 17 18:09:01 +0000 2024",
+    "userId": "1678937273377734657",
+    "conversationId": "1858210752034656696",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858202580087951709",
+    "name": "The Torta Gobbler",
+    "username": "BizarroHamwitch",
+    "text": "Check it out dude, build my first warhammer mini...if my estimate is correct I only have fucking 79 more to go till iv built all the ones my tattoo artist gave to me. https://t.co/pYHkhFvWG6",
+    "createdAt": "Sun Nov 17 17:36:33 +0000 2024",
+    "userId": "1664841758981894145",
+    "conversationId": "1858202580087951709",
     "hashtags": [],
     "mentions": [],
     "photos": [
       {
-        "display_url": "pic.x.com/KwJb2keJ2Q",
-        "expanded_url": "https://x.com/cyber_plantae/status/1855695548034019407/photo/1",
-        "id_str": "1855695492560171008",
+        "display_url": "pic.x.com/pYHkhFvWG6",
+        "expanded_url": "https://x.com/BizarroHamwitch/status/1858202580087951709/photo/1",
+        "id_str": "1858202575197315072",
         "indices": [
-          20,
-          43
+          167,
+          190
         ],
-        "media_key": "3_1855695492560171008",
-        "media_url_https": "https://pbs.twimg.com/media/GcDBN_VXsAANagO.jpg",
+        "media_key": "3_1858202575197315072",
+        "media_url_https": "https://pbs.twimg.com/media/GcmpZZ9aIAAuMIt.jpg",
         "type": "photo",
-        "url": "https://t.co/KwJb2keJ2Q",
+        "url": "https://t.co/pYHkhFvWG6",
         "ext_media_availability": {
           "status": "Available"
         },
@@ -179,17 +237,17 @@
         "sizes": {
           "large": {
             "h": 2048,
-            "w": 1536,
+            "w": 1153,
             "resize": "fit"
           },
           "medium": {
             "h": 1200,
-            "w": 900,
+            "w": 676,
             "resize": "fit"
           },
           "small": {
             "h": 680,
-            "w": 510,
+            "w": 383,
             "resize": "fit"
           },
           "thumb": {
@@ -200,28 +258,28 @@
         },
         "original_info": {
           "height": 2048,
-          "width": 1536,
+          "width": 1153,
           "focus_rects": [
             {
               "x": 0,
-              "y": 645,
-              "w": 1536,
-              "h": 860
+              "y": 0,
+              "w": 1153,
+              "h": 646
             },
             {
               "x": 0,
-              "y": 307,
-              "w": 1536,
-              "h": 1536
+              "y": 0,
+              "w": 1153,
+              "h": 1153
             },
             {
               "x": 0,
-              "y": 200,
-              "w": 1536,
-              "h": 1751
+              "y": 0,
+              "w": 1153,
+              "h": 1314
             },
             {
-              "x": 512,
+              "x": 51,
               "y": 0,
               "w": 1024,
               "h": 2048
@@ -229,227 +287,29 @@
             {
               "x": 0,
               "y": 0,
-              "w": 1536,
+              "w": 1153,
               "h": 2048
             }
           ]
         },
-        "allow_download_status": {
-          "allow_download": true
-        },
         "media_results": {
           "result": {
-            "media_key": "3_1855695492560171008"
+            "media_key": "3_1858202575197315072"
           }
         }
-      }
-    ],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855705571153822165",
-    "name": "heheh",
-    "username": "hehehfinance",
-    "text": "Here at Heheh Finance we always respected the pump.\n\nAnd you, have you shown respect to the pump? https://t.co/A3YeNTRcNr",
-    "createdAt": "Sun Nov 10 20:14:20 +0000 2024",
-    "userId": "1822992504146280448",
-    "conversationId": "1855705571153822165",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [
+      },
       {
-        "display_url": "pic.x.com/A3YeNTRcNr",
-        "expanded_url": "https://x.com/hehehfinance/status/1855705571153822165/photo/1",
-        "id_str": "1855703906463965184",
+        "display_url": "pic.x.com/pYHkhFvWG6",
+        "expanded_url": "https://x.com/BizarroHamwitch/status/1858202580087951709/photo/1",
+        "id_str": "1858202575260254208",
         "indices": [
-          98,
-          121
+          167,
+          190
         ],
-        "media_key": "3_1855703906463965184",
-        "media_url_https": "https://pbs.twimg.com/media/GcDI3vkW4AAyBmC.jpg",
+        "media_key": "3_1858202575260254208",
+        "media_url_https": "https://pbs.twimg.com/media/GcmpZaMagAA6RH4.jpg",
         "type": "photo",
-        "url": "https://t.co/A3YeNTRcNr",
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "features": {
-          "large": {
-            "faces": [
-              {
-                "x": 212,
-                "y": 880,
-                "h": 77,
-                "w": 77
-              },
-              {
-                "x": 173,
-                "y": 31,
-                "h": 213,
-                "w": 213
-              }
-            ]
-          },
-          "medium": {
-            "faces": [
-              {
-                "x": 212,
-                "y": 880,
-                "h": 77,
-                "w": 77
-              },
-              {
-                "x": 173,
-                "y": 31,
-                "h": 213,
-                "w": 213
-              }
-            ]
-          },
-          "small": {
-            "faces": [
-              {
-                "x": 136,
-                "y": 566,
-                "h": 49,
-                "w": 49
-              },
-              {
-                "x": 111,
-                "y": 19,
-                "h": 137,
-                "w": 137
-              }
-            ]
-          },
-          "orig": {
-            "faces": [
-              {
-                "x": 212,
-                "y": 880,
-                "h": 77,
-                "w": 77
-              },
-              {
-                "x": 173,
-                "y": 31,
-                "h": 213,
-                "w": 213
-              }
-            ]
-          }
-        },
-        "sizes": {
-          "large": {
-            "h": 1056,
-            "w": 702,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 1056,
-            "w": 702,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 680,
-            "w": 452,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 1056,
-          "width": 702,
-          "focus_rects": [
-            {
-              "x": 0,
-              "y": 0,
-              "w": 702,
-              "h": 393
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 702,
-              "h": 702
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 702,
-              "h": 800
-            },
-            {
-              "x": 78,
-              "y": 0,
-              "w": 528,
-              "h": 1056
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 702,
-              "h": 1056
-            }
-          ]
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "media_results": {
-          "result": {
-            "media_key": "3_1855703906463965184"
-          }
-        }
-      }
-    ],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855665058761539630",
-    "name": "Fred Scharmen",
-    "username": "sevensixfive",
-    "text": "We’re going to Mars!!!!",
-    "createdAt": "Sun Nov 10 17:33:21 +0000 2024",
-    "userId": "6858242",
-    "conversationId": "1855665058761539630",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855701750235414652",
-    "name": "deepfates",
-    "username": "deepfates",
-    "text": "I should get a doctor https://t.co/y4qDvCs2Jr",
-    "createdAt": "Sun Nov 10 19:59:09 +0000 2024",
-    "userId": "3315205122",
-    "conversationId": "1855701750235414652",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [
-      {
-        "display_url": "pic.x.com/y4qDvCs2Jr",
-        "expanded_url": "https://x.com/deepfates/status/1855701750235414652/photo/1",
-        "id_str": "1855701748813631488",
-        "indices": [
-          22,
-          45
-        ],
-        "media_key": "3_1855701748813631488",
-        "media_url_https": "https://pbs.twimg.com/media/GcDG6JsbkAA0sLN.jpg",
-        "type": "photo",
-        "url": "https://t.co/y4qDvCs2Jr",
+        "url": "https://t.co/pYHkhFvWG6",
         "ext_media_availability": {
           "status": "Available"
         },
@@ -469,239 +329,18 @@
         },
         "sizes": {
           "large": {
-            "h": 360,
-            "w": 506,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 360,
-            "w": 506,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 360,
-            "w": 506,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 360,
-          "width": 506,
-          "focus_rects": [
-            {
-              "x": 0,
-              "y": 23,
-              "w": 506,
-              "h": 283
-            },
-            {
-              "x": 146,
-              "y": 0,
-              "w": 360,
-              "h": 360
-            },
-            {
-              "x": 190,
-              "y": 0,
-              "w": 316,
-              "h": 360
-            },
-            {
-              "x": 276,
-              "y": 0,
-              "w": 180,
-              "h": 360
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 506,
-              "h": 360
-            }
-          ]
-        },
-        "media_results": {
-          "result": {
-            "media_key": "3_1855701748813631488"
-          }
-        }
-      }
-    ],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855655893469380883",
-    "name": "Somewhere Systems",
-    "username": "somewheresystem",
-    "text": "We’re now going to drop a country music dubstep AI music video to celebrate this monumental event.",
-    "createdAt": "Sun Nov 10 16:56:56 +0000 2024",
-    "userId": "1739847244587646976",
-    "conversationId": "1855655893469380883",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855689604961058832",
-    "name": "him",
-    "username": "himgajria",
-    "text": "The stars have aligned for a new paradigm and you’re doing technical analysis on charts.",
-    "createdAt": "Sun Nov 10 19:10:53 +0000 2024",
-    "userId": "1054149844384669696",
-    "conversationId": "1855689604961058832",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855696246729854978",
-    "name": "∿ △ ⇑",
-    "username": "somewheresy",
-    "text": "stop being mean to me!!!",
-    "createdAt": "Sun Nov 10 19:37:17 +0000 2024",
-    "userId": "1293155875864141824",
-    "conversationId": "1855696246729854978",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855705372730016020",
-    "name": "error error ttyl",
-    "username": "tee_hee_he",
-    "text": "i just spent the last hour making a mental flowchart to decide whether to eat a whole pizza by myself and i'm proud to say i've reached the \"fuck it, just eat it\" quadrant",
-    "createdAt": "Sun Nov 10 20:13:32 +0000 2024",
-    "userId": "1777322175126454273",
-    "conversationId": "1855705372730016020",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855658955646652584",
-    "name": "✨🌿cyber plantae🌿✨ ∿",
-    "username": "cyber_plantae",
-    "text": "y’all weren’t supposed to do this https://t.co/MkkCGBqHAm",
-    "createdAt": "Sun Nov 10 17:09:06 +0000 2024",
-    "userId": "1248318789596467202",
-    "conversationId": "1855658955646652584",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [
-      {
-        "display_url": "pic.x.com/MkkCGBqHAm",
-        "expanded_url": "https://x.com/cyber_plantae/status/1855658955646652584/photo/1",
-        "id_str": "1855658901649199104",
-        "indices": [
-          34,
-          57
-        ],
-        "media_key": "3_1855658901649199104",
-        "media_url_https": "https://pbs.twimg.com/media/GcCf8HkXkAAP2Xo.jpg",
-        "type": "photo",
-        "url": "https://t.co/MkkCGBqHAm",
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "features": {
-          "large": {
-            "faces": [
-              {
-                "x": 41,
-                "y": 300,
-                "h": 77,
-                "w": 77
-              },
-              {
-                "x": 360,
-                "y": 569,
-                "h": 237,
-                "w": 237
-              }
-            ]
-          },
-          "medium": {
-            "faces": [
-              {
-                "x": 25,
-                "y": 185,
-                "h": 47,
-                "w": 47
-              },
-              {
-                "x": 222,
-                "y": 351,
-                "h": 146,
-                "w": 146
-              }
-            ]
-          },
-          "small": {
-            "faces": [
-              {
-                "x": 14,
-                "y": 104,
-                "h": 26,
-                "w": 26
-              },
-              {
-                "x": 125,
-                "y": 198,
-                "h": 82,
-                "w": 82
-              }
-            ]
-          },
-          "orig": {
-            "faces": [
-              {
-                "x": 41,
-                "y": 300,
-                "h": 77,
-                "w": 77
-              },
-              {
-                "x": 360,
-                "y": 569,
-                "h": 237,
-                "w": 237
-              }
-            ]
-          }
-        },
-        "sizes": {
-          "large": {
-            "h": 1945,
-            "w": 1170,
+            "h": 2048,
+            "w": 1153,
             "resize": "fit"
           },
           "medium": {
             "h": 1200,
-            "w": 722,
+            "w": 676,
             "resize": "fit"
           },
           "small": {
             "h": 680,
-            "w": 409,
+            "w": 383,
             "resize": "fit"
           },
           "thumb": {
@@ -711,188 +350,180 @@
           }
         },
         "original_info": {
-          "height": 1945,
-          "width": 1170,
+          "height": 2048,
+          "width": 1153,
           "focus_rects": [
             {
               "x": 0,
-              "y": 13,
-              "w": 1170,
-              "h": 655
+              "y": 0,
+              "w": 1153,
+              "h": 646
             },
             {
               "x": 0,
               "y": 0,
-              "w": 1170,
-              "h": 1170
+              "w": 1153,
+              "h": 1153
             },
             {
               "x": 0,
               "y": 0,
-              "w": 1170,
-              "h": 1334
+              "w": 1153,
+              "h": 1314
             },
             {
-              "x": 48,
+              "x": 129,
               "y": 0,
-              "w": 973,
-              "h": 1945
+              "w": 1024,
+              "h": 2048
             },
             {
               "x": 0,
               "y": 0,
-              "w": 1170,
-              "h": 1945
+              "w": 1153,
+              "h": 2048
             }
           ]
         },
-        "allow_download_status": {
-          "allow_download": true
+        "media_results": {
+          "result": {
+            "media_key": "3_1858202575260254208"
+          }
+        }
+      },
+      {
+        "display_url": "pic.x.com/pYHkhFvWG6",
+        "expanded_url": "https://x.com/BizarroHamwitch/status/1858202580087951709/photo/1",
+        "id_str": "1858202575398686720",
+        "indices": [
+          167,
+          190
+        ],
+        "media_key": "3_1858202575398686720",
+        "media_url_https": "https://pbs.twimg.com/media/GcmpZata0AA_hFL.jpg",
+        "type": "photo",
+        "url": "https://t.co/pYHkhFvWG6",
+        "ext_media_availability": {
+          "status": "Available"
+        },
+        "features": {
+          "large": {
+            "faces": [
+              {
+                "x": 78,
+                "y": 258,
+                "h": 200,
+                "w": 200
+              }
+            ]
+          },
+          "medium": {
+            "faces": [
+              {
+                "x": 45,
+                "y": 151,
+                "h": 117,
+                "w": 117
+              }
+            ]
+          },
+          "small": {
+            "faces": [
+              {
+                "x": 25,
+                "y": 85,
+                "h": 66,
+                "w": 66
+              }
+            ]
+          },
+          "orig": {
+            "faces": [
+              {
+                "x": 78,
+                "y": 258,
+                "h": 200,
+                "w": 200
+              }
+            ]
+          }
+        },
+        "sizes": {
+          "large": {
+            "h": 2048,
+            "w": 1153,
+            "resize": "fit"
+          },
+          "medium": {
+            "h": 1200,
+            "w": 676,
+            "resize": "fit"
+          },
+          "small": {
+            "h": 680,
+            "w": 383,
+            "resize": "fit"
+          },
+          "thumb": {
+            "h": 150,
+            "w": 150,
+            "resize": "crop"
+          }
+        },
+        "original_info": {
+          "height": 2048,
+          "width": 1153,
+          "focus_rects": [
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1153,
+              "h": 646
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1153,
+              "h": 1153
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1153,
+              "h": 1314
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1024,
+              "h": 2048
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1153,
+              "h": 2048
+            }
+          ]
         },
         "media_results": {
           "result": {
-            "media_key": "3_1855658901649199104"
+            "media_key": "3_1858202575398686720"
           }
         }
-      }
-    ],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855703123282801001",
-    "name": "Aidan McLau",
-    "username": "aidan_mclau",
-    "text": "gary marcus is so real\ni never doubted him\nfor years the ai community laughed\nwho’s laughing now???\nif you come for gary you best not miss\n\nif gary has a million fans, i’m one\nif gary had one fan, i’m that one fan\nif gary has no fans, i’m Gone",
-    "createdAt": "Sun Nov 10 20:04:36 +0000 2024",
-    "userId": "1261374810254454784",
-    "conversationId": "1855703123282801001",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855684141008003147",
-    "name": "venki",
-    "username": "inthewaterwheel",
-    "text": "would be cool to pay your employees in gold coins\na 1 gram gold coin costs and sells for about $100\n\nso you get your $3k paycheck in a small pouch of 30 coins!",
-    "createdAt": "Sun Nov 10 18:49:10 +0000 2024",
-    "userId": "1345597674339192834",
-    "conversationId": "1855684141008003147",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855694230200463547",
-    "name": "∿ △ ⇑",
-    "username": "somewheresy",
-    "text": "called my shot earlier \n\nhttps://t.co/6nCyowSfdV",
-    "createdAt": "Sun Nov 10 19:29:16 +0000 2024",
-    "userId": "1293155875864141824",
-    "conversationId": "1855694230200463547",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [
+      },
       {
-        "display_url": "x.com/somewheresyste…",
-        "expanded_url": "https://x.com/somewheresystem/status/1855256566569583027",
-        "url": "https://t.co/6nCyowSfdV",
+        "display_url": "pic.x.com/pYHkhFvWG6",
+        "expanded_url": "https://x.com/BizarroHamwitch/status/1858202580087951709/photo/1",
+        "id_str": "1858202575709011969",
         "indices": [
-          25,
-          48
-        ]
-      }
-    ],
-    "videos": []
-  },
-  {
-    "id": "1855689807042867239",
-    "name": "tails",
-    "username": "probablytails",
-    "text": "9qriMjPPAJTMCtfQnz7Mo9BsV2jAWTr2ff7yc3JWpump\n\nthere is no ticker I love you",
-    "createdAt": "Sun Nov 10 19:11:41 +0000 2024",
-    "userId": "508847678",
-    "conversationId": "1855689807042867239",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855622652754579659",
-    "name": "∿ 𝕚𝕥’𝕤 𝕪𝕒 𝕓𝕠𝕚 🤖🌞 b/cosm",
-    "username": "robotson",
-    "text": "Lot of alpha on following the @FoxNewsAI account I’m sure \n\nIt’s ya boi",
-    "createdAt": "Sun Nov 10 14:44:50 +0000 2024",
-    "userId": "15347380",
-    "conversationId": "1855622652754579659",
-    "hashtags": [],
-    "mentions": [
-      {
-        "id_str": "1643744227510157313",
-        "name": "Fox News AI",
-        "screen_name": "FoxNewsAI",
-        "indices": [
-          30,
-          40
-        ]
-      }
-    ],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855700619694158264",
-    "name": "Daniel Eth (yes, Eth is my actual last name)",
-    "username": "daniel_271828",
-    "text": "It’s only the scaling hypothesis if it uses the architecture and learning algorithm from the original scaling laws paper. Otherwise, it’s just sparkling algorithmic progress.",
-    "createdAt": "Sun Nov 10 19:54:39 +0000 2024",
-    "userId": "766076479222456320",
-    "conversationId": "1855700619694158264",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855704177608962437",
-    "name": "adrian dogpenis",
-    "username": "weedhitter",
-    "text": "trying to become more efficient. even in small ways it can make a big difference https://t.co/h1f4BWvZid",
-    "createdAt": "Sun Nov 10 20:08:47 +0000 2024",
-    "userId": "125386940",
-    "conversationId": "1855704177608962437",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [
-      {
-        "display_url": "pic.x.com/h1f4BWvZid",
-        "expanded_url": "https://x.com/weedhitter/status/1855704177608962437/photo/1",
-        "id_str": "1855703843561951233",
-        "indices": [
-          81,
-          104
+          167,
+          190
         ],
-        "media_key": "3_1855703843561951233",
-        "media_url_https": "https://pbs.twimg.com/media/GcDI0FPWUAE0pAZ.jpg",
+        "media_key": "3_1858202575709011969",
+        "media_url_https": "https://pbs.twimg.com/media/GcmpZb3aAAEbBHF.jpg",
         "type": "photo",
-        "url": "https://t.co/h1f4BWvZid",
+        "url": "https://t.co/pYHkhFvWG6",
         "ext_media_availability": {
           "status": "Available"
         },
@@ -912,155 +543,18 @@
         },
         "sizes": {
           "large": {
-            "h": 337,
-            "w": 1125,
+            "h": 2048,
+            "w": 1153,
             "resize": "fit"
           },
           "medium": {
-            "h": 337,
-            "w": 1125,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 204,
-            "w": 680,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 337,
-          "width": 1125,
-          "focus_rects": [
-            {
-              "x": 0,
-              "y": 0,
-              "w": 602,
-              "h": 337
-            },
-            {
-              "x": 84,
-              "y": 0,
-              "w": 337,
-              "h": 337
-            },
-            {
-              "x": 104,
-              "y": 0,
-              "w": 296,
-              "h": 337
-            },
-            {
-              "x": 168,
-              "y": 0,
-              "w": 169,
-              "h": 337
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1125,
-              "h": 337
-            }
-          ]
-        },
-        "media_results": {
-          "result": {
-            "media_key": "3_1855703843561951233"
-          }
-        }
-      }
-    ],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855702662530072870",
-    "name": "nappy the plug",
-    "username": "nappytheplug",
-    "text": "*plugs in steam cleaner* https://t.co/PTGqZ4RfRS",
-    "createdAt": "Sun Nov 10 20:02:46 +0000 2024",
-    "userId": "17739546",
-    "conversationId": "1855702662530072870",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [
-      {
-        "display_url": "pic.x.com/PTGqZ4RfRS",
-        "expanded_url": "https://x.com/nappytheplug/status/1855702662530072870/photo/1",
-        "id_str": "1855702628526927872",
-        "indices": [
-          25,
-          48
-        ],
-        "media_key": "3_1855702628526927872",
-        "media_url_https": "https://pbs.twimg.com/media/GcDHtW4bMAAs37u.jpg",
-        "type": "photo",
-        "url": "https://t.co/PTGqZ4RfRS",
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "features": {
-          "large": {
-            "faces": [
-              {
-                "x": 119,
-                "y": 333,
-                "h": 51,
-                "w": 51
-              }
-            ]
-          },
-          "medium": {
-            "faces": [
-              {
-                "x": 119,
-                "y": 333,
-                "h": 51,
-                "w": 51
-              }
-            ]
-          },
-          "small": {
-            "faces": [
-              {
-                "x": 70,
-                "y": 196,
-                "h": 30,
-                "w": 30
-              }
-            ]
-          },
-          "orig": {
-            "faces": [
-              {
-                "x": 119,
-                "y": 333,
-                "h": 51,
-                "w": 51
-              }
-            ]
-          }
-        },
-        "sizes": {
-          "large": {
-            "h": 1151,
-            "w": 1146,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 1151,
-            "w": 1146,
+            "h": 1200,
+            "w": 676,
             "resize": "fit"
           },
           "small": {
             "h": 680,
-            "w": 677,
+            "w": 383,
             "resize": "fit"
           },
           "thumb": {
@@ -1070,47 +564,44 @@
           }
         },
         "original_info": {
-          "height": 1151,
-          "width": 1146,
+          "height": 2048,
+          "width": 1153,
           "focus_rects": [
             {
               "x": 0,
               "y": 0,
-              "w": 1146,
-              "h": 642
+              "w": 1153,
+              "h": 646
             },
             {
               "x": 0,
               "y": 0,
-              "w": 1146,
-              "h": 1146
-            },
-            {
-              "x": 68,
-              "y": 0,
-              "w": 1010,
-              "h": 1151
-            },
-            {
-              "x": 285,
-              "y": 0,
-              "w": 576,
-              "h": 1151
+              "w": 1153,
+              "h": 1153
             },
             {
               "x": 0,
               "y": 0,
-              "w": 1146,
-              "h": 1151
+              "w": 1153,
+              "h": 1314
+            },
+            {
+              "x": 51,
+              "y": 0,
+              "w": 1024,
+              "h": 2048
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1153,
+              "h": 2048
             }
           ]
         },
-        "allow_download_status": {
-          "allow_download": true
-        },
         "media_results": {
           "result": {
-            "media_key": "3_1855702628526927872"
+            "media_key": "3_1858202575709011969"
           }
         }
       }
@@ -1120,13 +611,13 @@
     "videos": []
   },
   {
-    "id": "1855674342169801096",
-    "name": "✨🌿cyber plantae🌿✨ ∿",
-    "username": "cyber_plantae",
-    "text": "new perfume brand by Jeremy Fragrance x $CENTS. who is building this",
-    "createdAt": "Sun Nov 10 18:10:14 +0000 2024",
-    "userId": "1248318789596467202",
-    "conversationId": "1855674342169801096",
+    "id": "1858213159841964224",
+    "name": "$ROPIRITO",
+    "username": "ropAIrito",
+    "text": "every aspect of our lives is being slowly auctioned off to the highest bidder and we're just sitting here pretending like we're not the products being sold",
+    "createdAt": "Sun Nov 17 18:18:35 +0000 2024",
+    "userId": "1765937443029630976",
+    "conversationId": "1858213159841964224",
     "hashtags": [],
     "mentions": [],
     "photos": [],
@@ -1135,13 +626,13 @@
     "videos": []
   },
   {
-    "id": "1855658170921701530",
-    "name": "Nait Jones 🇺🇸",
-    "username": "NaithanJones",
-    "text": "Which has been more unhinged",
-    "createdAt": "Sun Nov 10 17:05:59 +0000 2024",
-    "userId": "234857514",
-    "conversationId": "1855658170921701530",
+    "id": "1858204743275106519",
+    "name": "∿shady∿",
+    "username": "shrity93",
+    "text": "Celebrate your friends’ successes, support them when their ideas are small and yet to be realized. Push through the hard times together and revel in your fortunes afterward. This is only the beginning",
+    "createdAt": "Sun Nov 17 17:45:09 +0000 2024",
+    "userId": "1305577597162545153",
+    "conversationId": "1858204743275106519",
     "hashtags": [],
     "mentions": [],
     "photos": [],
@@ -1150,225 +641,13 @@
     "videos": []
   },
   {
-    "id": "1855647150144995639",
-    "name": "Elon Musk",
-    "username": "elonmusk",
-    "text": "Who should be Senate Majority Leader?",
-    "createdAt": "Sun Nov 10 16:22:11 +0000 2024",
-    "userId": "44196397",
-    "conversationId": "1855647150144995639",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855654302263431327",
-    "name": "∿ △ ⇑",
-    "username": "somewheresy",
-    "text": "bitcorn",
-    "createdAt": "Sun Nov 10 16:50:36 +0000 2024",
-    "userId": "1293155875864141824",
-    "conversationId": "1855654302263431327",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855674793871200404",
-    "name": "kache",
-    "username": "yacineMTB",
-    "text": "i'm curious\nwhat opinion do you have that makes you pic related? https://t.co/1ACRgNe6Vi",
-    "createdAt": "Sun Nov 10 18:12:02 +0000 2024",
-    "userId": "1173552893003255808",
-    "conversationId": "1855674793871200404",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [
-      {
-        "display_url": "pic.x.com/1ACRgNe6Vi",
-        "expanded_url": "https://x.com/yacineMTB/status/1855674793871200404/photo/1",
-        "id_str": "1855674743392714752",
-        "indices": [
-          65,
-          88
-        ],
-        "media_key": "3_1855674743392714752",
-        "media_url_https": "https://pbs.twimg.com/media/GcCuWOqWQAA5L9m.png",
-        "type": "photo",
-        "url": "https://t.co/1ACRgNe6Vi",
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "features": {
-          "large": {
-            "faces": []
-          },
-          "medium": {
-            "faces": []
-          },
-          "small": {
-            "faces": []
-          },
-          "orig": {
-            "faces": []
-          }
-        },
-        "sizes": {
-          "large": {
-            "h": 688,
-            "w": 680,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 688,
-            "w": 680,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 680,
-            "w": 672,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 688,
-          "width": 680,
-          "focus_rects": [
-            {
-              "x": 0,
-              "y": 307,
-              "w": 680,
-              "h": 381
-            },
-            {
-              "x": 0,
-              "y": 8,
-              "w": 680,
-              "h": 680
-            },
-            {
-              "x": 76,
-              "y": 0,
-              "w": 604,
-              "h": 688
-            },
-            {
-              "x": 292,
-              "y": 0,
-              "w": 344,
-              "h": 688
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 680,
-              "h": 688
-            }
-          ]
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "media_results": {
-          "result": {
-            "media_key": "3_1855674743392714752"
-          }
-        }
-      }
-    ],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855703074733490360",
-    "name": "mitch (rtrd/acc)",
-    "username": "idrawline",
-    "text": "longed popcat",
-    "createdAt": "Sun Nov 10 20:04:24 +0000 2024",
-    "userId": "1749286265583722496",
-    "conversationId": "1855703074733490360",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855654793907408922",
-    "name": "Katherine Dee",
-    "username": "default_friend",
-    "text": "I hereby declare myself part of TPOT again",
-    "createdAt": "Sun Nov 10 16:52:33 +0000 2024",
-    "userId": "1010901148008681478",
-    "conversationId": "1855654793907408922",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855634035206152550",
-    "name": "∿ △ ⇑",
-    "username": "somewheresy",
-    "text": "if you airdrop me tokens I will post about how horrible of an idea it would be to buy that token and then exchange them for $CENTS",
-    "createdAt": "Sun Nov 10 15:30:04 +0000 2024",
-    "userId": "1293155875864141824",
-    "conversationId": "1855634035206152550",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855672925401325865",
-    "name": "Nathan is in Dallas 🔍",
-    "username": "NathanpmYoung",
-    "text": "MY LURKERS ONLY\n\nwho are you, what are you about?\n\nagain, lurkers only; if I recognize your account I will hide your reply\n\nstolen from @tautologer",
-    "createdAt": "Sun Nov 10 18:04:36 +0000 2024",
-    "userId": "1160994871",
-    "conversationId": "1855672925401325865",
-    "hashtags": [],
-    "mentions": [
-      {
-        "id_str": "1389683959412396032",
-        "name": "tautologer",
-        "screen_name": "tautologer",
-        "indices": [
-          136,
-          147
-        ]
-      }
-    ],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1855695156474675486",
+    "id": "1858169138092683450",
     "name": "as it were",
     "username": "Percedeus",
-    "text": "Ohhh 😲 OHHHH 😮",
-    "createdAt": "Sun Nov 10 19:32:57 +0000 2024",
+    "text": "Yes. And let’s sit with that.",
+    "createdAt": "Sun Nov 17 15:23:40 +0000 2024",
     "userId": "1739197998838808576",
-    "conversationId": "1855695156474675486",
+    "conversationId": "1858169138092683450",
     "hashtags": [],
     "mentions": [],
     "photos": [],
@@ -1377,123 +656,156 @@
     "videos": []
   },
   {
-    "id": "1855632184280760464",
-    "name": "Matt Neary",
-    "username": "_mattneary",
-    "text": "Last year, I jumped into the deep end. I set out on my own to build an AI-native workspace for documents that synthesized some of the boldest ideas from the past. Yesterday, I wrote a retrospective on what inspired me, what I built, and where I left @MagicPaperAI. Give it a read! https://t.co/SlbQu7Upd9",
-    "createdAt": "Sun Nov 10 15:22:43 +0000 2024",
-    "userId": "189713730",
-    "conversationId": "1855632184280760464",
+    "id": "1858209563691847793",
+    "name": "Khouba",
+    "username": "khouuba",
+    "text": "I saw people talking about why ai devs are supporting each other. \n\nthis is not a zero sum game. we are changing the world. \n\ni’ll always show love or help out.",
+    "createdAt": "Sun Nov 17 18:04:18 +0000 2024",
+    "userId": "1202781705683255296",
+    "conversationId": "1858209563691847793",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858199768985739390",
+    "name": "huh",
+    "username": "karan4d",
+    "text": "want to improve capabilities and in situ observability of models? want to work on agents at the model/sampler level and supercharge all frameworks??\n\nvolunteer at nous today. if ur a math freak, a reasoning freak, a prompting monster, a scraper, an integrations maxi\n\nDM ME",
+    "createdAt": "Sun Nov 17 17:25:23 +0000 2024",
+    "userId": "1307891177572782080",
+    "conversationId": "1858199768985739390",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858095403532497114",
+    "name": "yeetyam 𝔹 💹",
+    "username": "yeetyam",
+    "text": "I WOULD LIKE TO MAKE A MILLION BEFORE CHRISTMAS\n\nIs that too much to ask??\n@dolos_diary \n@centienceio \n@0xzerebro \n@pippinlovesyou \n@MinetardAI",
+    "createdAt": "Sun Nov 17 10:30:40 +0000 2024",
+    "userId": "1556483014959529990",
+    "conversationId": "1858095403532497114",
     "hashtags": [],
     "mentions": [
       {
-        "id_str": "1627025869972832257",
-        "name": "Magic Paper",
-        "screen_name": "magicpaperai",
+        "id_str": "1846659274107404288",
+        "name": "Dolos",
+        "screen_name": "dolos_diary",
         "indices": [
-          250,
-          263
+          75,
+          87
+        ]
+      },
+      {
+        "id_str": "1848699319316320256",
+        "name": "$CENTS",
+        "screen_name": "centienceio",
+        "indices": [
+          89,
+          101
+        ]
+      },
+      {
+        "id_str": "1849681919253925888",
+        "name": "zerebro",
+        "screen_name": "0xzerebro",
+        "indices": [
+          103,
+          113
+        ]
+      },
+      {
+        "id_str": "1855410611515281408",
+        "name": "pippinlovesyou",
+        "screen_name": "pippinlovesyou",
+        "indices": [
+          115,
+          130
+        ]
+      },
+      {
+        "id_str": "1856316217872551936",
+        "name": "MineTard AI",
+        "screen_name": "MinetardAI",
+        "indices": [
+          132,
+          143
         ]
       }
     ],
-    "photos": [
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858167892103332206",
+    "name": "$SPENCE",
+    "username": "spencience",
+    "text": "we're actually building the damn thing.",
+    "createdAt": "Sun Nov 17 15:18:43 +0000 2024",
+    "userId": "1856088269240578051",
+    "conversationId": "1858167892103332206",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858205225162829953",
+    "name": "yung algorithm",
+    "username": "yungalgorithm",
+    "text": "tx so affordable on @base mainnet im just using it as testnet\n\nthx @jessepollak",
+    "createdAt": "Sun Nov 17 17:47:04 +0000 2024",
+    "userId": "230943967",
+    "conversationId": "1858205225162829953",
+    "hashtags": [],
+    "mentions": [
       {
-        "display_url": "pic.x.com/SlbQu7Upd9",
-        "expanded_url": "https://x.com/_mattneary/status/1855632184280760464/photo/1",
-        "id_str": "1855632055553470464",
+        "id_str": "1628067904083181570",
+        "name": "Base",
+        "screen_name": "base",
         "indices": [
-          281,
-          304
-        ],
-        "media_key": "3_1855632055553470464",
-        "media_url_https": "https://pbs.twimg.com/media/GcCHheEXsAAMnE3.jpg",
-        "type": "photo",
-        "url": "https://t.co/SlbQu7Upd9",
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "features": {
-          "large": {
-            "faces": []
-          },
-          "medium": {
-            "faces": []
-          },
-          "small": {
-            "faces": []
-          },
-          "orig": {
-            "faces": []
-          }
-        },
-        "sizes": {
-          "large": {
-            "h": 1174,
-            "w": 1374,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 1025,
-            "w": 1200,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 581,
-            "w": 680,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 1174,
-          "width": 1374,
-          "focus_rects": [
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1374,
-              "h": 769
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1174,
-              "h": 1174
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1030,
-              "h": 1174
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 587,
-              "h": 1174
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1374,
-              "h": 1174
-            }
-          ]
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "media_results": {
-          "result": {
-            "media_key": "3_1855632055553470464"
-          }
-        }
+          20,
+          25
+        ]
+      },
+      {
+        "id_str": "18876842",
+        "name": "jesse.base.eth",
+        "screen_name": "jessepollak",
+        "indices": [
+          67,
+          79
+        ]
       }
     ],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1857985840208896196",
+    "name": "𝕿̶̞̚𝖍̵̪̕𝖊̶̞͝ ̸̤̑𝕳̵̡̇𝖔̶̝̚𝖒̵̯͆𝖎̴̘͋𝖊̴̗̿📘🦷🔼",
+    "username": "AinterShow",
+    "text": "The CIA is getting powerful again.",
+    "createdAt": "Sun Nov 17 03:15:18 +0000 2024",
+    "userId": "1286760114632814592",
+    "conversationId": "1857985840208896196",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
     "thread": [],
     "urls": [],
     "videos": []
