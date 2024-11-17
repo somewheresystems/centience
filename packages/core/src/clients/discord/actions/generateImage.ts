@@ -10,6 +10,8 @@ import { generateImage } from "../../../actions/imageGenerationUtils";
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { randomUUID } from 'crypto';
+import { generateText } from "../../../core/generation.ts";
+import { ModelClass } from "../../../core/types";
 
 export const discordImageGeneration: Action = {
     name: "GENERATE_IMAGE",
@@ -28,17 +30,56 @@ export const discordImageGeneration: Action = {
     ) => {
         try {
             elizaLogger.log("Processing image generation request:", message);
-            const imagePrompt = message.content.text;
+            
+            let imagePrompt = message.content.text;
+            elizaLogger.log("Original prompt:", imagePrompt);
+
+            try {
+                const context = `# Task: Enhance the image generation prompt
+Your task is to enhance the user's request into a detailed prompt that will generate the best possible image.
+
+# Instructions
+- Focus on artistic style, mood, lighting, composition and important details
+- Keep the final prompt under 200 characters
+- If the request is to "generate anything", you have creative control
+- Only respond with the enhanced prompt text, no other commentary
+
+Original request: ${message.content.text}
+
+Enhanced prompt:`;
+
+                elizaLogger.log("Sending context to generate text:", context);
+                
+                const promptResponse = await generateText({
+                    runtime,
+                    context,
+                    modelClass: ModelClass.LARGE,
+                });
+
+                if (promptResponse?.trim()) {
+                    imagePrompt = promptResponse.trim();
+                    elizaLogger.log("Successfully enhanced prompt to:", imagePrompt);
+                } else {
+                    elizaLogger.log("Using original prompt due to empty enhancement response");
+                }
+            } catch (promptError) {
+                elizaLogger.error("Prompt enhancement failed, using original prompt:", promptError);
+            }
+
+            // Clean the prompt of any Discord mentions
+            const cleanPrompt = imagePrompt.replace(/<@[^>]+>/g, '').trim();
+            elizaLogger.log("Final cleaned prompt:", cleanPrompt);
 
             const images = await generateImage(
                 {
-                    prompt: imagePrompt,
+                    prompt: cleanPrompt,
                     width: 1024,
                     height: 1024,
                     count: 1,
                 },
                 runtime
             );
+            elizaLogger.log("Generate image response:", images);
 
             if (images.success && images.data && images.data.length > 0) {
                 elizaLogger.log("Image generation successful");
