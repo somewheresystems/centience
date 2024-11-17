@@ -97,7 +97,7 @@ Result: [RESPOND]
 
 Response options are [RESPOND], [IGNORE] and [STOP].
 
-{{agentName}} is in a room with other users and is very worried about being annoying and saying too much.
+{{agentName}} is in a room with other users and is very worried about being annoying.
 Respond with [RESPOND] to messages that are directed at {{agentName}}, or participate in conversations that are interesting or relevant to their background.
 If a message is not interesting or relevant, respond with [IGNORE]
 Unless directly responding to a user, respond with [IGNORE] to messages that are very short or do not contain much information.
@@ -773,6 +773,8 @@ export class MessageManager {
         message: DiscordMessage,
         state: State
     ): Promise<boolean> {
+        // Add global reply rate check at the start
+
         if (message.author.id === this.client.user?.id) return false;
         // if (message.author.bot) return false;
         if (message.mentions.has(this.client.user?.id as string)) return true;
