@@ -325,7 +325,7 @@ export class TwitterInteractionClient extends ClientBase {
         // Promise<"RESPOND" | "IGNORE" | "STOP" | null> {
         if (shouldRespond !== "RESPOND") {
             console.log("Not responding to message");
-            return { text: "", action: shouldRespond };
+            return { text: "Response Decision: ", action: shouldRespond };
         }
 
         const context = composeContext({
