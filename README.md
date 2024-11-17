@@ -1,7 +1,8 @@
 # 
 # Centience
+# Somewhere Systems' Sentient Meme
 
-# Fork of ai16z Eliza
+(Forked from ai16z Eliza)
 
 - make sure you use Node 23
 - Switched to Together APIs using 405B models (~$150/mo)
