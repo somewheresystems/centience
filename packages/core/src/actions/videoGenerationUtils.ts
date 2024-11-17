@@ -1,4 +1,5 @@
 import { IAgentRuntime } from "../core/types.ts";
+import { elizaLogger } from "../index";
 
 export const generateVideo = async (
     data: {
@@ -9,45 +10,55 @@ export const generateVideo = async (
     runtime: IAgentRuntime
 ) => {
     const LUMA_API_KEY = runtime.getSetting("LUMA_API_KEY");
+    elizaLogger.log("Starting video generation with Luma API");
     
     try {
-        // Create Luma capture
-        const captureResponse = await fetch("https://api.lumalabs.ai/v0/captures", {
+        // Create initial generation request
+        elizaLogger.log("Sending request to Luma API...");
+        const generationResponse = await fetch("https://api.lumalabs.ai/dream-machine/v1/generations", {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${LUMA_API_KEY}`,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Accept": "application/json"
             },
             body: JSON.stringify({
-                title: data.prompt,
                 prompt: data.prompt,
-                mode: "nerf", // Using NeRF mode for 3D video generation
-                duration: data.duration || 5,
-                resolution: data.resolution || "1080p"
+                aspect_ratio: "16:9",
+                loop: true
             })
         });
 
-        const captureData = await captureResponse.json();
-        const captureId = captureData.id;
+        const generationData = await generationResponse.json();
+        elizaLogger.log("Initial generation response:", generationData);
+
+        if (!generationData.id) {
+            throw new Error(`Failed to get generation ID: ${JSON.stringify(generationData)}`);
+        }
 
         // Poll for completion
-        let videoUrl = null;
         let attempts = 0;
         const maxAttempts = 60; // 5 minutes with 5-second intervals
-
+        
         while (attempts < maxAttempts) {
-            const statusResponse = await fetch(`https://api.lumalabs.ai/v0/captures/${captureId}`, {
-                headers: {
-                    "Authorization": `Bearer ${LUMA_API_KEY}`
+            const statusResponse = await fetch(
+                `https://api.lumalabs.ai/dream-machine/v1/generations/${generationData.id}`, {
+                    headers: {
+                        "Authorization": `Bearer ${LUMA_API_KEY}`,
+                        "Accept": "application/json"
+                    }
                 }
-            });
+            );
 
             const statusData = await statusResponse.json();
+            elizaLogger.log("Status check response:", statusData);
 
-            if (statusData.status === "completed") {
-                videoUrl = statusData.video_url;
-                break;
-            } else if (statusData.status === "failed") {
+            if (statusData.state === "completed" && statusData.assets?.video) {
+                return {
+                    success: true,
+                    url: statusData.assets.video
+                };
+            } else if (statusData.state === "failed") {
                 throw new Error("Video generation failed");
             }
 
@@ -55,16 +66,9 @@ export const generateVideo = async (
             attempts++;
         }
 
-        if (!videoUrl) {
-            throw new Error("Video generation timed out");
-        }
-
-        return {
-            url: videoUrl,
-            success: true
-        };
+        throw new Error("Video generation timed out");
     } catch (error) {
-        console.error("Error generating video:", error);
+        elizaLogger.error("Error generating video:", error);
         return {
             url: null,
             success: false,
