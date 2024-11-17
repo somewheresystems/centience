@@ -1,11 +1,11 @@
 import { Tweet } from "agent-twitter-client";
-import { embeddingZeroVector } from "@ai16z/eliza/src/memory.ts";
-import { Content, Memory, UUID } from "@ai16z/eliza/src/types.ts";
-import { stringToUuid } from "@ai16z/eliza/src/uuid.ts";
+import { embeddingZeroVector } from "../../core/memory.ts";
+import { Content, Memory, UUID } from "../../core/types.ts";
+import { stringToUuid } from "../../core/uuid.ts";
 import { ClientBase } from "./base.ts";
-import { elizaLogger } from "@ai16z/eliza/src/logger.ts";
+import { elizaLogger } from "../../index.ts";
 
-const MAX_TWEET_LENGTH = 240;
+const MAX_TWEET_LENGTH = 4000;
 
 export const wait = (minTime: number = 1000, maxTime: number = 3000) => {
     const waitTime =
@@ -206,8 +206,8 @@ export async function sendTweetChunks(
             url: tweet.permanentUrl,
             inReplyTo: tweet.inReplyToStatusId
                 ? stringToUuid(
-                      tweet.inReplyToStatusId + "-" + client.runtime.agentId
-                  )
+                    tweet.inReplyToStatusId + "-" + client.runtime.agentId
+                )
                 : undefined,
         },
         roomId,
@@ -268,8 +268,8 @@ export async function sendTweet(
             url: tweet.permanentUrl,
             inReplyTo: tweet.inReplyToStatusId
                 ? stringToUuid(
-                      tweet.inReplyToStatusId + "-" + client.runtime.agentId
-                  )
+                    tweet.inReplyToStatusId + "-" + client.runtime.agentId
+                )
                 : undefined,
         },
         roomId,
@@ -317,18 +317,9 @@ export function truncateTweetContent(content: string): string {
     while (content.length > MAX_TWEET_LENGTH && iterations < 10) {
         iterations++;
         // second to last index of period or exclamation point
-        const secondToLastIndexOfPeriod = content.lastIndexOf(
-            ".",
-            content.length - 2
-        );
-        const secondToLastIndexOfExclamation = content.lastIndexOf(
-            "!",
-            content.length - 2
-        );
-        const secondToLastIndex = Math.max(
-            secondToLastIndexOfPeriod,
-            secondToLastIndexOfExclamation
-        );
+        const secondToLastIndexOfPeriod = content.lastIndexOf(".", content.length - 2);
+        const secondToLastIndexOfExclamation = content.lastIndexOf("!", content.length - 2);
+        const secondToLastIndex = Math.max(secondToLastIndexOfPeriod, secondToLastIndexOfExclamation);
         content = content.slice(0, secondToLastIndex);
     }
 

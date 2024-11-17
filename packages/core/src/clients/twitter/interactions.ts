@@ -20,6 +20,8 @@ import {
 import { stringToUuid } from "../../core/uuid.ts";
 import { ClientBase } from "./base.ts";
 import { buildConversationThread, sendTweet, wait } from "./utils.ts";
+import { embeddingZeroVector } from "../../core/memory.ts";
+
 
 export const twitterMessageHandlerTemplate =
     `{{relevantFacts}}
@@ -325,7 +327,7 @@ export class TwitterInteractionClient extends ClientBase {
         // Promise<"RESPOND" | "IGNORE" | "STOP" | null> {
         if (shouldRespond !== "RESPOND") {
             console.log("Not responding to message");
-            return { text: "Response Decision: ", action: shouldRespond };
+            return { text: "Response Decision:", action: shouldRespond };
         }
 
         const context = composeContext({
@@ -341,7 +343,6 @@ export class TwitterInteractionClient extends ClientBase {
             runtime: this.runtime,
             context,
             modelClass: ModelClass.MEDIUM,
-            modelOverride: "hyperbolic"
         });
 
         // state['style'] = defaultCharacter.style
@@ -351,7 +352,6 @@ export class TwitterInteractionClient extends ClientBase {
         // });
 
         // No prompt specified so we clean up the tweet
-        const formatted_response = await generateFormatCompletion(response.text)
 
         const removeQuotes = (str: string) => str.replace(/^['"](.*)['"]$/, '$1');
         
@@ -359,7 +359,7 @@ export class TwitterInteractionClient extends ClientBase {
 
         response.inReplyTo = stringId;
 
-        response.text = removeQuotes(formatted_response)
+        response.text = removeQuotes(response.text)
 
         if (response.text) {
             try {
