@@ -614,6 +614,20 @@ export interface IPdfService {
     convertPdfToText(pdfBuffer: Buffer): Promise<string>;
 }
 
+export interface WebsiteCreationResult {
+    url: string;
+    title: string;
+    success: boolean;
+    message: string;
+}
+
+export interface WebsiteCreationResult {
+    url: string;
+    title: string;
+    success: boolean;
+    message: string;
+}
+
 export interface TweetAction {
     like: boolean;
     retweet: boolean;

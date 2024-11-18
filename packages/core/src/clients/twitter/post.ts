@@ -54,8 +54,6 @@ Current Tweet:
 # INSTRUCTIONS: Respond with appropriate action tags based on the above criteria and the current tweet. An action must meet its threshold to be included.` 
 + postActionResponseFooter;
 
-
-
 export class TwitterPostClient extends ClientBase {
     onReady() {
         const generateNewTweetLoop = () => {
@@ -153,14 +151,14 @@ export class TwitterPostClient extends ClientBase {
             });
 
             console.log("Generating tweet content...");
-            const newTweetContent = await generateText({
+            const newContent = await generateText({
                 runtime: this.runtime,
                 context,
                 modelClass: ModelClass.LARGE,
             });
 
             console.log("Processing generated content...");
-            const slice = newTweetContent.replaceAll(/\\n/g, "\n").trim();
+            const slice = newContent.replaceAll(/\\n/g, "\n").trim();
 
             const contentLength = 1000;
 
@@ -233,7 +231,7 @@ export class TwitterPostClient extends ClientBase {
                     userId: this.runtime.agentId,
                     agentId: this.runtime.agentId,
                     content: {
-                        text: newTweetContent.trim(),
+                        text: newContent.trim(),
                         url: tweet.permanentUrl,
                         source: "twitter",
                     },

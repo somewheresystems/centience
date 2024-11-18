@@ -1,4 +1,4 @@
-import { Action, IAgentRuntime, Memory, ModelClass } from "../../../core/types";
+import { Action, IAgentRuntime, Memory, ModelClass, HandlerCallback } from "../../../core/types";
 import { execSync } from "child_process";
 import { booleanFooter } from "../../../core/parsing";
 import fs from "node:fs";
@@ -8,7 +8,7 @@ import { State } from "../../../core/types";
 import { elizaLogger } from "../../../index.ts";
 import { generateText } from "../../../core/generation.ts";
 import { parseHtmlFromText } from "../../../core/parsing";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,19 +43,20 @@ async function generateHtmlContent(
                 Generate clean, valid HTML content for a ${title.toLowerCase()} page that is relevant to the conversation above.
                 The content should be a single HTML fragment (no doctype/html/head/body tags).
                 Include semantic headings, paragraphs, and lists.
+                Use Tailwind CSS classes for styling.
                 Example format:
-                <main>
-                    <h1>Welcome</h1>
-                    <p>Main introduction text here.</p>
+                <main class="container mx-auto px-4 py-8">
+                    <h1 class="text-4xl font-bold mb-6">Welcome</h1>
+                    <p class="text-gray-700 mb-4">Main introduction text here.</p>
                     <section>
-                        <h2>Key Features</h2>
-                        <ul>
-                            <li>Feature one</li>
-                            <li>Feature two</li>
+                        <h2 class="text-2xl font-semibold mb-4">Key Features</h2>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li class="text-gray-700">Feature one</li>
+                            <li class="text-gray-700">Feature two</li>
                         </ul>
                     </section>
                 </main>
-            `
+            `,
         }),
         modelClass: ModelClass.SMALL,
     });
@@ -63,8 +64,8 @@ async function generateHtmlContent(
     elizaLogger.log(`Generated raw HTML content for ${title}:`, htmlContent);
 
     // Sanitize HTML content by removing any emojis
-    const sanitizedHtml = htmlContent.replace(/[\u{1F300}-\u{1F9FF}]/gu, '');
-    
+    const sanitizedHtml = htmlContent.replace(/[\u{1F300}-\u{1F9FF}]/gu, "");
+
     const parsedHtml = parseHtmlFromText(sanitizedHtml);
     if (!parsedHtml) {
         elizaLogger.error(`Failed to parse HTML content for ${title}`);
@@ -77,9 +78,7 @@ async function generateHtmlContent(
     return parsedHtml;
 }
 
-async function createHtmlFiles(
-    pages: { [key: string]: string },
-) {
+async function createHtmlFiles(pages: { [key: string]: string }) {
     elizaLogger.log("Starting HTML file creation");
 
     try {
@@ -119,10 +118,10 @@ async function createHtmlFiles(
                         <meta charset="UTF-8">
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
                         <title>${title}</title>
-                        <link rel="stylesheet" href="styles.css">
+                        <script src="https://cdn.tailwindcss.com"></script>
                     </head>
-                    <body>
-                        <div class="container">${content}</div>
+                    <body class="bg-white">
+                        ${content}
                     </body>
                     </html>`
                 );
@@ -156,40 +155,16 @@ async function createHtmlFiles(
                 `Not enough disk space to create website files: ${error.message} (Code: ${error.code}, Stack: ${error.stack})`
             );
         } else {
-            throw new Error(`Failed to create HTML files: ${error.message} (Stack: ${error.stack})`);
+            throw new Error(
+                `Failed to create HTML files: ${error.message} (Stack: ${error.stack})`
+            );
         }
     }
 }
 
 function createCssFile() {
-    elizaLogger.log("Creating CSS file");
-    const cssContent = `
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 20px;
-        line-height: 1.6;
-    }
-    .container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    h1, h2, h3 { color: #333; margin-bottom: 1rem; }
-    p { margin-bottom: 1rem; color: #666; }
-    a { color: #0066cc; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    ul { margin-bottom: 1rem; padding-left: 20px; }
-    li { margin-bottom: 0.5rem; }`;
-
-    const cssPath = path.join(__dirname, "website", "styles.css");
-    try {
-        fs.writeFileSync(cssPath, cssContent);
-        elizaLogger.log(`CSS file created at: ${cssPath}`);
-    } catch (error) {
-        elizaLogger.error("Failed to create CSS file:", error);
-        throw new Error(`Failed to create CSS file: ${error.message} (Code: ${error.code}, Stack: ${error.stack})`);
-    }
+    // No longer needed since we're using Tailwind CSS via CDN
+    elizaLogger.log("Skipping CSS file creation - using Tailwind CSS");
 }
 
 async function deployToGithub(
@@ -206,23 +181,28 @@ async function deployToGithub(
 
     try {
         elizaLogger.log("Creating GitHub repository");
-        const createRepoResponse = await fetch("https://api.github.com/user/repos", {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-                name: repoName,
-                auto_init: true,
-                private: false,
-            }),
-        });
+        const createRepoResponse = await fetch(
+            "https://api.github.com/user/repos",
+            {
+                method: "POST",
+                headers,
+                body: JSON.stringify({
+                    name: repoName,
+                    auto_init: true,
+                    private: false,
+                }),
+            }
+        );
 
         if (!createRepoResponse.ok) {
             const responseText = await createRepoResponse.text();
-            throw new Error(`Failed to create repository: ${createRepoResponse.status} - ${responseText}`);
+            throw new Error(
+                `Failed to create repository: ${createRepoResponse.status} - ${responseText}`
+            );
         }
 
         // Wait a moment for GitHub to initialize the repo
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
         elizaLogger.log("Initializing Git repository");
         const gitCommands = [
@@ -246,7 +226,9 @@ async function deployToGithub(
                 );
                 execSync(cmd, { cwd: websiteDir });
             } catch (gitError) {
-                throw new Error(`Git command failed: ${cmd.replace(githubToken, "***")}\nError: ${gitError.message}\nStack: ${gitError.stack}`);
+                throw new Error(
+                    `Git command failed: ${cmd.replace(githubToken, "***")}\nError: ${gitError.message}\nStack: ${gitError.stack}`
+                );
             }
         });
 
@@ -262,7 +244,9 @@ async function deployToGithub(
 
         if (!enablePagesResponse.ok) {
             const responseText = await enablePagesResponse.text();
-            throw new Error(`Failed to enable GitHub Pages: ${enablePagesResponse.status} - ${responseText}`);
+            throw new Error(
+                `Failed to enable GitHub Pages: ${enablePagesResponse.status} - ${responseText}`
+            );
         }
 
         const siteUrl = `https://${username}.github.io/${repoName}`;
@@ -270,7 +254,9 @@ async function deployToGithub(
         return siteUrl;
     } catch (error) {
         elizaLogger.error("Deployment failed:", error);
-        throw new Error(`Deployment failed: ${error.message} (Stack: ${error.stack})`);
+        throw new Error(
+            `Deployment failed: ${error.message} (Stack: ${error.stack})`
+        );
     }
 }
 
@@ -362,7 +348,13 @@ const createWebsite: Action = {
             },
         ],
     ],
-    handler: async (runtime: IAgentRuntime, message: Memory, state: State) => {
+    handler: async (
+        runtime: IAgentRuntime,
+        message: Memory,
+        state: State,
+        options: any,
+        callback: HandlerCallback
+    ) => {
         elizaLogger.log("Starting CREATE_WEBSITE handler");
         if (!state) {
             elizaLogger.log("No state provided, composing new state");
@@ -385,10 +377,14 @@ const createWebsite: Action = {
 
         try {
             elizaLogger.log("Starting website generation process");
-            const homeContent = await generateHtmlContent("Home", runtime, state);
+            const homeContent = await generateHtmlContent(
+                "Home",
+                runtime,
+                state
+            );
             const pages = { home: homeContent };
 
-            await createHtmlFiles(pages, runtime);
+            await createHtmlFiles(pages);
             createCssFile();
 
             elizaLogger.log("Checking GitHub credentials");
@@ -396,7 +392,9 @@ const createWebsite: Action = {
                 process.env;
             if (!token || !username) {
                 elizaLogger.error("GitHub credentials not found");
-                throw new Error("GitHub credentials not found - Both GITHUB_TOKEN and GITHUB_USERNAME environment variables are required");
+                throw new Error(
+                    "GitHub credentials not found - Both GITHUB_TOKEN and GITHUB_USERNAME environment variables are required"
+                );
             }
 
             const repoName = `generated-website-${Date.now()}`;
@@ -404,18 +402,26 @@ const createWebsite: Action = {
             const siteUrl = await deployToGithub(repoName, token, username);
 
             elizaLogger.log("Website creation completed successfully");
-            return {
-                text: `Website created and deployed successfully. You can view it at: ${siteUrl}`,
+            const response = {
+                text: `I've created and deployed a website based on our conversation. You can view it at: ${siteUrl}`,
                 action: "CREATE_WEBSITE",
                 source: message.content.source,
             };
+
+            // Use the callback to send the response to Discord
+            await callback(response);
+            return response;
         } catch (error) {
             elizaLogger.error("Website creation failed:", error);
-            return {
-                text: `Failed to create website: ${error.message} (Stack: ${error.stack})`,
+            const errorResponse = {
+                text: `Sorry, I encountered an error while creating the website: ${error.message}`,
                 action: "CREATE_WEBSITE",
                 source: message.content.source,
             };
+
+            // Send error message through callback
+            await callback(errorResponse);
+            return errorResponse;
         }
     },
 };
