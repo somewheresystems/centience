@@ -17,14 +17,14 @@ import download_media from "./actions/download_media.ts";
 import joinvoice from "./actions/joinvoice.ts";
 import leavevoice from "./actions/leavevoice.ts";
 import summarize from "./actions/summarize_conversation.ts";
-import createWebsite from "./actions/create_website.ts";
 import transcribe_media from "./actions/transcribe_media.ts";
 import { MessageManager } from "./messages.ts";
 import channelStateProvider from "./providers/channelState.ts";
 import voiceStateProvider from "./providers/voiceState.ts";
 import { VoiceManager } from "./voice.ts";
-import { discordImageGeneration } from './actions/generateImage';
-import { discordVideoGeneration } from './actions/generateVideo';
+import { discordImageGeneration } from "./actions/generateImage";
+import { discordVideoGeneration } from "./actions/generateVideo";
+import { WEBSITE_GENERATION } from "../../actions/index.ts";
 
 export class DiscordClient extends EventEmitter {
     apiToken: string;
@@ -71,7 +71,7 @@ export class DiscordClient extends EventEmitter {
         this.runtime.registerAction(chat_with_attachments);
         this.runtime.registerAction(transcribe_media);
         this.runtime.registerAction(download_media);
-        this.runtime.registerAction(createWebsite);
+        this.runtime.registerAction(WEBSITE_GENERATION);
         this.runtime.registerAction(discordImageGeneration);
         this.runtime.registerAction(discordVideoGeneration);
 
