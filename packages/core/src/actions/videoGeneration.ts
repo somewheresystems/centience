@@ -6,7 +6,7 @@ import { prettyConsole } from "../index.ts";
 export const VIDEO_GENERATION: Action = {
     name: "GENERATE_VIDEO",
     similes: ["VIDEO_GENERATION", "VIDEO_GEN", "CREATE_VIDEO", "MAKE_VIDEO"],
-    description: "Generate a 3D video using Luma Labs API.",
+    description: "Generate an AI video using Luma Labs API.",
     validate: async (runtime: IAgentRuntime, message: Memory, state: State) => {
         return !!runtime.getSetting("LUMA_API_KEY");
     },
@@ -81,12 +81,12 @@ export const VIDEO_GENERATION: Action = {
         [
             {
                 user: "{{user1}}",
-                content: { text: "Generate a 3D video of a spinning galaxy" }
+                content: { text: "Generate a video of a spinning galaxy" }
             },
             {
                 user: "{{agentName}}",
                 content: { 
-                    text: "Here's a 3D video of a spinning galaxy",
+                    text: "Here's a video of a spinning galaxy",
                     action: "GENERATE_VIDEO"
                 }
             }

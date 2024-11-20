@@ -48,6 +48,9 @@ import {
 } from "./actions.ts";
 import { defaultCharacter } from "./defaultCharacter.ts";
 import { generateText } from "./generation.ts";
+import { generateVideo } from "../actions/videoGenerationUtils.ts";
+import { generateImage } from "../actions/imageGenerationUtils.ts";
+
 import { formatGoalsAsString, getGoals } from "./goals.ts";
 import { ImageGenModel } from "./imageGenModels.ts";
 import { formatActors, formatMessages, getActorDetails } from "./messages.ts";
@@ -169,6 +172,46 @@ export class AgentRuntime implements IAgentRuntime {
      * Searchable document fragments
      */
     fragmentsManager: IMemoryManager;
+
+    // Add the new services
+    imageGenerationService = {
+        generateImage: async (prompt: string): Promise<Buffer> => {
+            const result = await generateImage(
+                {
+                    prompt,
+                    width: 1024,
+                    height: 1024,
+                    count: 1
+                },
+                this
+            );
+            if (result.success && result.data?.[0]) {
+                // Convert base64 to Buffer
+                const base64Data = result.data[0].replace(/^data:image\/\w+;base64,/, '');
+                return Buffer.from(base64Data, 'base64');
+            }
+            throw new Error('Image generation failed');
+        }
+    };
+
+    videoGenerationService = {
+        generateVideo: async (prompt: string): Promise<Buffer> => {
+            const result = await generateVideo(
+                {
+                    prompt,
+                    duration: 10, // default duration in seconds
+                    resolution: "1024x1024"
+                },
+                this
+            );
+            if (result.success && result.url) {
+                // Fetch the video and return as buffer
+                const response = await fetch(result.url);
+                return Buffer.from(await response.arrayBuffer());
+            }
+            throw new Error('Video generation failed');
+        }
+    };
 
     /**
      * Creates an instance of AgentRuntime.

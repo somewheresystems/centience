@@ -1,6 +1,6 @@
 import {
     QueryTweetsResponse,
-    Scraper,
+    Scraper as BaseScraper,
     SearchMode,
     Tweet,
 } from "agent-twitter-client";
@@ -22,6 +22,24 @@ import { glob } from "glob";
 
 import { stringToUuid } from "../../core/uuid.ts";
 import { elizaLogger } from "../../index.ts";
+
+// Add type definition
+export interface MediaUploadResponse {
+    media_id_string: string;
+    media_id: number;
+    size: number;
+    expires_after_secs: number;
+    image?: {
+        image_type: string;
+        w: number;
+        h: number;
+    };
+}
+
+// Extend the Scraper type with the missing method
+interface Scraper extends BaseScraper {
+    uploadMedia(mediaPath: string): Promise<MediaUploadResponse>;
+}
 
 export function extractAnswer(text: string): string {
     const startIndex = text.indexOf("Answer: ") + 8;
@@ -161,7 +179,7 @@ export class ClientBase extends EventEmitter {
         if (ClientBase._twitterClient) {
             this.twitterClient = ClientBase._twitterClient;
         } else {
-            this.twitterClient = new Scraper();
+            this.twitterClient = new BaseScraper() as Scraper;
             ClientBase._twitterClient = this.twitterClient;
         }
 
@@ -596,6 +614,102 @@ export class ClientBase extends EventEmitter {
                 ...state,
                 twitterClient: this.twitterClient,
             });
+        }
+    }
+
+    async uploadMedia(mediaPath: string): Promise<MediaUploadResponse> {
+        return await this.requestQueue.add(async () => {
+            if (!this.twitterClient.uploadMedia) {
+                throw new Error('Twitter client does not support media uploads');
+            }
+            return await this.twitterClient.uploadMedia(mediaPath);
+        });
+    }
+
+    async sendTweetWithMedia(text: string, mediaIds: string[]): Promise<Tweet> {
+        const result = await this.requestQueue.add(async () => {
+            return await this.twitterClient.sendTweet(text);
+        });
+        
+        let tweetResult;
+        try {
+            const body = await result.json();
+            // Handle both v1 and v2 API response formats
+            if (body.data?.create_tweet?.tweet_results?.result) {
+                const legacyTweet = body.data.create_tweet.tweet_results.result;
+                tweetResult = {
+                    rest_id: legacyTweet.rest_id,
+                    legacy: legacyTweet.legacy,
+                    core: legacyTweet.core
+                };
+            } else {
+                tweetResult = body;
+            }
+        } catch (error) {
+            console.error("Error parsing tweet response:", error);
+            throw new Error(`Failed to parse tweet response: ${error.message}`);
+        }
+
+        const timestamp = Math.floor(new Date(tweetResult.legacy?.created_at || tweetResult.created_at).getTime() / 1000);
+        const tweet = {
+            id: tweetResult.rest_id || tweetResult.id_str,
+            text: tweetResult.legacy?.full_text || tweetResult.text,
+            conversationId: tweetResult.legacy?.conversation_id_str || tweetResult.conversation_id_str,
+            timestamp,
+            userId: tweetResult.legacy?.user_id_str || tweetResult.user_id_str,
+            inReplyToStatusId: tweetResult.legacy?.in_reply_to_status_id_str || tweetResult.in_reply_to_status_id_str,
+            permanentUrl: `https://twitter.com/${this.runtime.getSetting("TWITTER_USERNAME")}/status/${tweetResult.rest_id || tweetResult.id_str}`,
+            username: tweetResult.core?.user_results?.result?.legacy?.screen_name || tweetResult.user?.screen_name,
+            name: tweetResult.core?.user_results?.result?.legacy?.name || tweetResult.user?.name,
+            hashtags: [],
+            mentions: [],
+            photos: mediaIds.map(id => ({
+                id,
+                media_key: id,
+                url: `https://pbs.twimg.com/media/${id}?format=jpg&name=large`,
+                alt_text: ''
+            })),
+            thread: [],
+            urls: [],
+            videos: [],
+        } as unknown as Tweet;
+
+        await this.cacheTweet(tweet);
+        return tweet;
+    }
+
+    async testMediaUpload() {
+        try {
+            // Create temporary files for the media
+            const tmpImagePath = path.join(__dirname, `tmp_image_${Date.now()}.png`);
+            const tmpVideoPath = path.join(__dirname, `tmp_video_${Date.now()}.mp4`);
+            
+            try {
+                // Generate and save image
+                const imageBuffer = await this.runtime.imageGenerationService.generateImage("A test image for Twitter");
+                await fs.promises.writeFile(tmpImagePath, imageBuffer);
+                const imageResponse = await this.uploadMedia(tmpImagePath);
+                
+                // Generate and save video
+                const videoBuffer = await this.runtime.videoGenerationService.generateVideo("A test video for Twitter");
+                await fs.promises.writeFile(tmpVideoPath, videoBuffer);
+                const videoResponse = await this.uploadMedia(tmpVideoPath);
+                
+                // Post tweet with media
+                const tweet = await this.sendTweetWithMedia(
+                    "Testing media upload capabilities! #test",
+                    [imageResponse.media_id_string, videoResponse.media_id_string]
+                );
+                
+                console.log("Tweet posted successfully:", tweet);
+                return tweet;
+            } finally {
+                // Cleanup temporary files
+                await fs.promises.unlink(tmpImagePath).catch(() => {});
+                await fs.promises.unlink(tmpVideoPath).catch(() => {});
+            }
+        } catch (error) {
+            console.error("Error testing media upload:", error);
         }
     }
 }

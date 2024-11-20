@@ -552,6 +552,12 @@ export interface IAgentRuntime {
         additionalKeys?: { [key: string]: unknown }
     ): Promise<State>;
     updateRecentMessageState(state: State): Promise<State>;
+    imageGenerationService: {
+        generateImage: (prompt: string) => Promise<Buffer>;
+    };
+    videoGenerationService: {
+        generateVideo: (prompt: string) => Promise<Buffer>;
+    };
 }
 
 export interface IImageRecognitionService {

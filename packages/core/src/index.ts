@@ -13,3 +13,16 @@ export const elizaLogger = new Logging();
 elizaLogger.clear();
 elizaLogger.closeByNewLine = true;
 elizaLogger.useIcons = true;
+
+// Add these type exports
+export type {
+    HandlerCallback,
+    IAgentRuntime,
+    Memory,
+    State,
+    Plugin,
+    Action,
+} from './core/types';
+
+// If you already have a class export for AgentRuntime, keep it:
+export { AgentRuntime } from './core/runtime';

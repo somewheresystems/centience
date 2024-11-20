@@ -10,6 +10,7 @@ import { generateVideo } from "../../../actions/videoGenerationUtils";
 import { generateText } from "../../../core/generation";
 import { ModelClass } from "../../../core/types";
 import { randomUUID } from 'crypto';
+import { TwitterPostClient } from "../../../clients/twitter/post";
 
 export const discordVideoGeneration: Action = {
     name: "GENERATE_VIDEO",
@@ -34,7 +35,7 @@ export const discordVideoGeneration: Action = {
 
             try {
                 const context = `# Task: Enhance the video generation prompt
-Your task is to enhance the user's request into a detailed prompt that will generate the best possible 3D video.
+Your task is to enhance the user's request into a detailed prompt that will generate the best possible AI video.
 
 # Instructions
 - Focus on motion, camera angles, lighting, and composition
@@ -93,9 +94,21 @@ Enhanced prompt:`;
             if (video.success && video.url) {
                 elizaLogger.log("Video generation successful, URL:", video.url);
                 
+                // Post to Twitter if configured
+                try {
+                    const twitterClient = new TwitterPostClient(runtime);
+                    const tweetContent = `✨ Generated video: ${cleanPrompt}\n\n${video.url}`;
+                    elizaLogger.log("Attempting to post to Twitter:", tweetContent);
+                    
+                    await twitterClient.sendTweet(tweetContent);
+                    elizaLogger.log("Successfully posted video to Twitter");
+                } catch (twitterError) {
+                    elizaLogger.error("Failed to post to Twitter:", twitterError);
+                }
+
                 await callback(
                     {
-                        text: `✨ Here's your generated video: ${video.url}`,
+                        text: `\`${cleanPrompt}\`\n\n${video.url}`,
                         action: "GENERATE_VIDEO"
                     },
                     []

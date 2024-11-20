@@ -6,6 +6,7 @@ import { embeddingZeroVector } from "../../core/memory.ts";
 import { IAgentRuntime, ModelClass } from "../../core/types.ts";
 import { stringToUuid } from "../../core/uuid.ts";
 import { ClientBase } from "./base.ts";
+import path from "path";
 
 const twitterPostTemplate = `{{timeline}}
 
@@ -100,81 +101,106 @@ export class TwitterPostClient extends ClientBase {
                 modelClass: ModelClass.LARGE,
             });
 
-            const slice = newTweetContent.replaceAll(/\\n/g, "\n").trim();
-
-            const contentLength = 1000;
-
-            let content = slice.slice(0, contentLength);
-            // if its bigger than 280, delete the last line
+            let content = newTweetContent.replaceAll(/\\n/g, "\n").trim();
             if (content.length > 1000) {
                 content = content.slice(0, content.lastIndexOf("\n"));
             }
-            if (content.length > contentLength) {
-                // slice at the last period
-                content = content.slice(0, content.lastIndexOf("."));
+
+            let tweet: Tweet;
+            const mediaPath = this.runtime.getSetting("TWITTER_MEDIA_PATH");
+            
+            if (mediaPath && fs.existsSync(mediaPath)) {
+                const mediaFiles = fs.readdirSync(mediaPath)
+                    .filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+                
+                if (mediaFiles.length > 0) {
+                    // Randomly select a media file
+                    const mediaFile = mediaFiles[Math.floor(Math.random() * mediaFiles.length)];
+                    const fullPath = path.join(mediaPath, mediaFile);
+                    
+                    try {
+                        const mediaResponse = await this.uploadMedia(fullPath);
+                        tweet = await this.sendTweetWithMedia(content, [mediaResponse.media_id_string]);
+                    } catch (error) {
+                        console.error("Error uploading media:", error);
+                        // Fallback to text-only tweet
+                        tweet = await this.sendTweetWithoutMedia(content);
+                    }
+                } else {
+                    tweet = await this.sendTweetWithoutMedia(content);
+                }
+            } else {
+                tweet = await this.sendTweetWithoutMedia(content);
             }
 
-            // if it's still too long, get the period before the last period
-            if (content.length > contentLength) {
-                content = content.slice(0, content.lastIndexOf("."));
-            }
-            try {
-                const result = await this.requestQueue.add(
-                    async () => await this.twitterClient.sendTweet(content)
-                );
-                // read the body of the response
-                const body = await result.json();
-                const tweetResult = body.data.create_tweet.tweet_results.result;
+            const postId = tweet.id;
+            const conversationId =
+                tweet.conversationId + "-" + this.runtime.agentId;
+            const roomId = stringToUuid(conversationId);
 
-                const tweet = {
-                    id: tweetResult.rest_id,
-                    text: tweetResult.legacy.full_text,
-                    conversationId: tweetResult.legacy.conversation_id_str,
-                    createdAt: tweetResult.legacy.created_at,
-                    userId: tweetResult.legacy.user_id_str,
-                    inReplyToStatusId:
-                        tweetResult.legacy.in_reply_to_status_id_str,
-                    permanentUrl: `https://twitter.com/${this.runtime.getSetting("TWITTER_USERNAME")}/status/${tweetResult.rest_id}`,
-                    hashtags: [],
-                    mentions: [],
-                    photos: [],
-                    thread: [],
-                    urls: [],
-                    videos: [],
-                } as Tweet;
+            // make sure the agent is in the room
+            await this.runtime.ensureRoomExists(roomId);
+            await this.runtime.ensureParticipantInRoom(
+                this.runtime.agentId,
+                roomId
+            );
 
-                const postId = tweet.id;
-                const conversationId =
-                    tweet.conversationId + "-" + this.runtime.agentId;
-                const roomId = stringToUuid(conversationId);
+            await this.cacheTweet(tweet);
 
-                // make sure the agent is in the room
-                await this.runtime.ensureRoomExists(roomId);
-                await this.runtime.ensureParticipantInRoom(
-                    this.runtime.agentId,
-                    roomId
-                );
-
-                await this.cacheTweet(tweet);
-
-                await this.runtime.messageManager.createMemory({
-                    id: stringToUuid(postId + "-" + this.runtime.agentId),
-                    userId: this.runtime.agentId,
-                    agentId: this.runtime.agentId,
-                    content: {
-                        text: newTweetContent.trim(),
-                        url: tweet.permanentUrl,
-                        source: "twitter",
-                    },
-                    roomId,
-                    embedding: embeddingZeroVector,
-                    createdAt: tweet.timestamp * 1000,
-                });
-            } catch (error) {
-                console.error("Error sending tweet:", error);
-            }
+            await this.runtime.messageManager.createMemory({
+                id: stringToUuid(postId + "-" + this.runtime.agentId),
+                userId: this.runtime.agentId,
+                agentId: this.runtime.agentId,
+                content: {
+                    text: newTweetContent.trim(),
+                    url: tweet.permanentUrl,
+                    source: "twitter",
+                },
+                roomId,
+                embedding: embeddingZeroVector,
+                createdAt: tweet.timestamp * 1000,
+            });
         } catch (error) {
             console.error("Error generating new tweet:", error);
+        }
+    }
+
+    private async sendTweetWithoutMedia(content: string): Promise<Tweet> {
+        const result = await this.requestQueue.add(() =>
+            this.twitterClient.sendTweet(content)
+        );
+        const body = await result.json();
+        const tweetResult = body.data.create_tweet.tweet_results.result;
+
+        return {
+            id: tweetResult.rest_id,
+            text: tweetResult.legacy.full_text,
+            conversationId: tweetResult.legacy.conversation_id_str,
+            createdAt: tweetResult.legacy.created_at,
+            userId: tweetResult.legacy.user_id_str,
+            inReplyToStatusId: tweetResult.legacy.in_reply_to_status_id_str,
+            permanentUrl: `https://twitter.com/${this.runtime.getSetting("TWITTER_USERNAME")}/status/${tweetResult.rest_id}`,
+            hashtags: [],
+            mentions: [],
+            photos: [],
+            thread: [],
+            urls: [],
+            videos: [],
+        } as Tweet;
+    }
+
+    public async sendTweet(content: string) {
+        console.log("Attempting to send tweet:", content);
+        try {
+            const result = await this.requestQueue.add(
+                async () => await this.twitterClient.sendTweet(content)
+            );
+            const body = await result.json();
+            console.log("Tweet response:", body);
+            return result;
+        } catch (error) {
+            console.error("Failed to send tweet:", error);
+            throw error;
         }
     }
 }
