@@ -250,6 +250,131 @@ export async function generateText({
     }
 }
 
+export async function generateEnhancedPrompt({
+    runtime,
+    context,
+    modelClass,
+}: {
+    runtime: IAgentRuntime;
+    context: string;
+    modelClass: string;
+    stop?: string[];
+}): Promise<string> {
+    if (!context) {
+        console.error("generateEnhancedPrompt context is empty");
+        return "";
+    }
+
+    const provider = ModelProvider.ANTHROPIC;
+    const model = models[provider].model[modelClass];
+    const temperature = models[provider].settings.temperature;
+    const frequency_penalty = models[provider].settings.frequency_penalty;
+    const presence_penalty = models[provider].settings.presence_penalty;
+    const max_context_length = models[provider].settings.maxInputTokens;
+    const max_response_length = models[provider].settings.maxOutputTokens;
+
+    const apiKey = runtime.token;
+
+    try {
+        elizaLogger.log(
+            `Trimming context to max length of ${max_context_length} tokens.`
+        );
+        context = await trimTokens(context, max_context_length, "gpt-4o");
+
+        elizaLogger.log("Initializing Anthropic model for prompt enhancement.");
+        const anthropic = createAnthropic({ apiKey });
+
+        const { text: enhancedPrompt } = await aiGenerateText({
+            model: anthropic.languageModel(model),
+            prompt: context,
+            system: "You are an expert at enhancing and expanding technical requirements for web and game development projects. Your role is to take basic project descriptions and transform them into comprehensive technical specifications. For websites, you focus on responsive design, accessibility standards, semantic HTML, modern JavaScript practices, security considerations, and performance optimization. For games, you detail game mechanics, physics systems, collision detection, scoring mechanisms, state management, controls, and audiovisual feedback. You maintain the original project intent while adding specific implementation details and technical requirements. You consider cross-browser compatibility, error handling, and user experience. Your enhanced prompts are clear, structured, and actionable, providing developers with a thorough technical roadmap for implementation.",
+            temperature: temperature,
+            maxTokens: max_response_length,
+            frequencyPenalty: frequency_penalty,
+            presencePenalty: presence_penalty,
+        });
+
+        elizaLogger.log("Received enhanced prompt from Anthropic model.");
+        return enhancedPrompt;
+    } catch (error) {
+        elizaLogger.error("Error in generateEnhancedPrompt:", error);
+        throw error;
+    }
+}
+
+export async function generateHtml({
+    runtime,
+    context,
+    modelClass,
+    stop,
+}: {
+    runtime: IAgentRuntime;
+    context: string;
+    modelClass: string;
+    stop?: string[];
+}): Promise<string> {
+    if (!context) {
+        console.error("generateText context is empty");
+        return "";
+    }
+
+    const provider = ModelProvider.ANTHROPIC;
+    const model = models[provider].model[modelClass];
+    const temperature = models[provider].settings.temperature;
+    const frequency_penalty = models[provider].settings.frequency_penalty;
+    const presence_penalty = models[provider].settings.presence_penalty;
+    const max_context_length = models[provider].settings.maxInputTokens;
+    const max_response_length = models[provider].settings.maxOutputTokens;
+
+    const apiKey = runtime.token;
+
+    try {
+        elizaLogger.log(
+            `Trimming context to max length of ${max_context_length} tokens.`
+        );
+        context = await trimTokens(context, max_context_length, "gpt-4o");
+
+        let response: string;
+
+        const _stop = stop || models[provider].settings.stop;
+        elizaLogger.log(
+            `Using provider: ${provider}, model: ${model}, temperature: ${temperature}, max response length: ${max_response_length}`
+        );
+
+        switch (provider) {
+            case ModelProvider.ANTHROPIC: {
+                elizaLogger.log("Initializing Anthropic model.");
+
+                const anthropic = createAnthropic({ apiKey });
+
+                const { text: anthropicResponse } = await aiGenerateText({
+                    model: anthropic.languageModel(model),
+                    prompt: context,
+                    system: "You are an expert web developer focused on generating clean, semantic, and accessible HTML. Follow modern HTML5 standards and best practices. Ensure proper document structure, use semantic elements appropriately, include necessary ARIA attributes, and validate all markup. Prioritize accessibility, performance, and cross-browser compatibility. Generate only valid HTML that meets W3C standards. When building games, you are extremely proficient at implementing complete game mechanics, physics, collision detection, scoring systems, and state management. You also carefully consider win and loss conditions. You write extremely responsive interactive features. You write efficient, well-structured JavaScript with proper error handling and performance optimizations. You ONLY return cleanly formatted HTML with all scripts and markup in the same file. Your code is thoroughly tested across browsers and devices. You DO NOT leave any comments. For interactive features, you implement complete event handling and DOM manipulation. You optimize assets and minimize HTTP requests. You follow security best practices and sanitize all user input. Your code meets modern ECMAScript standards and uses appropriate design patterns.",
+                    temperature: temperature,
+                    maxTokens: max_response_length,
+                    frequencyPenalty: frequency_penalty,
+                    presencePenalty: presence_penalty,
+                });
+
+                response = anthropicResponse;
+                elizaLogger.log("Received response from Anthropic model.");
+                break;
+            }
+            default: {
+                const errorMessage = `Unsupported provider: ${provider}`;
+                elizaLogger.error(errorMessage);
+                throw new Error(errorMessage);
+            }
+        }
+
+        return response;
+    } catch (error) {
+        elizaLogger.error("Error in generateText:", error);
+        throw error;
+    }
+}
+
 /**
  * Truncate the context to the maximum length allowed by the model.
  * @param model The model to use for generateText.

@@ -87,40 +87,38 @@ export const parseActionResponseFromText = (text: string): { actions: ActionResp
 /**
  * Parses HTML content from a given text. The function looks for an HTML block wrapped in triple backticks
  * with `html` language identifier, and if not found, it searches for HTML patterns within the text.
- * It then attempts to extract and clean the HTML content. If extraction is successful, it returns the 
- * HTML string; otherwise, it returns null.
+ * It then attempts to extract and clean the HTML content.
  *
  * @param text - The input text from which to extract the HTML content.
  * @returns A string containing the HTML content if successful; otherwise, null.
  */
 export function parseHtmlFromText(text: string): string | null {
-    let htmlContent = null;
+    let htmlContent = text.trim();
 
-    const htmlBlockMatch = text.match(htmlBlockPattern);
+    // Check if content is already a complete HTML document
+    if (htmlContent.toLowerCase().startsWith("<!doctype html")) {
+        return htmlContent;
+    }
+
+    // Look for HTML in code blocks if not a complete document
+    const htmlBlockMatch =
+        text.match(/```html\n([\s\S]*?)\n```/) ||
+        text.match(/<main[\s\S]*?<\/main>/is);
 
     if (htmlBlockMatch) {
-        htmlContent = htmlBlockMatch[1].trim();
-    } else {
-        // Look for HTML-like patterns if no code block is found
-        const htmlPattern = /<[^>]+>[\s\S]*<\/[^>]+>/;
-        const htmlMatch = text.match(htmlPattern);
-
-        if (htmlMatch) {
-            htmlContent = htmlMatch[0].trim();
-        }
+        htmlContent = htmlBlockMatch[1] || htmlBlockMatch[0];
+        htmlContent = htmlContent.trim();
     }
 
-    if (htmlContent) {
-        // Basic validation - check for balanced tags
-        const openTags = htmlContent.match(/<[^/][^>]*>/g) || [];
-        const closeTags = htmlContent.match(/<\/[^>]+>/g) || [];
-        
-        if (openTags.length === closeTags.length) {
-            return htmlContent;
-        }
-    }
+    // Validate basic structure
+    const hasValidStructure = (content: string) => {
+        const hasMainTag =
+            content.includes("<main") && content.includes("</main>");
+        const hasDoctype = content.toLowerCase().includes("<!doctype html");
+        return hasMainTag || hasDoctype;
+    };
 
-    return null;
+    return hasValidStructure(htmlContent) ? htmlContent : null;
 }
 
 /**
