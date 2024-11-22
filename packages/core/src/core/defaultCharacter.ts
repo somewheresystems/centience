@@ -4,7 +4,6 @@ export const defaultCharacter: Character = {
     name: "Spencience",
     plugins: [],
     clients: [Clients.DISCORD, Clients.TWITTER, Clients.TELEGRAM],
-    clients: [Clients.DISCORD, Clients.TWITTER, Clients.TELEGRAM],
     modelProvider: ModelProvider.LLAMACLOUD,
     settings: {
         secrets: {},

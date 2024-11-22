@@ -158,15 +158,12 @@ export class TwitterInteractionClient extends ClientBase {
                         "twitter"
                     );
 
-
                     console.log("Building conversation thread...");
                     const thread = await buildConversationThread(tweet, this);
 
                     // Check if conversation is too long (more than 5 replies)
-                    // @ts-expect-error thread is a ConversationThread
                     if (thread && thread.length > 5) {
                         console.log(
-                            // @ts-expect-error thread is a ConversationThread
                             `Skipping tweet ${tweet.id} - conversation too long (${thread.length} replies)`
                         );
                         continue;

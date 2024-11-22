@@ -52,7 +52,8 @@ export async function createAgent(
         providers: [
             timeProvider,
             boredomProvider,
-            (character.settings?.secrets?.WALLET_PUBLIC_KEY !== undefined) && walletProvider,
+            character.settings?.secrets?.WALLET_PUBLIC_KEY !== undefined &&
+                walletProvider,
         ].filter(Boolean),
         actions: [
             ...defaultActions,
