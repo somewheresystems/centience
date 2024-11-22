@@ -3,7 +3,7 @@ import { elizaLogger } from "../../index.js";
 import { generateHtml } from "../../core/generation.js"; // Removed unused generateText import
 import { composeContext } from "../../core/context.js";
 import { diffLines } from "diff";
-import { WebsiteMemoryManager } from './WebsiteMemoryManager.js';
+import { WebsiteMemoryManager } from "./WebsiteMemoryManager.js";
 
 interface HtmlVersion {
     content: string;
@@ -16,10 +16,12 @@ class HtmlManager {
     private lastGenerationTime = 0;
     private minDelayBetweenGenerations = 1000; // 1 second minimum delay
     public readonly maxContinuationAttempts = 10; // Maximum number of continuation attempts
+    private websiteId: string;
 
-    constructor() {
+    constructor(websiteId: string) {
         this.currentHtml = "";
         this.versionHistory = [];
+        this.websiteId = websiteId;
         elizaLogger.log("HtmlManager initialized");
     }
 
@@ -141,14 +143,14 @@ class HtmlManager {
         }
 
         // Generate diff for logging
-        const diff = diffLines(oldVersion, newVersion);
+        const diffGenerated = diffLines(oldVersion, newVersion);
 
         elizaLogger.log("Content diff generated", {
-            diffLength: diff.length,
-            addedLines: diff.filter((part) => part.added).length,
-            removedLines: diff.filter((part) => part.removed).length,
+            diffLength: diffGenerated.length,
+            addedLines: diffGenerated.filter((part) => part.added).length,
+            removedLines: diffGenerated.filter((part) => part.removed).length,
             timestamp: new Date().toISOString(),
-            changes: diff.map((part) => ({
+            changes: diffGenerated.map((part) => ({
                 added: part.added,
                 removed: part.removed,
                 value: part.value.substring(0, 50) + "...",
@@ -160,6 +162,13 @@ class HtmlManager {
         this.versionHistory.push({
             content: newVersion,
             timestamp: new Date().toISOString(),
+        });
+
+        // Add version to website memory with diff stats
+        websiteMemory.addVersion(this.websiteId, newVersion, {
+            added: diffGenerated.filter((part) => part.added).length,
+            removed: diffGenerated.filter((part) => part.removed).length,
+            modified: diffGenerated.length,
         });
 
         elizaLogger.log("New version saved to history", {
@@ -224,18 +233,23 @@ class HtmlManager {
         const hasBodyTags = this.validateTagPair(html, "body");
 
         // Check for essential meta tags
-        const hasCharsetMeta = html.includes('charset="utf-8"') || html.includes("charset='utf-8'");
+        const hasCharsetMeta =
+            html.includes('charset="utf-8"') ||
+            html.includes("charset='utf-8'");
         const hasViewportMeta = html.includes('name="viewport"');
 
         // Check for content structure
         const hasTitle = this.validateTagPair(html, "title");
-        const hasMainContent = this.validateTagPair(html, "main") || this.validateTagPair(html, "div");
+        const hasMainContent =
+            this.validateTagPair(html, "main") ||
+            this.validateTagPair(html, "div");
 
         // Validate script tags
         const scriptTags = this.validateScriptTags(html);
 
         // Check for complete content
-        const hasCompleteStructure = hasDoctype && hasHtmlTags && hasHeadTags && hasBodyTags;
+        const hasCompleteStructure =
+            hasDoctype && hasHtmlTags && hasHeadTags && hasBodyTags;
         const hasEssentialMeta = hasCharsetMeta && hasViewportMeta;
         const hasContent = hasTitle && hasMainContent;
 
@@ -245,38 +259,44 @@ class HtmlManager {
         elizaLogger.log("Validation results", {
             hasDoctype,
             hasHtmlTags,
-            hasHeadTags, 
+            hasHeadTags,
             hasBodyTags,
             hasCharsetMeta,
             hasViewportMeta,
             hasTitle,
             hasMainContent,
             scriptTags,
-            hasUnclosedTags
+            hasUnclosedTags,
         });
 
-        return hasCompleteStructure && 
-               hasEssentialMeta && 
-               hasContent && 
-               scriptTags.isValid && 
-               !hasUnclosedTags;
+        return (
+            hasCompleteStructure &&
+            hasEssentialMeta &&
+            hasContent &&
+            scriptTags.isValid &&
+            !hasUnclosedTags
+        );
     }
 
     private validateTagPair(html: string, tagName: string): boolean {
-        const openTag = new RegExp(`<${tagName}[^>]*>`, 'gi');
-        const closeTag = new RegExp(`</${tagName}>`, 'gi');
+        const openTag = new RegExp(`<${tagName}[^>]*>`, "gi");
+        const closeTag = new RegExp(`</${tagName}>`, "gi");
         const openCount = (html.match(openTag) || []).length;
         const closeCount = (html.match(closeTag) || []).length;
         return openCount > 0 && openCount === closeCount;
     }
 
-    private validateScriptTags(html: string): { isValid: boolean; openCount: number; closeCount: number } {
+    private validateScriptTags(html: string): {
+        isValid: boolean;
+        openCount: number;
+        closeCount: number;
+    } {
         const scriptOpenTags = (html.match(/<script[^>]*>/g) || []).length;
         const scriptCloseTags = (html.match(/<\/script>/g) || []).length;
         return {
             isValid: scriptOpenTags === scriptCloseTags && scriptOpenTags > 0,
             openCount: scriptOpenTags,
-            closeCount: scriptCloseTags
+            closeCount: scriptCloseTags,
         };
     }
 
@@ -291,11 +311,14 @@ class HtmlManager {
             const tagName = match[1].toLowerCase();
 
             // Skip self-closing tags
-            if (fullTag.endsWith('/>') || ['meta', 'link', 'img', 'br', 'hr'].includes(tagName)) {
+            if (
+                fullTag.endsWith("/>") ||
+                ["meta", "link", "img", "br", "hr"].includes(tagName)
+            ) {
                 continue;
             }
 
-            if (!fullTag.startsWith('</')) {
+            if (!fullTag.startsWith("</")) {
                 stack.push(tagName);
             } else {
                 if (stack.length === 0 || stack[stack.length - 1] !== tagName) {
@@ -323,11 +346,10 @@ export const generateHtmlContent = async (
         isGame: title.toLowerCase().includes("game"),
     });
 
-    const htmlManager = new HtmlManager();
-    
     // Generate a unique ID for this website
-    const websiteId = `${title.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`;
-    
+    const websiteId = `${title.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${Date.now()}`;
+    const htmlManager = new HtmlManager(websiteId);
+
     // Initialize website in memory
     websiteMemory.createWebsite(websiteId, title, websitePrompt);
 
@@ -375,7 +397,13 @@ export const generateHtmlContent = async (
                - Include COMPLETE implementation of all interactive features
                - Include ALL event handlers and DOM manipulations
                - Ensure ALL JavaScript functionality is fully implemented
-            8. Use SVGs instead of raster files
+            8. Use pixel-based graphics:
+               - Create pixel art sprites and textures
+               - Use pixel-perfect rendering
+               - Maintain consistent pixel scale
+               - Optimize pixel graphics for performance
+               - Use sprite sheets for animations
+               - Implement proper pixel scaling for different screen sizes
             
             ${
                 title.toLowerCase().includes("game")
@@ -711,11 +739,11 @@ export const generateHtmlContent = async (
         });
 
         // After each successful HTML generation or continuation, add:
-        websiteMemory.addVersion(websiteId, htmlContent, {
-            added: diff.filter(part => part.added).length,
-            removed: diff.filter(part => part.removed).length,
-            modified: diff.length
-        });
+        // websiteMemory.addVersion(websiteId, htmlContent, {
+        //     added: diffGenerated.filter((part) => part.added).length,
+        //     removed: diffGenerated.filter((part) => part.removed).length,
+        //     modified: diffGenerated.length,
+        // });
     }
 
     if (continuationAttempts >= htmlManager.maxContinuationAttempts) {
@@ -732,7 +760,7 @@ export const generateHtmlContent = async (
         title,
         finalLength: htmlContent.length,
         continuationAttempts,
-        websiteStats: websiteMemory.getStats(websiteId)
+        websiteStats: websiteMemory.getStats(websiteId),
     });
 
     return htmlContent;

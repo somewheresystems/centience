@@ -28,8 +28,15 @@ export const critiqueHtml = async ({
             runtime,
             context: composeContext({
                 state,
-                template: `Analyze this HTML content and identify critical structural issues only.
-            Focus on:
+                template: `First validate that the input is valid HTML markup containing tags like <html>, <body>, etc.
+            If the input is not valid HTML markup (e.g. just URLs or text), return:
+            {
+              "fixes": [],
+              "score": 0,
+              "error": "Invalid input - must be HTML markup"
+            }
+
+            For valid HTML, analyze and identify critical structural issues focusing on:
             1. Unclosed tags (e.g. <div> without </div>)
             2. Missing required attributes (e.g. <img> without alt)
             3. Invalid nesting (e.g. <p><div></div></p>)
@@ -40,33 +47,25 @@ export const critiqueHtml = async ({
             HTML to analyze:
             ${html}
             
-            Format each fix as a JSON object exactly like these examples, do not deviate:
+            Return a JSON object with this exact structure:
             {
               "fixes": [
                 {
-                  "startLine": 5,
-                  "endLine": 5,
-                  "originalLines": ["<img src='logo.png'>"],
-                  "fixedLines": ["<img src='logo.png' alt='Company Logo'>"],
+                  "startLine": <number>,
+                  "endLine": <number>, 
+                  "originalLines": ["<original html>"],
+                  "fixedLines": ["<fixed html>"],
                   "severity": "critical",
-                  "category": "accessibility",
-                  "description": "Images must have alt text for screen readers"
-                },
-                {
-                  "startLine": 10,
-                  "endLine": 12,
-                  "originalLines": ["<div>", "  <p>Text</p>", "<div>"],
-                  "fixedLines": ["<div>", "  <p>Text</p>", "</div>"],
-                  "severity": "critical", 
-                  "category": "structure",
-                  "description": "Unclosed div tag"
+                  "category": "structure|interactivity|accessibility|performance",
+                  "description": "<issue description>"
                 }
-            ],
-              "score": 0.7
+              ],
+              "score": <number between 0-1>
             }
-            
-            Include an overall quality score from 0-1.
-            If no issues found, return empty array and score of 1.0.`,
+
+            The fixes array should be empty if no issues are found, with a score of 1.0.
+            Each fix must have valid line numbers and HTML content.
+            Do not include any text outside the JSON object.`,
             }),
             modelClass: ModelClass.MEDIUM,
         });

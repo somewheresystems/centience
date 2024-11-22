@@ -17,6 +17,9 @@ importers:
       better-sqlite3:
         specifier: 11.5.0
         version: 11.5.0
+      diff:
+        specifier: ^7.0.0
+        version: 7.0.0
       ollama-ai-provider:
         specifier: ^0.16.1
         version: 0.16.1(zod@3.23.8)
@@ -30,6 +33,9 @@ importers:
         specifier: ^0.1.2
         version: 0.1.2
     devDependencies:
+      '@types/diff':
+        specifier: ^6.0.0
+        version: 6.0.0
       concurrently:
         specifier: ^9.1.0
         version: 9.1.0
@@ -4019,6 +4025,9 @@ packages:
   '@types/diff-match-patch@1.0.36':
     resolution: {integrity: sha512-xFdR6tkm0MWvBfO8xXCSsinYxHcqkQUlcHeSpMC2ukzOb6lwQAfDmW+Qt0AvlGd8HpsS28qKsB+oPeJn9I39jg==}
 
+  '@types/diff@6.0.0':
+    resolution: {integrity: sha512-dhVCYGv3ZSbzmQaBSagrv1WJ6rXCdkyTcDyoNu1MD8JohI7pR7k8wdZEm+mvdxRKXyHVwckFzWU1vJc+Z29MlA==}
+
   '@types/dompurify@3.2.0':
     resolution: {integrity: sha512-Fgg31wv9QbLDA0SpTOXO3MaxySc4DKGLi8sna4/Utjo4r3ZRPdCt4UQee8BWr+Q5z21yifghREPJGYaEOEIACg==}
     deprecated: This is a stub types definition. dompurify provides its own type definitions, so you do not need this installed.
@@ -6053,6 +6062,10 @@ packages:
 
   diff@4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
+    engines: {node: '>=0.3.1'}
+
+  diff@7.0.0:
+    resolution: {integrity: sha512-PJWHUb1RFevKCwaFA9RlG5tCd+FO5iRh9A8HEtkmBH2Li03iJriB6m6JIN4rGz3K3JLawI7/veA1xzRKP6ISBw==}
     engines: {node: '>=0.3.1'}
 
   dir-glob@3.0.1:
@@ -15109,7 +15122,7 @@ snapshots:
 
   '@google-cloud/vertexai@1.9.0(encoding@0.1.13)':
     dependencies:
-      google-auth-library: 9.15.0(encoding@0.1.13)
+      google-auth-library: 9.14.2(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -17005,6 +17018,8 @@ snapshots:
 
   '@types/diff-match-patch@1.0.36': {}
 
+  '@types/diff@6.0.0': {}
+
   '@types/dompurify@3.2.0':
     dependencies:
       dompurify: 3.1.6
@@ -17696,7 +17711,7 @@ snapshots:
     dependencies:
       '@ai-sdk/provider': 0.0.24
       '@ai-sdk/provider-utils': 1.0.20(zod@3.23.8)
-      google-auth-library: 9.15.0(encoding@0.1.13)
+      google-auth-library: 9.14.2(encoding@0.1.13)
       zod: 3.23.8
     transitivePeerDependencies:
       - encoding
@@ -19292,6 +19307,8 @@ snapshots:
 
   diff@4.0.2: {}
 
+  diff@7.0.0: {}
+
   dir-glob@3.0.1:
     dependencies:
       path-type: 4.0.0
@@ -19929,7 +19946,7 @@ snapshots:
 
   extract-zip@2.0.1:
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.7(supports-color@5.5.0)
       get-stream: 5.2.0
       yauzl: 2.10.0
     optionalDependencies:
@@ -20479,6 +20496,18 @@ snapshots:
       ignore: 5.3.2
       merge2: 1.4.1
       slash: 4.0.0
+
+  goat-x@1.1.0:
+    dependencies:
+      '@sinclair/typebox': 0.32.35
+      headers-polyfill: 3.3.0
+      json-stable-stringify: 1.1.1
+      node-fetch: 3.3.2
+      otpauth: 9.3.5
+      set-cookie-parser: 2.7.1
+      tough-cookie: 4.1.4
+      tslib: 2.8.0
+      twitter-api-v2: 1.18.2
 
   google-auth-library@9.14.2(encoding@0.1.13):
     dependencies:

@@ -1,5 +1,3 @@
-import { elizaLogger } from "../../index.ts";
-
 interface WebsiteVersion {
     html: string;
     timestamp: string;
@@ -31,7 +29,7 @@ export class WebsiteMemoryManager {
     constructor(maxVersionsPerSite: number = 10) {
         this.websites = new Map();
         this.maxVersionsPerSite = maxVersionsPerSite;
-        elizaLogger.log("WebsiteMemoryManager initialized", {
+        console.log("WebsiteMemoryManager initialized", {
             maxVersionsPerSite,
         });
     }
@@ -60,7 +58,7 @@ export class WebsiteMemoryManager {
         };
 
         this.websites.set(id, website);
-        elizaLogger.log("Website created in memory", { id, title });
+        console.log("Website created in memory", { id, title });
     }
 
     addVersion(
@@ -85,7 +83,7 @@ export class WebsiteMemoryManager {
             website.currentVersion--;
         }
 
-        elizaLogger.log("Version added to website", {
+        console.log("Version added to website", {
             id,
             versionNumber: website.currentVersion,
             totalVersions: website.versions.length,
@@ -117,7 +115,7 @@ export class WebsiteMemoryManager {
         }
 
         website.currentVersion = versionIndex;
-        elizaLogger.log("Website rolled back to previous version", {
+        console.log("Website rolled back to previous version", {
             id,
             versionIndex,
             timestamp: website.versions[versionIndex].timestamp,
@@ -133,7 +131,7 @@ export class WebsiteMemoryManager {
             ...updates,
             lastModified: new Date().toISOString(),
         };
-        elizaLogger.log("Website metadata updated", { id, updates });
+        console.log("Website metadata updated", { id, updates });
     }
 
     getVersionHistory(id: string): WebsiteVersion[] {
@@ -148,7 +146,7 @@ export class WebsiteMemoryManager {
         if (!this.websites.delete(id)) {
             throw new Error(`Website ${id} not found`);
         }
-        elizaLogger.log("Website deleted from memory", { id });
+        console.log("Website deleted from memory", { id });
     }
 
     exists(id: string): boolean {
