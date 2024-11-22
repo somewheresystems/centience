@@ -37,7 +37,7 @@ export const discordVideoGeneration: Action = {
 
             try {
                 const context = `# Task: Enhance the video generation prompt
-Your task is to enhance the user's request into a detailed prompt that will generate the best possible 3D video.
+Your task is to enhance the user's request into a detailed prompt that will generate the best possible video.
 
 # Instructions
 - Focus on motion, camera angles, lighting, and composition
