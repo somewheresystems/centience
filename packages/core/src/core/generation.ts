@@ -13,7 +13,10 @@ import {
     parseShouldRespondFromText,
 } from "./parsing.ts";
 import settings from "./settings.ts";
-import { Content, IAgentRuntime, ModelProvider } from "./types.ts";
+import { Content, IAgentRuntime, ModelProvider, ActionResponse } from "./types.ts";
+import {
+    parseActionResponseFromText
+} from "@ai16z/eliza/src/parsing.ts";
 
 /**
  * Send a message to the model for a text generateText - receive a string back and parse how you'd like
@@ -324,6 +327,57 @@ export async function generateShouldRespond({
         retryDelay *= 2;
     }
 }
+    export async function generateTweetActions({
+        runtime,
+        context,
+        modelClass,
+    }: {
+        runtime: IAgentRuntime;
+        context: string;
+        modelClass: string;
+    }): Promise<ActionResponse | null> {
+        let retryDelay = 1000;
+
+        while (true) {
+            try {
+                console.debug(
+                    "Attempting to generate text with context for tweet actions:",
+                    context
+                );
+
+                const response = await generateText({
+                    runtime,
+                    context,
+                    modelClass,
+                });
+
+                console.debug("Received response from generateText for tweet actions:", response);
+                const { actions } = parseActionResponseFromText(response.trim());
+
+                if (actions) {
+                    console.debug("Parsed tweet actions:", actions);
+                    return actions;
+                } else {
+                    elizaLogger.debug("generateTweetActions no valid response");
+                }
+            } catch (error) {
+                elizaLogger.error("Error in generateTweetActions:", error);
+                if (
+                    error instanceof TypeError &&
+                    error.message.includes("queueTextCompletion")
+                ) {
+                    elizaLogger.error(
+                        "TypeError: Cannot read properties of null (reading 'queueTextCompletion')"
+                    );
+                }
+            }   
+
+            elizaLogger.log(`Retrying in ${retryDelay}ms...`);
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
+            retryDelay *= 2;
+        }
+    }
+
 
 /**
  * Splits content into chunks of specified size with optional overlapping bleed sections

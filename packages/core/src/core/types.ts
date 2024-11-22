@@ -611,3 +611,21 @@ export interface ISpeechService {
 export interface IPdfService {
     convertPdfToText(pdfBuffer: Buffer): Promise<string>;
 }
+
+export interface TweetAction {
+    like: boolean;
+    retweet: boolean;
+    quote?: boolean;
+    reply?: boolean;
+}
+
+export interface TweetResponse {
+    actions: TweetAction;
+}
+
+export interface ActionResponse {
+    like: boolean;
+    retweet: boolean;
+    quote?: boolean;
+    reply?: boolean;
+}
