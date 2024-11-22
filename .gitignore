@@ -41,3 +41,5 @@ packages/core/src/providers/cache/*
 cache/*
 
 twitter_archive
+test.html
+test.json

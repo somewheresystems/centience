@@ -22,7 +22,6 @@ import { ClientBase } from "./base.ts";
 import { buildConversationThread, sendTweet, wait } from "./utils.ts";
 import { embeddingZeroVector } from "../../core/memory.ts";
 
-
 export const twitterMessageHandlerTemplate =
     `{{relevantFacts}}
 {{recentFacts}}
@@ -159,6 +158,7 @@ export class TwitterInteractionClient extends ClientBase {
                         "twitter"
                     );
 
+
                     console.log("Building conversation thread...");
                     const thread = await buildConversationThread(tweet, this);
 
@@ -192,12 +192,13 @@ export class TwitterInteractionClient extends ClientBase {
                     );
 
                     try {
-                        console.log("Saving last checked tweet ID to file...");
-                        fs.writeFileSync(
-                            this.tweetCacheFilePath,
-                            this.lastCheckedTweetId.toString(),
-                            "utf-8"
-                        );
+                        if (this.lastCheckedTweetId) {
+                            fs.writeFileSync(
+                                this.tweetCacheFilePath,
+                                this.lastCheckedTweetId.toString(),
+                                "utf-8"
+                            );
+                        }
                     } catch (error) {
                         console.error(
                             "Error saving latest checked tweet ID to file:",
@@ -234,7 +235,7 @@ export class TwitterInteractionClient extends ClientBase {
     private async handleTweet({
         tweet,
         message,
-        thread
+        thread,
     }: {
         tweet: Tweet;
         message: Memory;
@@ -277,17 +278,20 @@ export class TwitterInteractionClient extends ClientBase {
 
         console.log("Thread: ", thread);
         const formattedConversation = thread
-            .map(tweet => `@${tweet.username} (${new Date(tweet.timestamp * 1000).toLocaleString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                month: 'short',
-                day: 'numeric'
-            })}):
-        ${tweet.text}`)
-            .join('\n\n');
-        
+            .map(
+                (tweet) => `@${tweet.username} (${new Date(
+                    tweet.timestamp * 1000
+                ).toLocaleString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    month: "short",
+                    day: "numeric",
+                })}):
+        ${tweet.text}`
+            )
+            .join("\n\n");
+
         console.log("formattedConversation: ", formattedConversation);
-        
 
         const formattedHomeTimeline =
             `# ${this.runtime.character.name}'s Home Timeline\n\n` +
@@ -324,10 +328,10 @@ export class TwitterInteractionClient extends ClientBase {
                     url: tweet.permanentUrl,
                     inReplyTo: tweet.inReplyToStatusId
                         ? stringToUuid(
-                            tweet.inReplyToStatusId +
-                            "-" +
-                            this.runtime.agentId
-                        )
+                              tweet.inReplyToStatusId +
+                                  "-" +
+                                  this.runtime.agentId
+                          )
                         : undefined,
                 },
                 userId: userIdUUID,
@@ -358,8 +362,14 @@ export class TwitterInteractionClient extends ClientBase {
 
         if (!shouldRespond) {
             console.log("Not responding to message");
-            return { text: "", action: "IGNORE" };
+            return { text: "Response Decision:", action: shouldRespond };
         }
+
+        // Add 50/50 chance to respond
+        // if (Math.random() < 0.5) {
+        //     console.log("Randomly chose not to respond (50/50 chance)");
+        //     return { text: "Response Decision: Random IGNORE", action: "IGNORE" };
+        // }
 
         console.log("Generating response context...");
         const context = composeContext({
@@ -386,12 +396,13 @@ export class TwitterInteractionClient extends ClientBase {
 
         // No prompt specified so we clean up the tweet
 
-        const removeQuotes = (str: string) => str.replace(/^['"](.*)['"]$/, '$1');
-        
+        const removeQuotes = (str: string) =>
+            str.replace(/^['"](.*)['"]$/, "$1");
+
         const stringId = stringToUuid(tweet.id + "-" + this.runtime.agentId);
         response.inReplyTo = stringId;
 
-        response.text = removeQuotes(response.text)
+        response.text = removeQuotes(response.text);
 
         if (response.text) {
             console.log(`Generated response text: "${response.text}"`);
@@ -456,7 +467,6 @@ export class TwitterInteractionClient extends ClientBase {
         }
     }
 
-
     async buildConversationThread(
         tweet: Tweet,
         maxReplies: number = 10
@@ -464,14 +474,11 @@ export class TwitterInteractionClient extends ClientBase {
         const thread: Tweet[] = [];
         const visited: Set<string> = new Set();
 
-        async function processThread(
-            currentTweet: Tweet, 
-            depth: number = 0
-        ) {
+        async function processThread(currentTweet: Tweet, depth: number = 0) {
             console.log("Processing tweet:", {
                 id: currentTweet.id,
                 inReplyToStatusId: currentTweet.inReplyToStatusId,
-                depth: depth
+                depth: depth,
             });
 
             if (!currentTweet) {
@@ -536,15 +543,18 @@ export class TwitterInteractionClient extends ClientBase {
 
             visited.add(currentTweet.id);
             thread.unshift(currentTweet);
-                
+
             console.log("Current thread state:", {
                 length: thread.length,
                 currentDepth: depth,
-                tweetId: currentTweet.id
+                tweetId: currentTweet.id,
             });
 
             if (currentTweet.inReplyToStatusId) {
-                console.log("Fetching parent tweet:", currentTweet.inReplyToStatusId);
+                console.log(
+                    "Fetching parent tweet:",
+                    currentTweet.inReplyToStatusId
+                );
                 try {
                     const parentTweet = await this.twitterClient.getTweet(
                         currentTweet.inReplyToStatusId
@@ -553,16 +563,19 @@ export class TwitterInteractionClient extends ClientBase {
                     if (parentTweet) {
                         console.log("Found parent tweet:", {
                             id: parentTweet.id,
-                            text: parentTweet.text?.slice(0, 50)
+                            text: parentTweet.text?.slice(0, 50),
                         });
                         await processThread(parentTweet, depth + 1);
                     } else {
-                        console.log("No parent tweet found for:", currentTweet.inReplyToStatusId);
+                        console.log(
+                            "No parent tweet found for:",
+                            currentTweet.inReplyToStatusId
+                        );
                     }
                 } catch (error) {
                     console.log("Error fetching parent tweet:", {
                         tweetId: currentTweet.inReplyToStatusId,
-                        error
+                        error,
                     });
                 }
             } else {
@@ -572,13 +585,13 @@ export class TwitterInteractionClient extends ClientBase {
 
         // Need to bind this context for the inner function
         await processThread.bind(this)(tweet, 0);
-        
+
         console.log("Final thread built:", {
             totalTweets: thread.length,
-            tweetIds: thread.map(t => ({
+            tweetIds: thread.map((t) => ({
                 id: t.id,
-                text: t.text?.slice(0, 50)
-            }))
+                text: t.text?.slice(0, 50),
+            })),
         });
 
         return thread;

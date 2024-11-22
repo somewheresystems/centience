@@ -3,6 +3,7 @@ import { elizaLogger } from "../../index.js";
 import { generateHtml } from "../../core/generation.js"; // Removed unused generateText import
 import { composeContext } from "../../core/context.js";
 import { diffLines } from "diff";
+import { WebsiteMemoryManager } from './WebsiteMemoryManager.js';
 
 interface HtmlVersion {
     content: string;
@@ -218,28 +219,28 @@ class HtmlManager {
 
         // Check for doctype and basic HTML structure
         const hasDoctype = html.toLowerCase().includes("<!doctype html>");
-        const hasHtmlTags = html.includes("<html") && html.includes("</html>");
-        const hasHeadTags = html.includes("<head") && html.includes("</head>");
-        const hasBodyTags = html.includes("<body") && html.includes("</body>");
+        const hasHtmlTags = this.validateTagPair(html, "html");
+        const hasHeadTags = this.validateTagPair(html, "head");
+        const hasBodyTags = this.validateTagPair(html, "body");
 
         // Check for essential meta tags
         const hasCharsetMeta = html.includes('charset="utf-8"') || html.includes("charset='utf-8'");
         const hasViewportMeta = html.includes('name="viewport"');
 
         // Check for content structure
-        const hasTitle = html.includes("<title") && html.includes("</title>");
-        const hasMainContent = html.includes("<main") && html.includes("</main") || 
-                             html.includes("<div") && html.includes("</div");
+        const hasTitle = this.validateTagPair(html, "title");
+        const hasMainContent = this.validateTagPair(html, "main") || this.validateTagPair(html, "div");
 
         // Validate script tags
-        const scriptOpenTags = (html.match(/<script[^>]*>/g) || []).length;
-        const scriptCloseTags = (html.match(/<\/script>/g) || []).length;
-        const hasMatchingScriptTags = scriptOpenTags === scriptCloseTags;
+        const scriptTags = this.validateScriptTags(html);
 
         // Check for complete content
         const hasCompleteStructure = hasDoctype && hasHtmlTags && hasHeadTags && hasBodyTags;
         const hasEssentialMeta = hasCharsetMeta && hasViewportMeta;
         const hasContent = hasTitle && hasMainContent;
+
+        // Check for unclosed tags
+        const hasUnclosedTags = this.findUnclosedTags(html).length > 0;
 
         elizaLogger.log("Validation results", {
             hasDoctype,
@@ -250,14 +251,66 @@ class HtmlManager {
             hasViewportMeta,
             hasTitle,
             hasMainContent,
-            scriptOpenTags,
-            scriptCloseTags,
-            hasMatchingScriptTags
+            scriptTags,
+            hasUnclosedTags
         });
 
-        return hasCompleteStructure && hasEssentialMeta && hasContent && hasMatchingScriptTags;
+        return hasCompleteStructure && 
+               hasEssentialMeta && 
+               hasContent && 
+               scriptTags.isValid && 
+               !hasUnclosedTags;
+    }
+
+    private validateTagPair(html: string, tagName: string): boolean {
+        const openTag = new RegExp(`<${tagName}[^>]*>`, 'gi');
+        const closeTag = new RegExp(`</${tagName}>`, 'gi');
+        const openCount = (html.match(openTag) || []).length;
+        const closeCount = (html.match(closeTag) || []).length;
+        return openCount > 0 && openCount === closeCount;
+    }
+
+    private validateScriptTags(html: string): { isValid: boolean; openCount: number; closeCount: number } {
+        const scriptOpenTags = (html.match(/<script[^>]*>/g) || []).length;
+        const scriptCloseTags = (html.match(/<\/script>/g) || []).length;
+        return {
+            isValid: scriptOpenTags === scriptCloseTags && scriptOpenTags > 0,
+            openCount: scriptOpenTags,
+            closeCount: scriptCloseTags
+        };
+    }
+
+    private findUnclosedTags(html: string): string[] {
+        const stack: string[] = [];
+        const unclosedTags: string[] = [];
+        const tagPattern = /<\/?([a-z0-9]+)[^>]*>/gi;
+        let match;
+
+        while ((match = tagPattern.exec(html)) !== null) {
+            const fullTag = match[0];
+            const tagName = match[1].toLowerCase();
+
+            // Skip self-closing tags
+            if (fullTag.endsWith('/>') || ['meta', 'link', 'img', 'br', 'hr'].includes(tagName)) {
+                continue;
+            }
+
+            if (!fullTag.startsWith('</')) {
+                stack.push(tagName);
+            } else {
+                if (stack.length === 0 || stack[stack.length - 1] !== tagName) {
+                    unclosedTags.push(tagName);
+                } else {
+                    stack.pop();
+                }
+            }
+        }
+
+        return [...stack, ...unclosedTags];
     }
 }
+
+const websiteMemory = new WebsiteMemoryManager();
 
 export const generateHtmlContent = async (
     title: string,
@@ -271,6 +324,12 @@ export const generateHtmlContent = async (
     });
 
     const htmlManager = new HtmlManager();
+    
+    // Generate a unique ID for this website
+    const websiteId = `${title.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`;
+    
+    // Initialize website in memory
+    websiteMemory.createWebsite(websiteId, title, websitePrompt);
 
     // Generate initial HTML content
     const initialContent = await generateHtml({
@@ -650,6 +709,13 @@ export const generateHtmlContent = async (
         elizaLogger.log("Continuation applied successfully", {
             newContentLength: newContent.length,
         });
+
+        // After each successful HTML generation or continuation, add:
+        websiteMemory.addVersion(websiteId, htmlContent, {
+            added: diff.filter(part => part.added).length,
+            removed: diff.filter(part => part.removed).length,
+            modified: diff.length
+        });
     }
 
     if (continuationAttempts >= htmlManager.maxContinuationAttempts) {
@@ -666,6 +732,7 @@ export const generateHtmlContent = async (
         title,
         finalLength: htmlContent.length,
         continuationAttempts,
+        websiteStats: websiteMemory.getStats(websiteId)
     });
 
     return htmlContent;

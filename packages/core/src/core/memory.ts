@@ -71,7 +71,7 @@ export class MemoryManager implements IMemoryManager {
         start,
         end,
     }: {
-        roomId: UUID;
+        roomId?: UUID;
         count?: number;
         unique?: boolean;
         agentId?: UUID;

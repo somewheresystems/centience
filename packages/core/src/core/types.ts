@@ -464,7 +464,7 @@ export interface IMemoryManager {
 
     addEmbeddingToMemory(memory: Memory): Promise<Memory>;
     getMemories(opts: {
-        roomId: UUID;
+        roomId?: UUID;
         count?: number;
         unique?: boolean;
         agentId?: UUID;

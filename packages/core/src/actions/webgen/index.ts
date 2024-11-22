@@ -7,11 +7,40 @@ import {
     ModelClass,
     State,
 } from "../../core/types.ts";
-import { elizaLogger, generateText } from "../../index.ts";
+import {
+    elizaLogger,
+    generateEnhancedPrompt,
+    generateText,
+} from "../../index.ts";
 import { generateHtmlContent } from "./generateHtmlContent.ts";
 import { createHtmlFiles } from "./createHtmlFiles.ts";
 import { deployToGithub } from "./deployToGithub.ts";
-// import { generateEnhancedPrompt } from "../../core/generation.ts";
+import { booleanFooter } from "../../core/parsing.ts";
+
+export const shouldCreateWebsiteTemplate = `Based on the conversation so far:
+
+{{recentMessages}}
+
+Should {{agentName}} create a website for this request?
+Respond with YES if one of the following is true:
+- The user has explicitly requested a website to be created
+- The user has provided clear requirements or content for a website
+- The user is discussing a project or topic that would benefit from a website
+- Creating a website would be valuable and appropriate for the user's needs
+
+Respond with NO if:
+- The user hasn't mentioned anything about websites or web content
+- The request is better suited for a different format (like a document or image)
+- The conversation is not related to content that should be published online
+- The user has indicated they don't want a website
+
+Consider these factors:
+- Is there enough content/context to create a meaningful website?
+- Would a website be the most appropriate format for this content?
+- Has the user expressed interest in having an online presence?
+- Would a website help achieve the user's goals?
+
+${booleanFooter}`;
 
 // Detects if the prompt is for a game or a website by using an LLM to analyze the prompt
 async function detectContentType(
@@ -23,7 +52,7 @@ async function detectContentType(
         context: `Analyze this prompt and determine if it's requesting a game or a website. Only respond with either "GAME" or "WEBSITE".
         
         Prompt: ${prompt}`,
-        modelClass: ModelClass.SMALL,
+        modelClass: ModelClass.MEDIUM,
     });
 
     const contentType = response.trim().toUpperCase();
@@ -47,10 +76,39 @@ export const WEBSITE_GENERATION: Action = {
         _message: Memory,
         _state: State
     ) => {
-        return !!(
-            runtime.getSetting("GITHUB_TOKEN") &&
-            runtime.getSetting("GITHUB_USERNAME")
+        elizaLogger.log("Validating CREATE_WEBSITE action");
+
+        // First check environment variables
+        const hasEnvVars = !!(
+            process.env.OPENAI_API_KEY &&
+            process.env.GITHUB_TOKEN &&
+            process.env.GITHUB_USERNAME
         );
+
+        if (!hasEnvVars) {
+            elizaLogger.log("Missing required environment variables");
+            return false;
+        }
+
+        // Use the template to determine if we should create a website
+        try {
+            const shouldCreateResponse = await generateText({
+                runtime,
+                context: shouldCreateWebsiteTemplate,
+                modelClass: ModelClass.MEDIUM,
+            });
+
+            const shouldCreate = shouldCreateResponse
+                .trim()
+                .toUpperCase()
+                .includes("YES");
+            elizaLogger.log(`Should create website? ${shouldCreate}`);
+
+            return shouldCreate;
+        } catch (error) {
+            elizaLogger.error("Error in website validation:", error);
+            return false;
+        }
     },
     handler: async (
         runtime: IAgentRuntime,
@@ -72,21 +130,20 @@ export const WEBSITE_GENERATION: Action = {
             elizaLogger.log("Starting website generation process");
 
             //  generate enhanced prompt
-            const enhancedPrompt = websitePrompt; //await generateEnhancedPrompt(
-            //     websitePrompt,
-            //     runtime
-            // );
-            const contentType = await detectContentType(
+            const enhancedPrompt = await generateEnhancedPrompt({
                 runtime,
-                enhancedPrompt
-            );
+                context: websitePrompt,
+                modelClass: ModelClass.MEDIUM,
+            });
+            console.log("Enhanced prompt:", enhancedPrompt);
+            const contentType = await detectContentType(runtime, websitePrompt);
 
             // Generate HTML content
             const homeContent = await generateHtmlContent(
                 contentType,
                 runtime,
                 state,
-                enhancedPrompt
+                websitePrompt
             );
 
             // Sanitize HTML content by removing non-HTML characters
@@ -107,11 +164,23 @@ export const WEBSITE_GENERATION: Action = {
             }
 
             const repoName = `generated-website-${Date.now()}`;
+
+            // Send deploying message
+            const deployingResponse: Content = {
+                text: "Website is being deployed to GitHub Pages. This will take a few minutes...",
+                action: "CREATE_WEBSITE",
+                source: message.content.source,
+            };
+            await callback(deployingResponse, []);
+
             const siteUrl = await deployToGithub({
                 repoName,
                 githubToken: token,
                 username,
             });
+
+            // Add delay to allow deployment to complete
+            await new Promise((resolve) => setTimeout(resolve, 2 * 60 * 1000)); // 2 minute delay
 
             const response: Content = {
                 text: `I've created and deployed a website based on our conversation. You can view it at: ${siteUrl}`,

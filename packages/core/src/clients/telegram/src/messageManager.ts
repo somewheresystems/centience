@@ -23,6 +23,7 @@ import {
     shouldRespondFooter,
 } from "../../../core/parsing.ts";
 import ImageDescriptionService from "../../../services/image.ts";
+import { WEBSITE_GENERATION } from "../../../actions/webgen/index.ts";
 
 const MAX_MESSAGE_LENGTH = 4096; // Telegram's max message length
 
@@ -114,6 +115,8 @@ About {{agentName}}:
 
 Examples of {{agentName}}'s dialog and actions:
 {{characterMessageExamples}}
+More examples of {{agentName}}'s dialog and actions:
+{{characterPostExamples}}
 
 {{providers}}
 
@@ -128,18 +131,29 @@ Note that {{agentName}} is capable of reading/seeing/hearing various forms of me
 
 {{recentMessages}}
 
-# Instructions: Write the next message for {{agentName}}. Include an action, if appropriate. {{actionNames}}
+# Instructions: Write the next message for {{agentName}}. Respond to the last message. Include an action, if appropriate. {{actionNames}}
 ` + messageCompletionFooter;
 
 export class MessageManager {
     private bot: Telegraf<Context>;
     private runtime: IAgentRuntime;
     private imageService: ImageDescriptionService;
+    private initialized: boolean = false;
 
     constructor(bot: Telegraf<Context>, runtime: IAgentRuntime) {
+        if (!bot || !runtime) {
+            throw new Error("Bot and runtime are required for MessageManager");
+        }
         this.bot = bot;
         this.runtime = runtime;
         this.imageService = ImageDescriptionService.getInstance(this.runtime);
+        this.initialized = true;
+    }
+
+    private checkInitialized() {
+        if (!this.initialized) {
+            throw new Error("MessageManager not properly initialized");
+        }
     }
 
     // Process image messages and generate descriptions
@@ -192,30 +206,25 @@ export class MessageManager {
         message: Message,
         state: State
     ): Promise<boolean> {
-        // Respond if bot is mentioned
-
-        if (
-            "text" in message &&
-            message.text?.includes(`@${this.bot.botInfo?.username}`)
-        ) {
-            return true;
+        // Skip empty messages
+        if (!("text" in message || "caption" in message)) {
+            return false;
         }
 
-        // Respond to private chats
+        // Always respond to private chats
         if (message.chat.type === "private") {
             return true;
         }
 
-        // Respond to images in group chats
-        if (
-            "photo" in message ||
-            ("document" in message &&
-                message.document?.mime_type?.startsWith("image/"))
-        ) {
-            return false;
-        }
+        // // Always respond to group chats
+        // if (
+        //     message.chat.type === "group" ||
+        //     message.chat.type === "supergroup"
+        // ) {
+        //     return true;
+        // }
 
-        // Use AI to decide for text or captions
+        // Use AI to decide for text or captions in all other cases
         if ("text" in message || ("caption" in message && message.caption)) {
             const shouldRespondContext = composeContext({
                 state,
@@ -292,10 +301,25 @@ export class MessageManager {
         context: string
     ): Promise<Content> {
         const { userId, roomId } = message;
+        console.log("🤖 Generating response for message:", message);
+        console.log(context);
+
+        const memories = await this.runtime.messageManager.getMemories({
+            // roomId: state.roomId,
+            count: 50,
+            unique: true,
+        });
+        let contextWithMemories = context;
+        if (message.content?.text) {
+            contextWithMemories += `\n${message.content.text}`; // Add current message first
+        }
+        contextWithMemories = memories.reduce((acc, memory) => {
+            return acc + `\n${memory.content.text}`;
+        }, contextWithMemories);
 
         const response = await generateMessageResponse({
             runtime: this.runtime,
-            context,
+            context: contextWithMemories,
             modelClass: ModelClass.LARGE,
         });
 
@@ -315,14 +339,10 @@ export class MessageManager {
 
     // Main handler for incoming messages
     public async handleMessage(ctx: Context): Promise<void> {
+        this.checkInitialized();
         if (!ctx.message || !ctx.from) {
             return; // Exit if no message or sender info
         }
-
-        // TODO: Handle commands?
-        // if (ctx.message.text?.startsWith("/")) {
-        //     return;
-        // }
 
         const message = ctx.message;
 
@@ -351,8 +371,6 @@ export class MessageManager {
 
             // Handle images
             const imageInfo = await this.processImage(message);
-
-            // Get text or caption
             let messageText = "";
             if ("text" in message) {
                 messageText = message.text;
@@ -360,7 +378,6 @@ export class MessageManager {
                 messageText = message.caption;
             }
 
-            // Combine text and image description
             const fullText = imageInfo
                 ? `${messageText} ${imageInfo.description}`
                 : messageText;
@@ -382,7 +399,6 @@ export class MessageManager {
                         : undefined,
             };
 
-            // Create memory for the message
             const memory: Memory = {
                 id: messageId,
                 agentId,
@@ -395,9 +411,29 @@ export class MessageManager {
 
             await this.runtime.messageManager.createMemory(memory);
 
-            // Update state with the new memory
             let state = await this.runtime.composeState(memory);
             state = await this.runtime.updateRecentMessageState(state);
+
+            // Check if the message should trigger website generation
+            // const shouldGenerateWebsite = await WEBSITE_GENERATION.validate(
+            //     this.runtime,
+            //     memory,
+            //     state
+            // );
+
+            // if (shouldGenerateWebsite) {
+            //     await WEBSITE_GENERATION.handler(
+            //         this.runtime,
+            //         memory,
+            //         state,
+            //         {},
+            //         async (response) => {
+            //             await ctx.reply(response.text);
+            //             return [];
+            //         }
+            //     );
+            //     return;
+            // }
 
             // Decide whether to respond
             const shouldRespond = await this._shouldRespond(message, state);
@@ -431,7 +467,6 @@ export class MessageManager {
 
                 const memories: Memory[] = [];
 
-                // Create memories for each sent message
                 for (let i = 0; i < sentMessages.length; i++) {
                     const sentMessage = sentMessages[i];
                     const isLastMessage = i === sentMessages.length - 1;
@@ -462,14 +497,11 @@ export class MessageManager {
                 return memories;
             };
 
-            // Execute callback to send messages and log memories
             const responseMessages = await callback(responseContent);
 
-            // Update state after response
             state = await this.runtime.updateRecentMessageState(state);
             await this.runtime.evaluate(memory, state);
 
-            // Handle any resulting actions
             await this.runtime.processActions(
                 memory,
                 responseMessages,

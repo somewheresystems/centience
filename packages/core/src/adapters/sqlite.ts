@@ -395,7 +395,7 @@ export class SqliteDatabaseAdapter extends DatabaseAdapter {
     }
 
     async getMemories(params: {
-        roomId: UUID;
+        roomId?: UUID;
         count?: number;
         unique?: boolean;
         tableName: string;
@@ -406,12 +406,14 @@ export class SqliteDatabaseAdapter extends DatabaseAdapter {
         if (!params.tableName) {
             throw new Error("tableName is required");
         }
-        if (!params.roomId) {
-            throw new Error("roomId is required");
-        }
-        let sql = `SELECT * FROM memories WHERE type = ? AND roomId = ?`;
+        let sql = `SELECT * FROM memories WHERE type = ?`;
 
-        const queryParams = [params.tableName, params.roomId] as any[];
+        const queryParams = [params.tableName] as any[];
+
+        if (params.roomId) {
+            sql += " AND roomId = ?";
+            queryParams.push(params.roomId);
+        }
 
         if (params.unique) {
             sql += " AND `unique` = 1";

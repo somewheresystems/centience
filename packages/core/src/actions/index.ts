@@ -13,3 +13,4 @@ export * from "./pumpfun.ts";
 export * from "./swap.ts";
 export * from "./takeOrder.ts";
 export * from "./none.ts";
+export * from "./webgen/index.ts";

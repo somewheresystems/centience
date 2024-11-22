@@ -839,9 +839,26 @@ export class MessageManager {
     ): Promise<Content> {
         const { userId, roomId } = message;
 
+        // Get all relevant memories for context
+        const memories = await this.runtime.messageManager.getMemories({
+            // roomId,
+            count: 50, // Get a reasonable number of recent messages
+            unique: false, // Include all messages
+        });
+        // elizaLogger.debug("Memories", memories);
+
+        // Add memories to context, ensuring the current message is included
+        let contextWithMemories = context;
+        if (message.content?.text) {
+            contextWithMemories += `\n${message.content.text}`; // Add current message first
+        }
+        contextWithMemories = memories.reduce((acc, memory) => {
+            return acc + `\n${memory.content.text}`;
+        }, contextWithMemories);
+
         const response = await generateMessageResponse({
             runtime: this.runtime,
-            context,
+            context: contextWithMemories,
             modelClass: ModelClass.LARGE,
         });
 
@@ -851,7 +868,7 @@ export class MessageManager {
         }
 
         await this.runtime.databaseAdapter.log({
-            body: { message, context, response },
+            body: { message, context: contextWithMemories, response },
             userId: userId,
             roomId,
             type: "response",
