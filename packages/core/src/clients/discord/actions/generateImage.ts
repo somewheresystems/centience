@@ -104,7 +104,7 @@ Enhanced prompt:`;
                     // Send to Discord
                     await callback(
                         {
-                            text: `Here's your generated image based on: "${imagePrompt}"`,
+                            text: `Prompt Used: "${imagePrompt}"`,
                             files: [{
                                 attachment: tempFileName,
                                 name: 'generated_image.png'
@@ -115,7 +115,7 @@ Enhanced prompt:`;
 
                 
                         try {
-                            const tweetText = `${imagePrompt.slice(0, 150)}${imagePrompt.length > 150 ? '...' : ''}`;
+                            const tweetText = imagePrompt;
                             
                             elizaLogger.log("Attempting to post to Twitter with text:", tweetText);
 
