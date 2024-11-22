@@ -552,6 +552,7 @@ export interface IAgentRuntime {
         additionalKeys?: { [key: string]: unknown }
     ): Promise<State>;
     updateRecentMessageState(state: State): Promise<State>;
+    getClient(clientName: string): any;
 }
 
 export interface IImageRecognitionService {

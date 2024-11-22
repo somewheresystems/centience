@@ -1216,4 +1216,8 @@ Text: ${attachment.text}
             attachments: formattedAttachments,
         } as State;
     }
+
+    getClient(clientName: string): any {
+        return null; // Or implement actual client retrieval logic
+    }
 }

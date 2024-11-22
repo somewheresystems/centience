@@ -16,7 +16,7 @@ import settings from "./settings.ts";
 import { Content, IAgentRuntime, ModelProvider, ActionResponse } from "./types.ts";
 import {
     parseActionResponseFromText
-} from "@ai16z/eliza/src/parsing.ts";
+} from "./parsing.ts";
 
 /**
  * Send a message to the model for a text generateText - receive a string back and parse how you'd like

@@ -1,4 +1,4 @@
-import { Tweet } from "agent-twitter-client";
+import { Tweet } from "goat-x";
 import fs from "fs";
 import { composeContext } from "../../core/context.ts";
 import { generateText, generateTweetActions } from "../../core/generation.ts";
@@ -9,7 +9,7 @@ import { ClientBase } from "./base.ts";
 import {
     postActionResponseFooter,
     parseActionResponseFromText
-} from "@ai16z/eliza/src/parsing.ts";
+} from "../../core/parsing";
 
 const twitterPostTemplate = `{{timeline}}
 
