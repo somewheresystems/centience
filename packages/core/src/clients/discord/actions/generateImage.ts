@@ -115,7 +115,7 @@ Enhanced prompt:`;
 
                 
                         try {
-                            const tweetText = imagePrompt;
+                            const tweetText = imagePrompt.trim();
                             
                             elizaLogger.log("Attempting to post to Twitter with text:", tweetText);
 
