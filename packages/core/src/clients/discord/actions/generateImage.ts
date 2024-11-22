@@ -12,6 +12,8 @@ import * as path from 'path';
 import { randomUUID } from 'crypto';
 import { generateText } from "../../../core/generation.ts";
 import { ModelClass } from "../../../core/types";
+import { Scraper } from "goat-x";
+import { ClientBase } from "../../../clients/twitter/base";
 
 export const discordImageGeneration: Action = {
     name: "GENERATE_IMAGE",
@@ -89,30 +91,66 @@ Enhanced prompt:`;
                     const tempDir = path.join(process.cwd(), 'temp');
                     await fs.mkdir(tempDir, { recursive: true });
                     
-                    // For Discord, convert base64 to Buffer
+                    // Convert base64 to Buffer
                     const imageBuffer = Buffer.from(
                         images.data[0].replace(/^data:image\/\w+;base64,/, ""),
                         'base64'
                     );
 
-                    // Create temp file path
+                    // Save to temp file
                     const tempFileName = path.join(tempDir, `${randomUUID()}.png`);
-                    
-                    // Save buffer to temp file
                     await fs.writeFile(tempFileName, imageBuffer);
 
+                    // Send to Discord
                     await callback(
                         {
-                            text: `Here's your generated image based on: "${imagePrompt}"`,
+                            text: `Prompt Used: "${imagePrompt}"`,
                             files: [{
                                 attachment: tempFileName,
                                 name: 'generated_image.png'
                             }]
                         },
-                        [tempFileName] // Pass temp file for cleanup
+                        [tempFileName]
                     );
 
-                    // Cleanup temp file after sending
+                
+                        try {
+                            const tweetText = imagePrompt.trim();
+                            
+                            elizaLogger.log("Attempting to post to Twitter with text:", tweetText);
+
+                            // Create a client instance like in post.ts
+                            const client = new ClientBase({ runtime });
+                            const result = await client.requestQueue.add(
+                                async () => await client.twitterClient.sendTweet(
+                                    tweetText,
+                                    undefined,
+                                    [{
+                                        data: imageBuffer,
+                                        mediaType: 'image/png'
+                                    }]
+                                )
+                            );
+
+                            const body = await result.json();
+                            const tweetResult = body.data.create_tweet.tweet_results.result;
+
+                            elizaLogger.log("Successfully posted image to Twitter:", tweetResult);
+
+                            await callback({
+                                text: `Image has been generated and shared on Twitter! 🐦\nhttps://twitter.com/${runtime.getSetting("TWITTER_USERNAME")}/status/${tweetResult.rest_id}`,
+                                files: [{
+                                    attachment: tempFileName,
+                                    name: 'generated_image.png'
+                                }]
+                            }, [tempFileName]);
+
+                        } catch (twitterError) {
+                            elizaLogger.error("Error posting to Twitter:", twitterError);
+                            // Continue with Discord post even if Twitter fails
+                        }
+
+                    // Cleanup temp file
                     await fs.unlink(tempFileName).catch(err => 
                         elizaLogger.error("Error cleaning up temp file:", err)
                     );

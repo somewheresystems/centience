@@ -506,6 +506,7 @@ export interface IAgentRuntime {
     character: Character;
     providers: Provider[];
     actions: Action[];
+    twitterAuth?: TwitterAuth;
 
     messageManager: IMemoryManager;
     descriptionManager: IMemoryManager;
@@ -629,4 +630,17 @@ export interface ActionResponse {
     retweet: boolean;
     quote?: boolean;
     reply?: boolean;
+}
+
+export interface TwitterAuth {
+    apiKey: string;
+    apiSecret: string;
+    accessToken: string;
+    accessTokenSecret: string;
+    bearerToken?: string;
+    guestToken?: string;
+    cookieJar: () => {
+        getCookies: (url: string) => Promise<Array<{ key: string; value: string }>>;
+        getCookieString: (url: string) => Promise<string>;
+    };
 }

@@ -10,6 +10,9 @@ import { generateVideo } from "../../../actions/videoGenerationUtils";
 import { generateText } from "../../../core/generation";
 import { ModelClass } from "../../../core/types";
 import { randomUUID } from 'crypto';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import { ClientBase } from "../../../clients/twitter/base";
 
 export const discordVideoGeneration: Action = {
     name: "GENERATE_VIDEO",
@@ -93,15 +96,67 @@ Enhanced prompt:`;
             if (video.success && video.url) {
                 elizaLogger.log("Video generation successful, URL:", video.url);
                 
-                await callback(
-                    {
-                        text: `✨ Here's your generated video: ${video.url}`,
+                try {
+                    // Download video from URL
+                    const response = await fetch(video.url);
+                    const videoBuffer = Buffer.from(await response.arrayBuffer());
+
+                    // Create temp directory if it doesn't exist
+                    const tempDir = path.join(process.cwd(), 'temp');
+                    await fs.mkdir(tempDir, { recursive: true });
+                    
+                    // Save to temp file
+                    const tempFileName = path.join(tempDir, `${randomUUID()}.mp4`);
+                    await fs.writeFile(tempFileName, videoBuffer);
+
+                    try {
+                        const tweetText = cleanPrompt.trim();
+                        
+                        elizaLogger.log("Attempting to post to Twitter with text:", tweetText);
+
+                        // Create a client instance
+                        const client = new ClientBase({ runtime });
+                        const result = await client.requestQueue.add(
+                            async () => await client.twitterClient.sendTweet(
+                                tweetText,
+                                undefined,
+                                [{
+                                    data: videoBuffer,
+                                    mediaType: 'video/mp4'
+                                }]
+                            )
+                        );
+
+                        const body = await result.json();
+                        const tweetResult = body.data.create_tweet.tweet_results.result;
+
+                        elizaLogger.log("Successfully posted video to Twitter:", tweetResult);
+
+                        await callback({
+                            text: `✨ Video generated and shared on Twitter! 🐦\n${video.url}\nhttps://twitter.com/${runtime.getSetting("TWITTER_USERNAME")}/status/${tweetResult.rest_id}`,
+                        }, []);
+
+                    } catch (twitterError) {
+                        elizaLogger.error("Error posting to Twitter:", twitterError);
+                        // Continue with Discord post even if Twitter fails
+                        await callback({
+                            text: `✨ Here's your generated video: ${video.url}`,
+                            action: "GENERATE_VIDEO"
+                        }, []);
+                    }
+
+                    // Cleanup temp file
+                    await fs.unlink(tempFileName).catch(err => 
+                        elizaLogger.error("Error cleaning up temp file:", err)
+                    );
+                } catch (fsError) {
+                    elizaLogger.error("File system error:", fsError);
+                    // If file handling fails, still send the video URL
+                    await callback({
+                        text: `${video.url}`,
                         action: "GENERATE_VIDEO"
-                    },
-                    []
-                );
-                
-                elizaLogger.log("Discord response sent successfully");
+                    }, []);
+                }
             } else {
                 elizaLogger.error("Video generation failed with response:", video);
                 await callback(

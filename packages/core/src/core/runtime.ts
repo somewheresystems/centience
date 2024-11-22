@@ -25,6 +25,7 @@ import {
     ModelProvider,
     Provider,
     State,
+    TwitterAuth,
     type Action,
     type Evaluator,
     type Memory,
@@ -129,6 +130,8 @@ export class AgentRuntime implements IAgentRuntime {
 
     pdfService: IPdfService;
 
+    twitterAuth?: TwitterAuth;
+
     /**
      * Fetch function to use
      * Some environments may not have access to the global fetch function and need a custom fetch override.
@@ -200,6 +203,7 @@ export class AgentRuntime implements IAgentRuntime {
         databaseAdapter: IDatabaseAdapter; // The database adapter used for interacting with the database
         fetch?: typeof fetch | unknown;
         speechModelPath?: string;
+        twitterAuth?: TwitterAuth;
     }) {
         this.#conversationLength =
             opts.conversationLength ?? this.#conversationLength;
@@ -322,6 +326,8 @@ export class AgentRuntime implements IAgentRuntime {
         ) {
             // this.processCharacterKnowledge(opts.character.knowledge);
         }
+
+        this.twitterAuth = opts.twitterAuth;
     }
 
     /**
