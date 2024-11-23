@@ -38,7 +38,7 @@ function validateHtmlContent(content: string): boolean {
     );
 }
 
-export const createHtmlFiles = async (pages: Pages, metadata: any) => {
+export const createHtmlFiles = async (pages: Pages) => {
     elizaLogger.log("Starting HTML file creation");
 
     try {
