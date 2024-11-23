@@ -682,6 +682,20 @@ export const generateHtmlContent = async (
         });
         continuationAttempts++;
 
+        // Check if we have a complete HTML document structure
+        const hasCompleteStructure = htmlContent.includes('<!DOCTYPE html>') &&
+            htmlContent.includes('<html') &&
+            htmlContent.includes('</html>') &&
+            htmlContent.includes('<head>') && 
+            htmlContent.includes('</head>') &&
+            htmlContent.includes('<body>') &&
+            htmlContent.includes('</body>');
+
+        if (hasCompleteStructure) {
+            elizaLogger.log("Complete HTML document structure detected, no continuation needed");
+            break;
+        }
+
         const lastCompleteElementMatch = htmlContent.match(
             /(?:(?:<[^>]+>[^<]*<\/[^>]+>)|(?:<script[^>]*>[\s\S]*?<\/script>))(?!.*(?:<\/[^>]+>|<\/script>))/
         );

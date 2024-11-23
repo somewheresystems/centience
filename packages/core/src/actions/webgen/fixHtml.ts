@@ -45,32 +45,24 @@ export const fixHtml = async ({
             );
         }
 
-        // Clean up any existing temp directory
         try {
             await fs.rm(tempDir, { recursive: true, force: true });
         } catch (error) {
-            // Ignore errors if directory doesn't exist
             console.log("Error cleaning up temp directory:", error);
         }
 
-        // Create temp directory
         await fs.mkdir(tempDir);
 
-        // Clone repository
-        elizaLogger.log("Cloning repository");
         const safeRepoUrl = repoUrl.replace(
             "https://",
             `https://${username}:${githubToken}@`
         );
         execSync(`git clone ${safeRepoUrl} ${tempDir}`);
 
-        // Read current file content
         const fullPath = path.join(tempDir, filePath);
         const currentContent = await fs.readFile(fullPath, "utf-8");
 
-        // First analyze the HTML with critiqueHtml to identify issues
-        elizaLogger.log("Analyzing HTML with critiqueHtml");
-        const { fixes, score } = await critiqueHtml({
+        const { fixes } = await critiqueHtml({
             runtime,
             state: await runtime.composeState({
                 content: { text: currentContent },
@@ -81,8 +73,6 @@ export const fixHtml = async ({
             html: currentContent,
         });
 
-        // Generate corrected HTML using generateHtml, incorporating critique fixes
-        elizaLogger.log("Generating corrected HTML");
         const correctedHtml = await generateHtml({
             runtime,
             context: `Fix this HTML according to these corrections: ${corrections}
@@ -95,14 +85,10 @@ export const fixHtml = async ({
             modelClass: ModelClass.MEDIUM,
         });
 
-        // Generate diff and apply corrections
-        elizaLogger.log("Applying corrections");
         const diff = diffLines(currentContent, correctedHtml);
 
-        // Write corrected content
         await fs.writeFile(fullPath, correctedHtml);
 
-        // Log the changes
         elizaLogger.log("Changes made:", {
             diffLength: diff.length,
             addedLines: diff.filter((part) => part.added).length,
@@ -114,7 +100,6 @@ export const fixHtml = async ({
             })),
         });
 
-        // Commit and push changes
         const gitCommands = [
             `git config user.name "${username}"`,
             `git config user.email "${username}@users.noreply.github.com"`,
@@ -135,9 +120,6 @@ export const fixHtml = async ({
             }
         });
 
-        elizaLogger.log("HTML fixes successfully applied and pushed");
-
-        // Cleanup
         await fs.rm(tempDir, { recursive: true, force: true });
 
         return {

@@ -12,25 +12,33 @@ interface Pages {
 
 function validateHtmlContent(content: string): boolean {
     // Check for essential HTML structure
-    const hasDoctype = content.toLowerCase().includes('<!doctype html');
-    const hasHtml = content.includes('<html') && content.includes('</html>');
-    const hasHead = content.includes('<head') && content.includes('</head>');
-    const hasBody = content.includes('<body') && content.includes('</body>');
-    
+    const hasDoctype = content.toLowerCase().includes("<!doctype html");
+    const hasHtml = content.includes("<html") && content.includes("</html>");
+    const hasHead = content.includes("<head") && content.includes("</head>");
+    const hasBody = content.includes("<body") && content.includes("</body>");
+
     // Check for main content
-    const hasMainContent = content.includes('<main') && content.includes('</main>') ||
-                          content.includes('<div') && content.includes('</div');
-    
+    const hasMainContent =
+        (content.includes("<main") && content.includes("</main>")) ||
+        (content.includes("<div") && content.includes("</div"));
+
     // More lenient script tag validation that accounts for nested content
     const scriptTags = content.match(/<script[\s\S]*?<\/script>/g) || [];
-    const hasValidScripts = scriptTags.every(script => 
-        script.startsWith('<script') && script.endsWith('</script>')
+    const hasValidScripts = scriptTags.every(
+        (script) => script.startsWith("<script") && script.endsWith("</script>")
     );
 
-    return hasDoctype && hasHtml && hasHead && hasBody && hasMainContent && hasValidScripts;
+    return (
+        hasDoctype &&
+        hasHtml &&
+        hasHead &&
+        hasBody &&
+        hasMainContent &&
+        hasValidScripts
+    );
 }
 
-export const createHtmlFiles = async (pages: Pages) => {
+export const createHtmlFiles = async (pages: Pages, metadata: any) => {
     elizaLogger.log("Starting HTML file creation");
 
     try {

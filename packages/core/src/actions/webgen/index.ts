@@ -19,6 +19,8 @@ import { booleanFooter } from "../../core/parsing.ts";
 import { composeContext } from "../../core/context.ts";
 import { fixHtml } from "./fixHtml.ts";
 
+const DEPLOYMENT_TIMEOUT = 5 * 60 * 1000; // 5 minutes timeout
+
 export const shouldCreateWebsiteTemplate = `Based on the conversation so far:
 
 {{recentMessages}}
@@ -110,7 +112,16 @@ export const WEBSITE_CORRECTION: Action = {
             }
             const filePath = "index.html"; // Default to index.html
             console.log("Fixing HTML for repo:", repoUrl);
-            await fixHtml({
+
+            // Create a promise that rejects after timeout
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => {
+                    reject(new Error("Website correction timed out after 5 minutes"));
+                }, DEPLOYMENT_TIMEOUT);
+            });
+
+            // Create the main correction handling promise
+            const correctionPromise = fixHtml({
                 runtime,
                 repoUrl,
                 filePath,
@@ -118,6 +129,9 @@ export const WEBSITE_CORRECTION: Action = {
                 username,
                 corrections,
             });
+
+            // Race between timeout and correction handling
+            await Promise.race([correctionPromise, timeoutPromise]);
 
             const response: Content = {
                 text: "Website HTML has been corrected and updated successfully.",
@@ -234,58 +248,69 @@ export const WEBSITE_GENERATION: Action = {
 
             elizaLogger.log("Starting website generation process");
 
-            //  generate enhanced prompt
-            const enhancedPrompt = await generateEnhancedPrompt({
-                runtime,
-                context: websitePrompt,
-                modelClass: ModelClass.MEDIUM,
-            });
-            console.log("Enhanced prompt:", enhancedPrompt);
-            const contentType = await detectContentType(runtime, websitePrompt);
-
-            // Generate HTML content
-            const homeContent = await generateHtmlContent(
-                contentType,
-                runtime,
-                state,
-                websitePrompt
-            );
-
-            // Sanitize HTML content by removing non-HTML characters
-            const sanitizedHomeContent = homeContent
-                // eslint-disable-next-line no-control-regex
-                .replace(/[^\u0009\u000A\u000D\x20-\x7E\xA0-\uFFFF]/g, "") // Remove control chars except tabs, newlines
-                .replace(/[\u2028\u2029]/g, "\n"); // Replace line/paragraph separators with newlines
-
-            const pages = { home: sanitizedHomeContent };
-
-            await createHtmlFiles(pages);
-
-            const token = runtime.getSetting("GITHUB_TOKEN");
-            const username = runtime.getSetting("GITHUB_USERNAME");
-
-            if (!token || !username) {
-                throw new Error("GitHub credentials not found");
-            }
-
-            const repoName = `generated-website-${Date.now()}`;
-
-            // Send deploying message
-            const deployingResponse: Content = {
-                text: "Website is being deployed to GitHub Pages. This will take a few minutes...",
-                action: "CREATE_WEBSITE",
-                source: message.content.source,
-            };
-            await callback(deployingResponse, []);
-
-            const siteUrl = await deployToGithub({
-                repoName,
-                githubToken: token,
-                username,
+            // Create a promise that rejects after timeout
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => {
+                    reject(new Error("Website generation timed out after 5 minutes"));
+                }, DEPLOYMENT_TIMEOUT);
             });
 
-            // Add delay to allow deployment to complete
-            await new Promise((resolve) => setTimeout(resolve, 2 * 60 * 1000)); // 2 minute delay
+            // Create the main generation handling promise
+            const generationPromise = (async () => {
+                const enhancedPrompt = await generateEnhancedPrompt({
+                    runtime,
+                    context: websitePrompt,
+                    modelClass: ModelClass.MEDIUM,
+                });
+                console.log("Enhanced prompt:", enhancedPrompt);
+                const contentType = await detectContentType(runtime, websitePrompt);
+
+                // Generate HTML content
+                const homeContent = await generateHtmlContent(
+                    contentType,
+                    runtime,
+                    state,
+                    websitePrompt
+                );
+
+                const sanitizedHomeContent = homeContent
+                    // eslint-disable-next-line no-control-regex
+                    .replace(/[^\u0009\u000A\u000D\x20-\x7E\xA0-\uFFFF]/g, "")
+                    .replace(/[\u2028\u2029]/g, "\n");
+
+                const pages = { home: sanitizedHomeContent };
+
+                await createHtmlFiles(pages);
+
+                const token = runtime.getSetting("GITHUB_TOKEN");
+                const username = runtime.getSetting("GITHUB_USERNAME");
+
+                if (!token || !username) {
+                    throw new Error("GitHub credentials not found");
+                }
+
+                const repoName = `generated-website-${Date.now()}`;
+
+                const deployingResponse: Content = {
+                    text: "Website is being deployed to GitHub Pages. This will take a few minutes...",
+                    action: "CREATE_WEBSITE",
+                    source: message.content.source,
+                };
+                await callback(deployingResponse, []);
+
+                const siteUrl = await deployToGithub({
+                    repoName,
+                    githubToken: token,
+                    username,
+                });
+
+                await new Promise((resolve) => setTimeout(resolve, 2 * 60 * 1000));
+
+                return siteUrl;
+            })();
+
+            // Race between timeout and generation handling
+            const siteUrl = await Promise.race([generationPromise, timeoutPromise]);
 
             const response: Content = {
                 text: `I've created and deployed a website based on our conversation. You can view it at: ${siteUrl}`,

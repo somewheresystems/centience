@@ -3,7 +3,6 @@ import { Context, Telegraf } from "telegraf";
 import { IAgentRuntime } from "../../../core/types.ts";
 import { MessageManager } from "./messageManager.ts";
 import { elizaLogger } from "../../../index.ts";
-import { WEBSITE_GENERATION } from "../../../actions/webgen/index.ts";
 
 export class TelegramClient {
     private bot: Telegraf<Context>;
@@ -15,8 +14,6 @@ export class TelegramClient {
         this.runtime = runtime;
         this.bot = new Telegraf(botToken);
         this.messageManager = new MessageManager(this.bot, this.runtime);
-
-        this.runtime.registerAction(WEBSITE_GENERATION);
 
         elizaLogger.log("Setting up message handler...");
         this.bot.on("message", async (ctx) => {
