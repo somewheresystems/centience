@@ -1,105 +1,70 @@
 import { execSync } from "child_process";
-import path from "node:path";
-import { elizaLogger } from "../../index.js";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { elizaLogger } from "../../index.ts";
+import { IAgentRuntime } from "../../core/types.ts";
 
 export const deployToGithub = async ({
     repoName,
     githubToken,
-    username,
+    username
 }: {
     repoName: string;
     githubToken: string;
     username: string;
 }) => {
-    elizaLogger.log(`Starting GitHub deployment for repo: ${repoName}`);
-    const websiteDir = path.join(__dirname, "website");
-    const headers = {
-        Authorization: `token ${githubToken}`,
-        Accept: "application/vnd.github.v3+json",
-    };
-
+    const remoteUrl = `https://x-access-token:${githubToken}@github.com/${username}/${repoName}.git`;
+    
     try {
-        elizaLogger.log("Creating GitHub repository");
-        const createRepoResponse = await fetch(
-            "https://api.github.com/user/repos",
-            {
-                method: "POST",
-                headers,
-                body: JSON.stringify({
-                    name: repoName,
-                    auto_init: true,
-                    private: false,
-                }),
+        // Create Octokit instance
+        const { Octokit } = await import("@octokit/rest");
+        const octokit = new Octokit({ auth: githubToken });
+
+        elizaLogger.log("Creating new repository:", repoName);
+        
+        // First create the repository
+        await octokit.repos.createForAuthenticatedUser({
+            name: repoName,
+            auto_init: true,
+            private: false,
+        });
+
+        // Wait for repository creation
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
+        elizaLogger.log("Repository created, initializing git");
+
+        // Initialize git without fetching
+        await execSync('git init', { cwd: process.cwd() });
+        await execSync('git add .', { cwd: process.cwd() });
+        await execSync('git commit -m "Initial website commit"', { 
+            cwd: process.cwd(),
+            env: {
+                ...process.env,
+                GIT_AUTHOR_NAME: username,
+                GIT_AUTHOR_EMAIL: `${username}@users.noreply.github.com`,
+                GIT_COMMITTER_NAME: username,
+                GIT_COMMITTER_EMAIL: `${username}@users.noreply.github.com`,
             }
-        );
+        });
+        
+        // Add remote and force push to main (since we're not fetching)
+        await execSync(`git remote add origin ${remoteUrl}`, { cwd: process.cwd() });
+        await execSync('git push -f origin HEAD:main', { cwd: process.cwd() });
 
-        if (!createRepoResponse.ok) {
-            const responseText = await createRepoResponse.text();
-            throw new Error(
-                `Failed to create repository: ${createRepoResponse.status} - ${responseText}`
-            );
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        elizaLogger.log("Initializing Git repository");
-        const gitCommands = [
-            "rm -rf .git",
-            "git init",
-            `git config user.name "${username}"`,
-            `git config user.email "${username}@users.noreply.github.com"`,
-            "git add .",
-            'git commit -m "Initial commit"',
-            `git remote add origin https://${username}:${githubToken}@github.com/${username}/${repoName}.git`,
-            "git fetch origin",
-            "git reset --soft origin/main",
-            "git add .",
-            'git commit -m "Initial website files"',
-            "git branch -M main",
-            "git push -f origin main",
-        ];
-
-        gitCommands.forEach((cmd) => {
-            try {
-                elizaLogger.log(
-                    `Executing git command: ${cmd.replace(githubToken, "***")}`
-                );
-                execSync(cmd, { cwd: websiteDir });
-            } catch (gitError) {
-                throw new Error(
-                    `Git command failed: ${cmd.replace(githubToken, "***")}\nError: ${gitError.message}\nStack: ${gitError.stack}`
-                );
+        elizaLogger.log("Website pushed to GitHub successfully");
+        
+        // Enable GitHub Pages
+        await octokit.repos.createPagesSite({
+            owner: username,
+            repo: repoName,
+            source: {
+                branch: "main",
+                path: "/"
             }
         });
 
-        elizaLogger.log("Enabling GitHub Pages");
-        const enablePagesResponse = await fetch(
-            `https://api.github.com/repos/${username}/${repoName}/pages`,
-            {
-                method: "POST",
-                headers,
-                body: JSON.stringify({ source: { branch: "main", path: "/" } }),
-            }
-        );
-
-        if (!enablePagesResponse.ok) {
-            const responseText = await enablePagesResponse.text();
-            throw new Error(
-                `Failed to enable GitHub Pages: ${enablePagesResponse.status} - ${responseText}`
-            );
-        }
-
-        const siteUrl = `https://${username}.github.io/${repoName}`;
-        elizaLogger.log(`Deployment successful. Site URL: ${siteUrl}`);
-        return siteUrl;
+        return `https://${username}.github.io/${repoName}`;
     } catch (error) {
-        elizaLogger.error("Deployment failed:", error);
-        throw new Error(
-            `Deployment failed: ${error.message} (Stack: ${error.stack})`
-        );
+        elizaLogger.error("GitHub deployment failed:", error);
+        throw new Error(`Deployment failed: ${error.message}`);
     }
 };

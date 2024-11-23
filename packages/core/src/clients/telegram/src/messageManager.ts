@@ -316,8 +316,16 @@ export class MessageManager {
         for (let i = 0; i < maxRetries; i++) {
             try {
                 if (method === 'sendMessage') {
+                    if (!await this.hasPermissionToSend(ctx, params.chat_id)) {
+                        console.warn(`Bot lacks permission to send messages in chat ${params.chat_id}`);
+                        return null;
+                    }
                     return await ctx.telegram.sendMessage(params.chat_id, params.text, params.options);
                 } else if (method === 'sendPhoto') {
+                    if (!await this.hasPermissionToSend(ctx, params.chat_id)) {
+                        console.warn(`Bot lacks permission to send photos in chat ${params.chat_id}`);
+                        return null;
+                    }
                     return await ctx.telegram.sendPhoto(params.chat_id, params.photo, params.options);
                 }
             } catch (error) {
@@ -328,10 +336,33 @@ export class MessageManager {
                     await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
                     continue;
                 }
+                if (error?.response?.error_code === 400 && error?.response?.description?.includes('not enough rights')) {
+                    console.warn(`Bot lacks permission in chat ${params.chat_id}: ${error.response.description}`);
+                    return null;
+                }
                 throw error;
             }
         }
         throw lastError;
+    }
+
+    private async hasPermissionToSend(ctx: Context, chatId: number): Promise<boolean> {
+        try {
+            const chat = await ctx.telegram.getChat(chatId);
+            const me = await ctx.telegram.getMe();
+            const member = await ctx.telegram.getChatMember(chatId, me.id);
+            
+            // Check if the bot is an admin (admins don't have explicit can_send_messages)
+            if (member.status === 'administrator' || member.status === 'creator') {
+                return true;
+            }
+            
+            // For regular members, they can send messages by default
+            return member.status === 'member';
+        } catch (error) {
+            console.warn(`Cannot verify permissions for chat ${chatId}:`, error.message);
+            return false;
+        }
     }
 
     private async sendMessageInChunks(
