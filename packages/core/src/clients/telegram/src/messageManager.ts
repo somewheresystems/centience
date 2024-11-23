@@ -17,13 +17,13 @@ import { stringToUuid } from "../../../core/uuid.ts";
 import {
     generateMessageResponse,
     generateShouldRespond,
+    generateTrueOrFalse,
 } from "../../../core/generation.ts";
 import {
     messageCompletionFooter,
     shouldRespondFooter,
 } from "../../../core/parsing.ts";
 import ImageDescriptionService from "../../../services/image.ts";
-import { WEBSITE_GENERATION } from "../../../actions/webgen/index.ts";
 
 const MAX_MESSAGE_LENGTH = 4096; // Telegram's max message length
 
@@ -115,8 +115,6 @@ About {{agentName}}:
 
 Examples of {{agentName}}'s dialog and actions:
 {{characterMessageExamples}}
-More examples of {{agentName}}'s dialog and actions:
-{{characterPostExamples}}
 
 {{providers}}
 
@@ -131,29 +129,45 @@ Note that {{agentName}} is capable of reading/seeing/hearing various forms of me
 
 {{recentMessages}}
 
-# Instructions: Write the next message for {{agentName}}. Respond to the last message. Include an action, if appropriate. {{actionNames}}
+# Instructions: Write the next message for {{agentName}}. Include an action, if appropriate. {{actionNames}}
 ` + messageCompletionFooter;
+
+const telegramShouldGenerateImageTemplate = `# Task: Decide if {{agentName}} should generate an image.
+
+# INSTRUCTIONS: Determine if the user is requesting image generation. Respond with "RESPOND", "IGNORE", or "STOP".
+
+# RESPONSE EXAMPLES
+<user>: can you generate an image of a cat
+Result: RESPOND
+
+<user>: make me a picture of mountains 
+Result: RESPOND
+
+<user>: draw me something beautiful
+Result: RESPOND
+
+<user>: can you show me what that would look like?
+Result: RESPOND
+
+<user>: what do you think about cats?
+Result: IGNORE
+
+<user>: hey can you help me with something
+Result: IGNORE
+
+<user>: describe a mountain landscape
+Result: IGNORE
+`;
 
 export class MessageManager {
     private bot: Telegraf<Context>;
     private runtime: IAgentRuntime;
     private imageService: ImageDescriptionService;
-    private initialized: boolean = false;
 
     constructor(bot: Telegraf<Context>, runtime: IAgentRuntime) {
-        if (!bot || !runtime) {
-            throw new Error("Bot and runtime are required for MessageManager");
-        }
         this.bot = bot;
         this.runtime = runtime;
         this.imageService = ImageDescriptionService.getInstance(this.runtime);
-        this.initialized = true;
-    }
-
-    private checkInitialized() {
-        if (!this.initialized) {
-            throw new Error("MessageManager not properly initialized");
-        }
     }
 
     // Process image messages and generate descriptions
@@ -206,25 +220,30 @@ export class MessageManager {
         message: Message,
         state: State
     ): Promise<boolean> {
-        // Skip empty messages
-        if (!("text" in message || "caption" in message)) {
-            return false;
+        // Respond if bot is mentioned
+
+        if (
+            "text" in message &&
+            message.text?.includes(`@${this.bot.botInfo?.username}`)
+        ) {
+            return true;
         }
 
-        // Always respond to private chats
+        // Respond to private chats
         if (message.chat.type === "private") {
             return true;
         }
 
-        // // Always respond to group chats
-        // if (
-        //     message.chat.type === "group" ||
-        //     message.chat.type === "supergroup"
-        // ) {
-        //     return true;
-        // }
+        // Respond to images in group chats
+        if (
+            "photo" in message ||
+            ("document" in message &&
+                message.document?.mime_type?.startsWith("image/"))
+        ) {
+            return false;
+        }
 
-        // Use AI to decide for text or captions in all other cases
+        // Use AI to decide for text or captions
         if ("text" in message || ("caption" in message && message.caption)) {
             const shouldRespondContext = composeContext({
                 state,
@@ -247,7 +266,74 @@ export class MessageManager {
         return false; // No criteria met
     }
 
+    // Add this method after _shouldRespond
+    private async _shouldGenerateImage(text: string, state: State): Promise<boolean> {
+        const imageAction = this.runtime.actions.find(
+            action => action.name === "GENERATE_IMAGE"
+        );
+        
+        if (!imageAction || !imageAction.validate) {
+            return false;
+        }
+
+        const memory: Memory = {
+            userId: state.userId,
+            agentId: this.runtime.agentId,
+            roomId: state.roomId,
+            content: { text },
+            createdAt: Date.now(),
+            embedding: embeddingZeroVector,
+            id: stringToUuid(Date.now().toString())
+        };
+
+        const isValid = await imageAction.validate(this.runtime, memory);
+        if (!isValid) {
+            return false;
+        }
+
+        const shouldGenerateContext = composeContext({
+            state,
+            template: telegramShouldGenerateImageTemplate,
+        });
+
+        const response = await generateShouldRespond({
+            runtime: this.runtime,
+            context: shouldGenerateContext,
+            modelClass: ModelClass.SMALL,
+        });
+
+        return response === "RESPOND";
+    }
+
     // Send long messages in chunks
+    private async sendWithRetry(
+        ctx: Context,
+        method: 'sendMessage' | 'sendPhoto',
+        params: any,
+        maxRetries = 3
+    ): Promise<any> {
+        let lastError;
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                if (method === 'sendMessage') {
+                    return await ctx.telegram.sendMessage(params.chat_id, params.text, params.options);
+                } else if (method === 'sendPhoto') {
+                    return await ctx.telegram.sendPhoto(params.chat_id, params.photo, params.options);
+                }
+            } catch (error) {
+                lastError = error;
+                if (error?.response?.error_code === 429) {
+                    const retryAfter = error?.response?.parameters?.retry_after || 10;
+                    console.log(`Rate limited. Waiting ${retryAfter} seconds before retry ${i + 1}/${maxRetries}`);
+                    await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+                    continue;
+                }
+                throw error;
+            }
+        }
+        throw lastError;
+    }
+
     private async sendMessageInChunks(
         ctx: Context,
         content: string,
@@ -258,16 +344,19 @@ export class MessageManager {
 
         for (let i = 0; i < chunks.length; i++) {
             const chunk = chunks[i];
-            const sentMessage = (await ctx.telegram.sendMessage(
-                ctx.chat.id,
-                chunk,
+            const sentMessage = await this.sendWithRetry(
+                ctx,
+                'sendMessage',
                 {
-                    reply_parameters:
-                        i === 0 && replyToMessageId
+                    chat_id: ctx.chat.id,
+                    text: chunk,
+                    options: {
+                        reply_parameters: i === 0 && replyToMessageId
                             ? { message_id: replyToMessageId }
                             : undefined,
+                    }
                 }
-            )) as Message.TextMessage;
+            ) as Message.TextMessage;
 
             sentMessages.push(sentMessage);
         }
@@ -301,25 +390,10 @@ export class MessageManager {
         context: string
     ): Promise<Content> {
         const { userId, roomId } = message;
-        console.log("🤖 Generating response for message:", message);
-        console.log(context);
-
-        const memories = await this.runtime.messageManager.getMemories({
-            // roomId: state.roomId,
-            count: 50,
-            unique: true,
-        });
-        let contextWithMemories = context;
-        if (message.content?.text) {
-            contextWithMemories += `\n${message.content.text}`; // Add current message first
-        }
-        contextWithMemories = memories.reduce((acc, memory) => {
-            return acc + `\n${memory.content.text}`;
-        }, contextWithMemories);
 
         const response = await generateMessageResponse({
             runtime: this.runtime,
-            context: contextWithMemories,
+            context,
             modelClass: ModelClass.LARGE,
         });
 
@@ -339,10 +413,14 @@ export class MessageManager {
 
     // Main handler for incoming messages
     public async handleMessage(ctx: Context): Promise<void> {
-        this.checkInitialized();
         if (!ctx.message || !ctx.from) {
             return; // Exit if no message or sender info
         }
+
+        // TODO: Handle commands?
+        // if (ctx.message.text?.startsWith("/")) {
+        //     return;
+        // }
 
         const message = ctx.message;
 
@@ -371,6 +449,8 @@ export class MessageManager {
 
             // Handle images
             const imageInfo = await this.processImage(message);
+
+            // Get text or caption
             let messageText = "";
             if ("text" in message) {
                 messageText = message.text;
@@ -378,6 +458,7 @@ export class MessageManager {
                 messageText = message.caption;
             }
 
+            // Combine text and image description
             const fullText = imageInfo
                 ? `${messageText} ${imageInfo.description}`
                 : messageText;
@@ -399,6 +480,7 @@ export class MessageManager {
                         : undefined,
             };
 
+            // Create memory for the message
             const memory: Memory = {
                 id: messageId,
                 agentId,
@@ -411,53 +493,15 @@ export class MessageManager {
 
             await this.runtime.messageManager.createMemory(memory);
 
+            // Update state with the new memory
             let state = await this.runtime.composeState(memory);
             state = await this.runtime.updateRecentMessageState(state);
-
-            // Check if the message should trigger website generation
-            // const shouldGenerateWebsite = await WEBSITE_GENERATION.validate(
-            //     this.runtime,
-            //     memory,
-            //     state
-            // );
-
-            // if (shouldGenerateWebsite) {
-            //     await WEBSITE_GENERATION.handler(
-            //         this.runtime,
-            //         memory,
-            //         state,
-            //         {},
-            //         async (response) => {
-            //             await ctx.reply(response.text);
-            //             return [];
-            //         }
-            //     );
-            //     return;
-            // }
 
             // Decide whether to respond
             const shouldRespond = await this._shouldRespond(message, state);
             if (!shouldRespond) return;
 
-            // Generate response
-            const context = composeContext({
-                state,
-                template:
-                    this.runtime.character.templates
-                        ?.telegramMessageHandlerTemplate ||
-                    this.runtime.character?.templates?.messageHandlerTemplate ||
-                    telegramMessageHandlerTemplate,
-            });
-
-            const responseContent = await this._generateResponse(
-                memory,
-                state,
-                context
-            );
-
-            if (!responseContent || !responseContent.text) return;
-
-            // Send response in chunks
+            // Define callback first
             const callback: HandlerCallback = async (content: Content) => {
                 const sentMessages = await this.sendMessageInChunks(
                     ctx,
@@ -467,6 +511,7 @@ export class MessageManager {
 
                 const memories: Memory[] = [];
 
+                // Create memories for each sent message
                 for (let i = 0; i < sentMessages.length; i++) {
                     const sentMessage = sentMessages[i];
                     const isLastMessage = i === sentMessages.length - 1;
@@ -497,11 +542,75 @@ export class MessageManager {
                 return memories;
             };
 
+            // Check for image generation request
+            const shouldGenerateImage = await this._shouldGenerateImage(fullText, state);
+            if (shouldGenerateImage) {
+                const imageAction = this.runtime.actions.find(
+                    action => action.name === "GENERATE_IMAGE"
+                );
+                
+                if (imageAction && imageAction.handler) {
+                    await imageAction.handler(
+                        this.runtime,
+                        memory,
+                        state,
+                        {},
+                        async (content: Content, tempFiles: string[] = []) => {
+                            try {
+                                if (content.text) {
+                                    await this.sendMessageInChunks(ctx, content.text, message.message_id);
+                                }
+                                
+                                if (content.files && Array.isArray(content.files) && content.files.length > 0) {
+                                    for (const file of content.files) {
+                                        await this.sendWithRetry(
+                                            ctx,
+                                            'sendPhoto',
+                                            {
+                                                chat_id: ctx.chat.id,
+                                                photo: { source: file.attachment },
+                                                options: {}
+                                            }
+                                        );
+                                    }
+                                }
+                            } catch (error) {
+                                console.error("Error sending message/image:", error);
+                                throw error;
+                            }
+                            return [];
+                        }
+                    );
+                    return;
+                }
+            }
+
+            // Generate response
+            const context = composeContext({
+                state,
+                template:
+                    this.runtime.character.templates
+                        ?.telegramMessageHandlerTemplate ||
+                    this.runtime.character?.templates?.messageHandlerTemplate ||
+                    telegramMessageHandlerTemplate,
+            });
+
+            const responseContent = await this._generateResponse(
+                memory,
+                state,
+                context
+            );
+
+            if (!responseContent || !responseContent.text) return;
+
+            // Execute callback to send messages and log memories
             const responseMessages = await callback(responseContent);
 
+            // Update state after response
             state = await this.runtime.updateRecentMessageState(state);
             await this.runtime.evaluate(memory, state);
 
+            // Handle any resulting actions
             await this.runtime.processActions(
                 memory,
                 responseMessages,
