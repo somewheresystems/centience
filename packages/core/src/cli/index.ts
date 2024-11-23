@@ -26,11 +26,6 @@ export async function initializeClients(
     const clientTypes =
         character.clients?.map((str) => str.toLowerCase()) || [];
 
-    // if (clientTypes.includes("webgen")) {
-    //     const webgenClient = initializeWebgenClient(runtime);
-    //     if (webgenClient) clients.push(webgenClient);
-    // }
-
     elizaLogger.log("clientTypes", clientTypes);
     if (clientTypes.includes("twitter")) {
         const twitterClients = await startTwitter(runtime);
@@ -266,22 +261,4 @@ export async function startTwitter(runtime: IAgentRuntime) {
         twitterSearchClient,
         twitterGenerationClient,
     ];
-}
-
-export function initializeWebgenClient(runtime: IAgentRuntime) {
-    if (
-        runtime.getSetting("GITHUB_USERNAME") &&
-        runtime.getSetting("GITHUB_TOKEN")
-    ) {
-        console.log("Initializing website generator client...");
-        const client = new Client.WebgenClient(runtime);
-        console.log(
-            `Website generator client initialized for GitHub user: ${runtime.getSetting("GITHUB_USERNAME")}`
-        );
-        return client;
-    }
-    console.log(
-        "Website generator client not initialized - missing GITHUB_USERNAME or GITHUB_TOKEN"
-    );
-    return null;
 }
