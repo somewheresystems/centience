@@ -4,7 +4,8 @@ node_modules
 .env
 concatenated-output.ts
 embedding-cache.json
-
+packages/agent/temp/*
+*.png
 .DS_Store
 
 dist/
