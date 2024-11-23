@@ -149,6 +149,10 @@ const interestWords = [
     "summary",
     "research",
     "website",
+    "game",
+    "make",
+    "build",
+    "fix",
 ];
 
 const cringeWords = [

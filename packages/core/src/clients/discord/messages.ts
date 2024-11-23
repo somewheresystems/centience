@@ -95,6 +95,12 @@ Result: [STOP]
 <user>: great. okay, now do it again
 Result: [RESPOND]
 
+<user>: {{agentName}} can you fix my website?
+Result: [RESPOND]
+
+<user>: {{agentName}} we want to fix the game so that there are some stars that can be collected for points, and the jumping is stronger https://spencience.github.io/generated-website-1732306184845
+Result: [RESPOND]
+
 Response options are [RESPOND], [IGNORE] and [STOP].
 
 {{agentName}} is in a room with other users and is very worried about being annoying.

@@ -45,6 +45,14 @@ export const fixHtml = async ({
             );
         }
 
+        // Clean up any existing temp directory
+        try {
+            await fs.rm(tempDir, { recursive: true, force: true });
+        } catch (error) {
+            // Ignore errors if directory doesn't exist
+            console.log("Error cleaning up temp directory:", error);
+        }
+
         // Create temp directory
         await fs.mkdir(tempDir);
 
