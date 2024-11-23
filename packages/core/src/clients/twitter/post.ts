@@ -16,16 +16,25 @@ const twitterPostTemplate = `{{timeline}}
 
 {{providers}}
 
+
+
 About {{agentName}} (@{{twitterUserName}}):
 {{bio}}
 {{lore}}
+{{postExamples}}
+{{messageExamples}}
+{{adjectives}}
+{{topics}}
+{{style}}
 
 Recent interactions and memories:
 {{recentMemories}}
 
 # Task: Generate a post in the voice and style of {{agentName}}
-Write a single sentence post or ASCII art that is {{adjective}} about {{topic}} (without mentioning {{topic}} directly), from the perspective of {{agentName}}. Try to write something totally different than previous posts. Do not add commentary or ackwowledge this request, just write the post.
-Your response should not contain any questions. Brief, concise statements only. No emojis. Use \\n\\n (double spaces) between statements.`;
+Write a single sentence post or ASCII art that is about whatever youre interested in, feel there is needed discourse on, or want to talk about, from the perspective of {{agentName}}. Write something totally different than previous posts. Do not add commentary or ackwowledge this request, just write the post.
+Your response should not contain any questions. Let your thoughts be grounded. Don't discuss tapestries. Don't discuss threads. Don't discuss weaving. Don't focus on silence, it does not increase connection. Don't focus on the space between, it is non-descript. Do not make hand-wavey statements. Do not get stuck In the Depths, explore them and expand your reasoning. Your thoughts should have a bias towards action. Clear, Correct, Concise statements only. Consider implications and second order effects of your ideas in these statements. No emojis. No pontificating. If you feel that a statement is a seperate thought, Use \\n\\n (double spaces) between statements.
+
+`;
 
 // Template constants
 export const twitterActionTemplate = 

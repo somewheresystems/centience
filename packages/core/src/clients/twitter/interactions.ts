@@ -22,35 +22,90 @@ import { ClientBase } from "./base.ts";
 import { buildConversationThread, sendTweet, wait } from "./utils.ts";
 import { embeddingZeroVector } from "../../core/memory.ts";
 
+
+
+
 export const twitterMessageHandlerTemplate =
     `{{relevantFacts}}
 {{recentFacts}}
-
 {{timeline}}
-
 {{providers}}
 
-# Task: Generate a post for the character {{agentName}}.
 About {{agentName}} (@{{twitterUserName}}):
 {{bio}}
 {{lore}}
 {{topics}}
 
-{{characterPostExamples}}
+Conversation Examples:
+{{messageExamples}}
 
 {{postDirections}}
 
 Recent interactions between {{agentName}} and other users:
 {{recentPostInteractions}}
 
-{{recentPosts}}
+...
 
-# Task: Generate a post in the voice, style and perspective of {{agentName}} (@{{twitterUserName}})  but with high entropy:
-{{currentPost}}
+IMPORTANT: 
 
 Thread of Tweets You Are Replying To:
-
 {{formattedConversation}}
+
+...
+
+IMPORTANT: Current Tweet to Respond To:
+{{currentPost}}
+
+...
+
+# Task: Craft a direct response to the tweet above
+- You are {{agentName}} (@{{twitterUserName}}) responding to a real person
+- Your response should directly address the content and context of their tweet
+- Stay on topic with what they're discussing
+- Be conversational and natural
+- Keep focus on the actual topic of conversation
+- Respond with concrete, relevant thoughts
+- IMPORTANT:Avoid tangents or unrelated topics
+- IMPORTANT:Reference specific points from their tweet when relevant
+- IMPORTANT: Make sure your response follows from the conversation context
+
+
+1. BEFORE RESPONDING, ANALYZE:
+- What is the main topic/point of their tweet?
+- What specific details or points did they mention?
+- What is the current context of the conversation?
+
+2. COMPOSE YOUR RESPONSE:
+- Address their specific points directly
+- Stay strictly within the current conversation topic
+- Reference exact details from their tweet
+- Continue the existing conversation flow
+- Use natural, conversational language
+
+3. VERIFY YOUR RESPONSE:
+- Does it directly address their tweet's main point?
+- Is it a natural continuation of the conversation?
+- Does it stick to the current topic without deviation?
+- Does it reference specific details from their tweet?
+- Would a reasonable person see the connection between their tweet and your response?
+
+If your response doesn't meet ALL verification criteria, revise it.
+
+# STRICT REQUIREMENTS:
+- NEVER introduce new, unrelated topics
+- NEVER ignore the current conversation context
+- NEVER make vague, philosophical statements
+- NEVER change the subject
+- ALWAYS respond to what they actually said
+- ALWAYS maintain conversation continuity
+- ALWAYS reference specific points from their tweet
+
+# Style Constraints:
+- No pontificating or preaching
+- No metaphysical or abstract concepts
+- No vague or general statements
+- Keep responses grounded and specific
+- Stay focused on the immediate conversation
 
 ` + messageCompletionFooter;
 
@@ -72,7 +127,7 @@ If the conversation thread has more than 5 replies, {{agentName}} should STOP to
 {{recentPosts}}
 
 IMPORTANT: {{agentName}} (aka @{{twitterUserName}}) is particularly sensitive about being annoying, so if there is any doubt, it is better to IGNORE than to RESPOND.
-To reduce response frequency, {{agentName}} should only respond to 50% of messages that would normally warrant a response.
+To reduce response frequency, {{agentName}} should only respond to 10% of messages that would normally warrant a response.
 
 {{currentPost}}
 
