@@ -17,6 +17,7 @@ import { stringToUuid } from "../../../core/uuid.ts";
 import {
     generateMessageResponse,
     generateShouldRespond,
+    generateTrueOrFalse,
 } from "../../../core/generation.ts";
 import {
     messageCompletionFooter,
@@ -131,6 +132,33 @@ Note that {{agentName}} is capable of reading/seeing/hearing various forms of me
 # Instructions: Write the next message for {{agentName}}. Include an action, if appropriate. {{actionNames}}
 ` + messageCompletionFooter;
 
+const telegramShouldGenerateImageTemplate = `# Task: Decide if {{agentName}} should generate an image.
+
+# INSTRUCTIONS: Determine if the user is requesting image generation. Respond with "RESPOND", "IGNORE", or "STOP".
+
+# RESPONSE EXAMPLES
+<user>: can you generate an image of a cat
+Result: RESPOND
+
+<user>: make me a picture of mountains 
+Result: RESPOND
+
+<user>: draw me something beautiful
+Result: RESPOND
+
+<user>: can you show me what that would look like?
+Result: RESPOND
+
+<user>: what do you think about cats?
+Result: IGNORE
+
+<user>: hey can you help me with something
+Result: IGNORE
+
+<user>: describe a mountain landscape
+Result: IGNORE
+`;
+
 export class MessageManager {
     private bot: Telegraf<Context>;
     private runtime: IAgentRuntime;
@@ -238,7 +266,74 @@ export class MessageManager {
         return false; // No criteria met
     }
 
+    // Add this method after _shouldRespond
+    private async _shouldGenerateImage(text: string, state: State): Promise<boolean> {
+        const imageAction = this.runtime.actions.find(
+            action => action.name === "GENERATE_IMAGE"
+        );
+        
+        if (!imageAction || !imageAction.validate) {
+            return false;
+        }
+
+        const memory: Memory = {
+            userId: state.userId,
+            agentId: this.runtime.agentId,
+            roomId: state.roomId,
+            content: { text },
+            createdAt: Date.now(),
+            embedding: embeddingZeroVector,
+            id: stringToUuid(Date.now().toString())
+        };
+
+        const isValid = await imageAction.validate(this.runtime, memory);
+        if (!isValid) {
+            return false;
+        }
+
+        const shouldGenerateContext = composeContext({
+            state,
+            template: telegramShouldGenerateImageTemplate,
+        });
+
+        const response = await generateShouldRespond({
+            runtime: this.runtime,
+            context: shouldGenerateContext,
+            modelClass: ModelClass.SMALL,
+        });
+
+        return response === "RESPOND";
+    }
+
     // Send long messages in chunks
+    private async sendWithRetry(
+        ctx: Context,
+        method: 'sendMessage' | 'sendPhoto',
+        params: any,
+        maxRetries = 3
+    ): Promise<any> {
+        let lastError;
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                if (method === 'sendMessage') {
+                    return await ctx.telegram.sendMessage(params.chat_id, params.text, params.options);
+                } else if (method === 'sendPhoto') {
+                    return await ctx.telegram.sendPhoto(params.chat_id, params.photo, params.options);
+                }
+            } catch (error) {
+                lastError = error;
+                if (error?.response?.error_code === 429) {
+                    const retryAfter = error?.response?.parameters?.retry_after || 10;
+                    console.log(`Rate limited. Waiting ${retryAfter} seconds before retry ${i + 1}/${maxRetries}`);
+                    await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+                    continue;
+                }
+                throw error;
+            }
+        }
+        throw lastError;
+    }
+
     private async sendMessageInChunks(
         ctx: Context,
         content: string,
@@ -249,16 +344,19 @@ export class MessageManager {
 
         for (let i = 0; i < chunks.length; i++) {
             const chunk = chunks[i];
-            const sentMessage = (await ctx.telegram.sendMessage(
-                ctx.chat.id,
-                chunk,
+            const sentMessage = await this.sendWithRetry(
+                ctx,
+                'sendMessage',
                 {
-                    reply_parameters:
-                        i === 0 && replyToMessageId
+                    chat_id: ctx.chat.id,
+                    text: chunk,
+                    options: {
+                        reply_parameters: i === 0 && replyToMessageId
                             ? { message_id: replyToMessageId }
                             : undefined,
+                    }
                 }
-            )) as Message.TextMessage;
+            ) as Message.TextMessage;
 
             sentMessages.push(sentMessage);
         }
@@ -403,25 +501,7 @@ export class MessageManager {
             const shouldRespond = await this._shouldRespond(message, state);
             if (!shouldRespond) return;
 
-            // Generate response
-            const context = composeContext({
-                state,
-                template:
-                    this.runtime.character.templates
-                        ?.telegramMessageHandlerTemplate ||
-                    this.runtime.character?.templates?.messageHandlerTemplate ||
-                    telegramMessageHandlerTemplate,
-            });
-
-            const responseContent = await this._generateResponse(
-                memory,
-                state,
-                context
-            );
-
-            if (!responseContent || !responseContent.text) return;
-
-            // Send response in chunks
+            // Define callback first
             const callback: HandlerCallback = async (content: Content) => {
                 const sentMessages = await this.sendMessageInChunks(
                     ctx,
@@ -461,6 +541,67 @@ export class MessageManager {
 
                 return memories;
             };
+
+            // Check for image generation request
+            const shouldGenerateImage = await this._shouldGenerateImage(fullText, state);
+            if (shouldGenerateImage) {
+                const imageAction = this.runtime.actions.find(
+                    action => action.name === "GENERATE_IMAGE"
+                );
+                
+                if (imageAction && imageAction.handler) {
+                    await imageAction.handler(
+                        this.runtime,
+                        memory,
+                        state,
+                        {},
+                        async (content: Content, tempFiles: string[] = []) => {
+                            try {
+                                if (content.text) {
+                                    await this.sendMessageInChunks(ctx, content.text, message.message_id);
+                                }
+                                
+                                if (content.files && Array.isArray(content.files) && content.files.length > 0) {
+                                    for (const file of content.files) {
+                                        await this.sendWithRetry(
+                                            ctx,
+                                            'sendPhoto',
+                                            {
+                                                chat_id: ctx.chat.id,
+                                                photo: { source: file.attachment },
+                                                options: {}
+                                            }
+                                        );
+                                    }
+                                }
+                            } catch (error) {
+                                console.error("Error sending message/image:", error);
+                                throw error;
+                            }
+                            return [];
+                        }
+                    );
+                    return;
+                }
+            }
+
+            // Generate response
+            const context = composeContext({
+                state,
+                template:
+                    this.runtime.character.templates
+                        ?.telegramMessageHandlerTemplate ||
+                    this.runtime.character?.templates?.messageHandlerTemplate ||
+                    telegramMessageHandlerTemplate,
+            });
+
+            const responseContent = await this._generateResponse(
+                memory,
+                state,
+                context
+            );
+
+            if (!responseContent || !responseContent.text) return;
 
             // Execute callback to send messages and log memories
             const responseMessages = await callback(responseContent);
