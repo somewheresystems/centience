@@ -198,79 +198,104 @@ export class ClientBase extends EventEmitter {
 
         // async initialization
         (async () => {
+            console.log("Starting Twitter client initialization...");
             // Check for Twitter cookies
             if (this.runtime.getSetting("TWITTER_COOKIES")) {
+                console.log("Found Twitter cookies in runtime settings");
                 const cookiesArray = JSON.parse(
                     this.runtime.getSetting("TWITTER_COOKIES")
                 );
                 await this.setCookiesFromArray(cookiesArray);
+                console.log("Successfully set cookies from runtime settings");
             } else {
+                console.log("No cookies in runtime settings, checking file...");
                 console.log("Cookies file path:", cookiesFilePath);
                 if (fs.existsSync(cookiesFilePath)) {
+                    console.log("Found cookies file, loading cookies...");
                     const cookiesArray = JSON.parse(
                         fs.readFileSync(cookiesFilePath, "utf-8")
                     );
                     await this.setCookiesFromArray(cookiesArray);
+                    console.log("Successfully loaded and set cookies from file");
                 } else {
-                    await this.twitterClient.login(
-                        this.runtime.getSetting("TWITTER_USERNAME"),
-                        this.runtime.getSetting("TWITTER_PASSWORD"),
-                        this.runtime.getSetting("TWITTER_EMAIL")
-                    );
-                    console.log("Logged in to Twitter");
-                    const cookies = await this.twitterClient.getCookies();
-                    fs.writeFileSync(
-                        cookiesFilePath,
-                        JSON.stringify(cookies),
-                        "utf-8"
-                    );
+                    console.log("No cookies file found, attempting direct login...");
+                    try {
+                        await this.twitterClient.login(
+                            this.runtime.getSetting("TWITTER_USERNAME"),
+                            this.runtime.getSetting("TWITTER_PASSWORD"),
+                            this.runtime.getSetting("TWITTER_EMAIL")
+                        );
+                        console.log("Successfully logged in to Twitter");
+                        const cookies = await this.twitterClient.getCookies();
+                        fs.writeFileSync(
+                            cookiesFilePath,
+                            JSON.stringify(cookies),
+                            "utf-8"
+                        );
+                        console.log("Successfully saved cookies to file");
+                    } catch (error) {
+                        console.error("Failed to login to Twitter:", error);
+                    }
                 }
             }
 
             let loggedInWaits = 0;
+            console.log("Checking login status...");
 
             while (!(await this.twitterClient.isLoggedIn())) {
-                console.log("Waiting for Twitter login");
+                console.log(`Login check attempt ${loggedInWaits + 1} of 10...`);
                 await new Promise((resolve) => setTimeout(resolve, 2000));
                 if (loggedInWaits > 10) {
-                    console.error("Failed to login to Twitter");
-                    await this.twitterClient.login(
-                        this.runtime.getSetting("TWITTER_USERNAME"),
-                        this.runtime.getSetting("TWITTER_PASSWORD"),
-                        this.runtime.getSetting("TWITTER_EMAIL")
-                    );
-
-                    const cookies = await this.twitterClient.getCookies();
-                    fs.writeFileSync(
-                        cookiesFilePath,
-                        JSON.stringify(cookies),
-                        "utf-8"
-                    );
-                    loggedInWaits = 0;
+                    console.error("Max login attempts reached, trying fresh login");
+                    try {
+                        await this.twitterClient.login(
+                            this.runtime.getSetting("TWITTER_USERNAME"),
+                            this.runtime.getSetting("TWITTER_PASSWORD"),
+                            this.runtime.getSetting("TWITTER_EMAIL")
+                        );
+                        console.log("Fresh login successful");
+                        const cookies = await this.twitterClient.getCookies();
+                        fs.writeFileSync(
+                            cookiesFilePath,
+                            JSON.stringify(cookies),
+                            "utf-8"
+                        );
+                        console.log("Saved new cookies after fresh login");
+                        loggedInWaits = 0;
+                    } catch (error) {
+                        console.error("Fresh login attempt failed:", error);
+                    }
                 }
                 loggedInWaits++;
             }
+
+            console.log("Successfully logged in, getting user ID...");
             const userId = await this.requestQueue.add(async () => {
-                // wait 3 seconds before getting the user id
+                console.log("Waiting 10 seconds before user ID request...");
                 await new Promise((resolve) => setTimeout(resolve, 10000));
                 try {
-                    return await this.twitterClient.getUserIdByScreenName(
+                    const id = await this.twitterClient.getUserIdByScreenName(
                         this.runtime.getSetting("TWITTER_USERNAME")
                     );
+                    console.log("Successfully retrieved user ID:", id);
+                    return id;
                 } catch (error) {
                     console.error("Error getting user ID:", error);
                     return null;
                 }
             });
             if (!userId) {
-                console.error("Failed to get user ID");
+                console.error("Failed to get user ID, initialization failed");
                 return;
             }
             console.log("Twitter user ID:", userId);
             this.twitterUserId = userId;
 
+            console.log("Populating timeline...");
             await this.populateTimeline();
+            console.log("Timeline populated successfully");
 
+            console.log("Twitter client initialization complete, calling onReady");
             this.onReady();
         })();
     }
@@ -284,7 +309,7 @@ export class ClientBase extends EventEmitter {
         return homeTimeline
             .filter((t) => t.__typename !== "TweetWithVisibilityResults")
             .map((tweet) => {
-                console.log("tweet is", tweet);
+                // console.log("tweet is", tweet);
                 const obj = {
                     id: tweet.rest_id,
                     name:
@@ -321,7 +346,7 @@ export class ClientBase extends EventEmitter {
                         [],
                 };
 
-                console.log("obj is", obj);
+                // console.log("obj is", obj);
 
                 return obj;
             });

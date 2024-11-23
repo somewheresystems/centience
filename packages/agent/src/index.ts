@@ -52,7 +52,8 @@ export async function createAgent(
         providers: [
             timeProvider,
             boredomProvider,
-            (character.settings?.secrets?.WALLET_PUBLIC_KEY !== undefined) && walletProvider,
+            character.settings?.secrets?.WALLET_PUBLIC_KEY !== undefined &&
+                walletProvider,
         ].filter(Boolean),
         actions: [
             ...defaultActions,
@@ -134,12 +135,19 @@ async function handleUserInput(input) {
             }
         );
 
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`API request failed: ${errorText}`);
+        }
+
         const data = await response.json();
+
         data.forEach((message) =>
             console.log(`${characters[0].name}: ${message.text}`)
         );
     } catch (error) {
-        console.error("Error fetching response:", error);
+        console.error("Error handling user input:", error);
+        throw error;
     }
 
     chat();

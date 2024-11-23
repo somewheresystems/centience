@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
         "target": "ESNext",
-        "module": "ESNext",
+        "module": "Node16",
         "lib": ["ESNext", "dom"],
-        "moduleResolution": "Bundler",
+        "moduleResolution": "node16",
         "outDir": "./dist",
         "rootDir": ".",
         "strict": false,

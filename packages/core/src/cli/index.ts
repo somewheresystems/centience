@@ -26,6 +26,12 @@ export async function initializeClients(
     const clientTypes =
         character.clients?.map((str) => str.toLowerCase()) || [];
 
+    elizaLogger.log("clientTypes", clientTypes);
+    if (clientTypes.includes("twitter")) {
+        const twitterClients = await startTwitter(runtime);
+        clients.push(...twitterClients);
+    }
+
     if (clientTypes.includes("discord")) {
         clients.push(startDiscord(runtime));
     }
@@ -33,11 +39,6 @@ export async function initializeClients(
     if (clientTypes.includes("telegram")) {
         const telegramClient = await startTelegram(runtime, character);
         if (telegramClient) clients.push(telegramClient);
-    }
-
-    if (clientTypes.includes("twitter")) {
-        const twitterClients = await startTwitter(runtime);
-        clients.push(...twitterClients);
     }
 
     return clients;

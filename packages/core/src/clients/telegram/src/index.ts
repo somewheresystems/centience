@@ -54,13 +54,36 @@ export class TelegramClient {
     public async start(): Promise<void> {
         elizaLogger.log("🚀 Starting Telegram bot...");
         try {
-            this.bot.launch({
-                dropPendingUpdates: true,
-            });
+            // Add debug logging before launch
+            elizaLogger.log("Attempting to launch bot...");
+
+            await this.bot
+                .launch({
+                    dropPendingUpdates: true,
+                })
+                .catch((error) => {
+                    elizaLogger.error("Failed during bot.launch():", error);
+                    throw error;
+                });
+
             elizaLogger.log(
                 "✨ Telegram bot successfully launched and is running!"
             );
             elizaLogger.log(`Bot username: @${this.bot.botInfo?.username}`);
+
+            // Send test message on startup
+            const testMessage =
+                "🤖 Bot has started successfully and is ready to receive messages!";
+            try {
+                const me = await this.bot.telegram.getMe();
+                await this.bot.telegram.sendMessage(me.id, testMessage);
+                elizaLogger.log("✅ Startup test message sent successfully");
+            } catch (error) {
+                elizaLogger.error(
+                    "❌ Failed to send startup test message:",
+                    error
+                );
+            }
 
             // Graceful shutdown handlers
             const shutdownHandler = async (signal: string) => {

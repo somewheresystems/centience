@@ -464,7 +464,7 @@ export interface IMemoryManager {
 
     addEmbeddingToMemory(memory: Memory): Promise<Memory>;
     getMemories(opts: {
-        roomId: UUID;
+        roomId?: UUID;
         count?: number;
         unique?: boolean;
         agentId?: UUID;
@@ -612,6 +612,20 @@ export interface ISpeechService {
 
 export interface IPdfService {
     convertPdfToText(pdfBuffer: Buffer): Promise<string>;
+}
+
+export interface WebsiteCreationResult {
+    url: string;
+    title: string;
+    success: boolean;
+    message: string;
+}
+
+export interface WebsiteCreationResult {
+    url: string;
+    title: string;
+    success: boolean;
+    message: string;
 }
 
 export interface TweetAction {

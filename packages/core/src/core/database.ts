@@ -39,7 +39,7 @@ export abstract class DatabaseAdapter implements IDatabaseAdapter {
      * @returns A Promise that resolves to an array of Memory objects.
      */
     abstract getMemories(params: {
-        roomId: UUID;
+        roomId?: UUID;
         count?: number;
         unique?: boolean;
         tableName: string;

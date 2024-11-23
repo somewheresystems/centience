@@ -13,6 +13,8 @@ import {
     ModelClass,
     State,
 } from "../../../core/types.ts";
+import { elizaLogger } from "../../../index.ts";
+
 export const summarizationTemplate = `# Summarized so far (we are adding to this)
 {{currentSummary}}
 
@@ -44,6 +46,7 @@ const getAttachmentIds = async (
     message: Memory,
     state: State
 ): Promise<{ objective: string; attachmentIds: string[] } | null> => {
+    elizaLogger.log("Getting attachment IDs from message...");
     state = (await runtime.composeState(message)) as State;
 
     const context = composeContext({
@@ -52,12 +55,12 @@ const getAttachmentIds = async (
     });
 
     for (let i = 0; i < 5; i++) {
+        elizaLogger.log(`Attempt ${i + 1} to parse attachment IDs`);
         const response = await generateText({
             runtime,
             context,
             modelClass: ModelClass.LARGE,
         });
-        console.log("response", response);
         // try parsing to a json object
         const parsedResponse = parseJSONObjectFromText(response) as {
             objective: string;
@@ -65,9 +68,11 @@ const getAttachmentIds = async (
         } | null;
         // see if it contains objective and attachmentIds
         if (parsedResponse?.objective && parsedResponse?.attachmentIds) {
+            elizaLogger.success("Successfully parsed attachment IDs:", parsedResponse);
             return parsedResponse;
         }
     }
+    elizaLogger.error("Failed to parse attachment IDs after 5 attempts");
     return null;
 };
 
@@ -93,7 +98,9 @@ const summarizeAction = {
     description:
         "Answer a user request informed by specific attachments based on their IDs. If a user asks to chat with a PDF, or wants more specific information about a link or video or anything else they've attached, this is the action to use.",
     validate: async (runtime: IAgentRuntime, message: Memory, state: State) => {
+        elizaLogger.debug("Validating CHAT_WITH_ATTACHMENTS action");
         if (message.content.source !== "discord") {
+            elizaLogger.debug("Message source is not discord, skipping");
             return false;
         }
         // only show if one of the keywords are in the message
@@ -122,9 +129,11 @@ const summarizeAction = {
             "listen",
             "watch",
         ];
-        return keywords.some((keyword) =>
+        const hasKeyword = keywords.some((keyword) =>
             message.content.text.toLowerCase().includes(keyword.toLowerCase())
         );
+        elizaLogger.debug(`Message ${hasKeyword ? "contains" : "does not contain"} keywords`);
+        return hasKeyword;
     },
     handler: async (
         runtime: IAgentRuntime,
@@ -133,6 +142,7 @@ const summarizeAction = {
         options: any,
         callback: HandlerCallback
     ) => {
+        elizaLogger.log("Starting CHAT_WITH_ATTACHMENTS handler");
         state = (await runtime.composeState(message)) as State;
 
         const callbackData: Content = {
@@ -143,15 +153,19 @@ const summarizeAction = {
         };
 
         // 1. extract attachment IDs from the message
+        elizaLogger.log("Extracting attachment IDs from message");
         const attachmentData = await getAttachmentIds(runtime, message, state);
         if (!attachmentData) {
-            console.error("Couldn't get attachment IDs from message");
+            elizaLogger.error("Couldn't get attachment IDs from message");
             return;
         }
 
         const { objective, attachmentIds } = attachmentData;
+        elizaLogger.debug("Objective:", objective);
+        elizaLogger.debug("Attachment IDs:", attachmentIds);
 
         // This is pretty gross but it can catch cases where the returned generated UUID is stupidly wrong for some reason
+        elizaLogger.log("Filtering attachments from recent messages");
         const attachments = state.recentMessagesData
             .filter(
                 (msg) =>
@@ -174,6 +188,8 @@ const summarizeAction = {
                     })
             );
 
+        elizaLogger.debug("Found attachments:", attachments.length);
+
         const attachmentsWithText = attachments
             .map((attachment) => `# ${attachment.title}\n${attachment.text}`)
             .join("\n\n");
@@ -188,6 +204,7 @@ const summarizeAction = {
 
         const datestr = new Date().toUTCString().replace(/:/g, "-");
 
+        elizaLogger.log("Generating summary");
         const context = composeContext({
             state,
             // make sure it fits, we can pad the tokens a bit
@@ -207,16 +224,18 @@ const summarizeAction = {
         currentSummary = currentSummary + "\n" + summary;
 
         if (!currentSummary) {
-            console.error("No summary found, that's not good!");
+            elizaLogger.error("No summary found, that's not good!");
             return;
         }
 
+        elizaLogger.log("Processing summary response");
         callbackData.text = currentSummary.trim();
         if (
             callbackData.text &&
             (currentSummary.trim()?.split("\n").length < 4 ||
                 currentSummary.trim()?.split(" ").length < 100)
         ) {
+            elizaLogger.debug("Summary is short, sending directly in message");
             callbackData.text = `Here is the summary:
 \`\`\`md
 ${currentSummary.trim()}
@@ -224,6 +243,7 @@ ${currentSummary.trim()}
 `;
             await callback(callbackData);
         } else if (currentSummary.trim()) {
+            elizaLogger.debug("Summary is long, saving to file");
             const summaryFilename = `content_cache/summary_${Date.now()}.txt`;
             // save the summary to a file
             fs.writeFileSync(summaryFilename, currentSummary);
@@ -235,11 +255,10 @@ ${currentSummary.trim()}
                 [summaryFilename]
             );
         } else {
-            console.warn(
-                "Empty response from chat with attachments action, skipping"
-            );
+            elizaLogger.warn("Empty response from chat with attachments action, skipping");
         }
 
+        elizaLogger.success("CHAT_WITH_ATTACHMENTS handler completed");
         return callbackData;
     },
     examples: [

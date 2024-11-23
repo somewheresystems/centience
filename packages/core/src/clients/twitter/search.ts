@@ -137,7 +137,7 @@ export class TwitterSearchClient extends ClientBase {
       )
       .join("\n")}
   
-  Which tweet is the most interesting and relevant for Ruby to reply to? Please provide only the ID of the tweet in your response.
+  Which tweet is the most interesting and relevant for Spencience to reply to? Please provide only the ID of the tweet in your response.
   Notes:
     - Respond to English tweets only
     - Respond to tweets that don't have a lot of hashtags, links, URLs or images

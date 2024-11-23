@@ -148,6 +148,11 @@ const interestWords = [
     "summarization",
     "summary",
     "research",
+    "website",
+    "game",
+    "make",
+    "build",
+    "fix",
 ];
 
 const cringeWords = [
@@ -236,6 +241,8 @@ const cringeWords = [
     "nostalgia",
     "journey",
     "trove",
+    "tapestry",
+    "frequency",
 ];
 
 const negativeWords = [

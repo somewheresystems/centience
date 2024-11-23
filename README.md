@@ -1,18 +1,21 @@
-# 
+#
+
 # Centience
+
 # Somewhere Systems' Sentient Meme
 
 (Forked from ai16z Eliza)
 
-- make sure you use Node 23
-- Switched to Together APIs using 405B models (~$150/mo)
-- Added Luma AI for video generation (in progress)
+-   make sure you use Node 23
+-   Switched to Together APIs using 405B models (~$150/mo)
+-   Added Luma AI for video generation (in progress)
 
 So this thing is kinda disorganized to my spec, but here's how to get it started:
-- fill out .env file with your keys -- get the cookies by downloading a json string from your browser when logged into your account, make sure 2FA is off.
-- `pnpm i`
-- `pnpm build`
-- `pnpm start`
+
+-   fill out .env file with your keys -- get the cookies by downloading a json string from your browser when logged into your account, make sure 2FA is off.
+-   `pnpm i`
+-   `pnpm build`
+-   `pnpm start`
 
 ## Features
 
@@ -128,6 +131,11 @@ SLIPPAGE=1
 RPC_URL=https://api.mainnet-beta.solana.com
 HELIUS_API_KEY=
 
+## Webgen/Websim
+GITHUB_TOKEN=EXAMPLE-BOT-TOKEN
+GITHUB_USERNAME=BOTTYBOI
+
+Instructions to get Github Token: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic
 
 ## Telegram
 TELEGRAM_BOT_TOKEN=

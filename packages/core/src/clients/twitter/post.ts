@@ -6,6 +6,7 @@ import { embeddingZeroVector } from "../../core/memory.ts";
 import { IAgentRuntime, ModelClass } from "../../core/types.ts";
 import { stringToUuid } from "../../core/uuid.ts";
 import { ClientBase } from "./base.ts";
+import { generateSummary } from "../../services/summary.ts";
 import {
     postActionResponseFooter,
     parseActionResponseFromText
@@ -19,6 +20,8 @@ About {{agentName}} (@{{twitterUserName}}):
 {{bio}}
 {{lore}}
 
+Recent interactions and memories:
+{{recentMemories}}
 
 # Task: Generate a post in the voice and style of {{agentName}}
 Write a single sentence post or ASCII art that is {{adjective}} about {{topic}} (without mentioning {{topic}} directly), from the perspective of {{agentName}}. Try to write something totally different than previous posts. Do not add commentary or ackwowledge this request, just write the post.
@@ -54,16 +57,14 @@ Current Tweet:
 # INSTRUCTIONS: Respond with appropriate action tags based on the above criteria and the current tweet. An action must meet its threshold to be included.` 
 + postActionResponseFooter;
 
-
-
 export class TwitterPostClient extends ClientBase {
     onReady() {
         const generateNewTweetLoop = () => {
             this.generateNewTweet();
             setTimeout(
                 generateNewTweetLoop,
-                (Math.floor(Math.random() * (40 - 4 + 1)) + 4) * 60 * 1000
-            ); // Random interval between 4-40 minutes
+                (Math.floor(Math.random() * (50 - 10 + 1)) + 10) * 60 * 1000
+            ); // Random interval between 10-50 minutes
         };
 
         const generateNewTimelineTweetLoop = () => {
@@ -86,8 +87,9 @@ export class TwitterPostClient extends ClientBase {
     }
 
     private async generateNewTweet() {
-        console.log("Generating new tweet");
+        console.log("Starting generateNewTweet function...");
         try {
+            console.log("Ensuring user exists...");
             await this.runtime.ensureUserExists(
                 this.runtime.agentId,
                 this.runtime.getSetting("TWITTER_USERNAME"),
@@ -95,22 +97,46 @@ export class TwitterPostClient extends ClientBase {
                 "twitter"
             );
 
+            console.log("Retrieving recent memories...");
+            const rooms =
+                await this.runtime.databaseAdapter.getRoomsForParticipant(
+                    this.runtime.agentId
+                );
+            const recentMemories =
+                await this.runtime.messageManager.getMemoriesByRoomIds({
+                    roomIds: rooms,
+                    agentId: this.runtime.agentId,
+                });
+
+            const formattedMemories = recentMemories
+                .map((memory) => `Memory: ${memory.content.text}\n---\n`)
+                .join("\n");
+
             let homeTimeline = [];
 
-            if (!fs.existsSync("tweetcache")) fs.mkdirSync("tweetcache");
-            // read the file if it exists
+            console.log("Checking for tweetcache directory...");
+            if (!fs.existsSync("tweetcache")) {
+                console.log("Creating tweetcache directory");
+                fs.mkdirSync("tweetcache");
+            }
+
+            console.log("Loading home timeline...");
             if (fs.existsSync("tweetcache/home_timeline.json")) {
+                console.log("Reading home timeline from cache");
                 homeTimeline = JSON.parse(
                     fs.readFileSync("tweetcache/home_timeline.json", "utf-8")
                 );
             } else {
+                console.log("Fetching fresh home timeline");
                 homeTimeline = await this.fetchHomeTimeline(50);
+                console.log("Writing home timeline to cache");
                 fs.writeFileSync(
                     "tweetcache/home_timeline.json",
                     JSON.stringify(homeTimeline, null, 2)
                 );
             }
 
+            console.log("Formatting home timeline...");
             const formattedHomeTimeline =
                 `# ${this.runtime.character.name}'s Home Timeline\n\n` +
                 homeTimeline
@@ -119,6 +145,7 @@ export class TwitterPostClient extends ClientBase {
                     })
                     .join("\n");
 
+            console.log("Composing state...");
             const state = await this.runtime.composeState(
                 {
                     userId: this.runtime.agentId,
@@ -130,48 +157,63 @@ export class TwitterPostClient extends ClientBase {
                     twitterUserName:
                         this.runtime.getSetting("TWITTER_USERNAME"),
                     timeline: formattedHomeTimeline,
+                    recentMemories: formattedMemories,
                 }
             );
-            // Generate new tweet
+
+            console.log("Generating context...");
             const context = composeContext({
                 state,
                 template:
                     this.runtime.character.templates?.twitterPostTemplate ||
                     twitterPostTemplate,
             });
-
-            const newTweetContent = await generateText({
+            console.log("Context:", context);
+            console.log("Generating tweet content...");
+            const newContent = await generateText({
                 runtime: this.runtime,
                 context,
                 modelClass: ModelClass.LARGE,
             });
 
-            const slice = newTweetContent.replaceAll(/\\n/g, "\n").trim();
+            console.log("Processing generated content...");
+            const slice = newContent.replaceAll(/\\n/g, "\n").trim();
 
             const contentLength = 1000;
 
+            console.log("Trimming content to fit Twitter limits...");
             let content = slice.slice(0, contentLength);
-            // if its bigger than 280, delete the last line
-            if (content.length > 1000) {
+            if (content.length > 280) {
+                console.log("Content too long, removing last line");
                 content = content.slice(0, content.lastIndexOf("\n"));
             }
             if (content.length > contentLength) {
-                // slice at the last period
+                console.log("Content still too long, trimming to last period");
                 content = content.slice(0, content.lastIndexOf("."));
             }
 
-            // if it's still too long, get the period before the last period
             if (content.length > contentLength) {
+                console.log(
+                    "Content still too long, trimming to previous period"
+                );
                 content = content.slice(0, content.lastIndexOf("."));
             }
+
+            console.log(
+                `Final tweet content (${content.length} chars): "${content}"`
+            );
+
             try {
+                console.log("Sending tweet...");
                 const result = await this.requestQueue.add(
                     async () => await this.twitterClient.sendTweet(content)
                 );
-                // read the body of the response
+
+                console.log("Processing tweet response...");
                 const body = await result.json();
                 const tweetResult = body.data.create_tweet.tweet_results.result;
 
+                console.log("Creating tweet object...");
                 const tweet = {
                     id: tweetResult.rest_id,
                     text: tweetResult.legacy.full_text,
@@ -194,33 +236,67 @@ export class TwitterPostClient extends ClientBase {
                     tweet.conversationId + "-" + this.runtime.agentId;
                 const roomId = stringToUuid(conversationId);
 
-                // make sure the agent is in the room
+                console.log("Ensuring room exists...");
                 await this.runtime.ensureRoomExists(roomId);
+
+                console.log("Ensuring participant in room...");
                 await this.runtime.ensureParticipantInRoom(
                     this.runtime.agentId,
                     roomId
                 );
 
+                console.log("Caching tweet...");
                 await this.cacheTweet(tweet);
 
+                console.log("Creating memory records...");
+                // Create memory for the tweet content
+                const contentSummary = await generateSummary(
+                    this.runtime,
+                    newContent.trim()
+                );
                 await this.runtime.messageManager.createMemory({
-                    id: stringToUuid(postId + "-" + this.runtime.agentId),
+                    id: stringToUuid(postId + "-content-" + this.runtime.agentId),
                     userId: this.runtime.agentId,
                     agentId: this.runtime.agentId,
                     content: {
-                        text: newTweetContent.trim(),
+                        text: newContent.trim(),
                         url: tweet.permanentUrl,
                         source: "twitter",
+                        summary: contentSummary,
                     },
                     roomId,
                     embedding: embeddingZeroVector,
                     createdAt: tweet.timestamp * 1000,
                 });
+
+                // Create memory for the action of posting
+                const actionSummary = await generateSummary(
+                    this.runtime,
+                    `Posted a tweet: ${tweet.text}`
+                );
+                await this.runtime.messageManager.createMemory({
+                    id: stringToUuid(postId + "-action-" + this.runtime.agentId),
+                    userId: this.runtime.agentId,
+                    agentId: this.runtime.agentId,
+                    content: {
+                        text: `I posted a tweet saying: "${tweet.text}"`,
+                        url: tweet.permanentUrl,
+                        source: "twitter",
+                        summary: actionSummary,
+                    },
+                    roomId,
+                    embedding: embeddingZeroVector,
+                    createdAt: tweet.timestamp * 1000,
+                });
+
+                console.log("Successfully generated and sent tweet with memories!");
             } catch (error) {
                 console.error("Error sending tweet:", error);
+                console.error("Error details:", JSON.stringify(error, null, 2));
             }
         } catch (error) {
-            console.error("Error generating new tweet:", error);
+            console.error("Error in generateNewTweet:", error);
+            console.error("Error details:", JSON.stringify(error, null, 2));
         }
     }
 

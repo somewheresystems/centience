@@ -37,20 +37,12 @@ export async function buildConversationThread(
     const visited: Set<string> = new Set();
 
     async function processThread(currentTweet: Tweet, depth: number = 0) {
-        elizaLogger.debug("Processing tweet:", {
-            id: currentTweet.id,
-            inReplyToStatusId: currentTweet.inReplyToStatusId,
-            depth: depth
-        });
-
         if (!currentTweet) {
-            elizaLogger.debug("No current tweet found for thread building");
             return;
         }
 
         // Stop if we've reached our reply limit
         if (depth >= maxReplies) {
-            elizaLogger.debug("Reached maximum reply depth", depth);
             return;
         }
 
@@ -100,35 +92,21 @@ export async function buildConversationThread(
         }
 
         if (visited.has(currentTweet.id)) {
-            elizaLogger.debug("Already visited tweet:", currentTweet.id);
             return;
         }
 
         visited.add(currentTweet.id);
         thread.unshift(currentTweet);
-            
-        elizaLogger.debug("Current thread state:", {
-            length: thread.length,
-            currentDepth: depth,
-            tweetId: currentTweet.id
-        });
 
         // If there's a parent tweet, fetch and process it
         if (currentTweet.inReplyToStatusId) {
-            elizaLogger.debug("Fetching parent tweet:", currentTweet.inReplyToStatusId);
             try {
                 const parentTweet = await client.twitterClient.getTweet(
                     currentTweet.inReplyToStatusId,
                 );
 
                 if (parentTweet) {
-                    elizaLogger.debug("Found parent tweet:", {
-                        id: parentTweet.id,
-                        text: parentTweet.text?.slice(0, 50)
-                    });
                     await processThread(parentTweet, depth + 1);
-                } else {
-                    elizaLogger.debug("No parent tweet found for:", currentTweet.inReplyToStatusId);
                 }
             } catch (error) {
                 elizaLogger.error("Error fetching parent tweet:", {
@@ -136,20 +114,10 @@ export async function buildConversationThread(
                     error
                 });
             }
-        } else {
-            elizaLogger.debug("Reached end of reply chain at:", currentTweet.id);
         }
     }
 
     await processThread(tweet, 0);
-    
-    elizaLogger.debug("Final thread built:", {
-        totalTweets: thread.length,
-        tweetIds: thread.map(t => ({
-            id: t.id,
-            text: t.text?.slice(0, 50)
-        }))
-    });
 
     return thread;
 }
