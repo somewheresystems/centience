@@ -118,6 +118,7 @@ export class TwitterPostClient extends ClientBase {
                 });
 
             const formattedMemories = recentMemories
+                .slice(0, 10)
                 .map((memory) => `Memory: ${memory.content.text}\n---\n`)
                 .join("\n");
 

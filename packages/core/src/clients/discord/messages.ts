@@ -554,18 +554,40 @@ export class MessageManager {
             );
         } catch (error) {
             console.error("Error handling message:", error);
-            if (message.channel.type === ChannelType.GuildVoice) {
-                // For voice channels, use text-to-speech for the error message
-                const errorMessage = "Sorry, I had a glitch. What was that?";
-                const audioStream = await this.runtime.speechService.generate(
-                    this.runtime,
-                    errorMessage
+            
+            // Check if we can send messages before attempting to reply
+            const sendPermissions = canSendMessage(message.channel);
+            if (!sendPermissions.canSend) {
+                elizaLogger.warn(
+                    `Cannot send error message to channel ${message.channel.id} - Missing permissions`,
+                    sendPermissions.reason
                 );
-                await this.voiceManager.playAudioStream(userId, audioStream);
-            } else {
-                // For text channels, send the error message
-                await message.reply(
-                    "Sorry, I encountered an error while processing your request."
+                return;
+            }
+
+            try {
+                if (message.channel.type === ChannelType.GuildVoice) {
+                    const errorMessage = "Sorry, I had a glitch. What was that?";
+                    const audioStream = await this.runtime.speechService.generate(
+                        this.runtime,
+                        errorMessage
+                    );
+                    await this.voiceManager.playAudioStream(userId, audioStream);
+                } else if ('send' in message.channel) {
+                    // Check if channel has send method
+                    await message.channel.send(
+                        "Sorry, I encountered an error while processing your request."
+                    );
+                } else {
+                    elizaLogger.warn(
+                        `Cannot send error message - unsupported channel type ${message.channel.type}`
+                    );
+                }
+            } catch (replyError) {
+                // If sending the error message also fails, just log it
+                elizaLogger.error(
+                    `Failed to send error message to channel ${message.channel.id}`,
+                    replyError
                 );
             }
         }

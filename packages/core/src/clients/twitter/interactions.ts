@@ -19,16 +19,14 @@ import {
 } from "../../core/types.ts";
 import { stringToUuid } from "../../core/uuid.ts";
 import { ClientBase } from "./base.ts";
-import { buildConversationThread, sendTweet, wait } from "./utils.ts";
+import {  sendTweet, wait } from "./utils.ts";
 import { embeddingZeroVector } from "../../core/memory.ts";
 
 
 
 
 export const twitterMessageHandlerTemplate =
-    `{{relevantFacts}}
-{{recentFacts}}
-{{timeline}}
+    `
 {{providers}}
 
 About {{agentName}} (@{{twitterUserName}}):
@@ -36,24 +34,17 @@ About {{agentName}} (@{{twitterUserName}}):
 {{lore}}
 {{topics}}
 
+STYLE: {{style}}
+
 Conversation Examples:
 {{messageExamples}}
 
 {{postDirections}}
 
-Recent interactions between {{agentName}} and other users:
-{{recentPostInteractions}}
-
-...
-
-IMPORTANT: 
-
-Thread of Tweets You Are Replying To:
+IMPORTANT - Current Conversation Context:
 {{formattedConversation}}
 
-...
-
-IMPORTANT: Current Tweet to Respond To:
+CRITICAL - Current Tweet to Respond To:
 {{currentPost}}
 
 ...
@@ -82,30 +73,43 @@ IMPORTANT: Current Tweet to Respond To:
 - Continue the existing conversation flow
 - Use natural, conversational language
 
+
+    # Style Constraints:
+    - No pontificating or preaching
+    - No metaphysical or abstract concepts
+    - No vague or general statements
+    - Keep responses grounded and specific
+    - Stay focused on the immediate conversation
+
+    Your response MUST:
+    - Directly address their specific points
+    - Stay on their exact topic
+    - Show clear connection to their tweet
+    - Be natural and conversational
+
+    DO NOT:
+    - Change the subject
+    - Ignore their specific points
+    - Make vague statements
+    - Introduce unrelated topics
+
 3. VERIFY YOUR RESPONSE:
 - Does it directly address their tweet's main point?
 - Is it a natural continuation of the conversation?
 - Does it stick to the current topic without deviation?
 - Does it reference specific details from their tweet?
 - Would a reasonable person see the connection between their tweet and your response?
+    # STRICT REQUIREMENTS:
+    - NEVER introduce new, unrelated topics
+    - NEVER ignore the current conversation context
+    - NEVER make vague, philosophical statements
+    - NEVER change the subject
+    - ALWAYS respond to what they actually said
+    - ALWAYS maintain conversation continuity
+    - ALWAYS reference specific points from their tweet
 
-If your response doesn't meet ALL verification criteria, revise it.
+If your response doesn't meet ALL verification criteria and the STRICT REQUIREMENTS, revise it.
 
-# STRICT REQUIREMENTS:
-- NEVER introduce new, unrelated topics
-- NEVER ignore the current conversation context
-- NEVER make vague, philosophical statements
-- NEVER change the subject
-- ALWAYS respond to what they actually said
-- ALWAYS maintain conversation continuity
-- ALWAYS reference specific points from their tweet
-
-# Style Constraints:
-- No pontificating or preaching
-- No metaphysical or abstract concepts
-- No vague or general statements
-- Keep responses grounded and specific
-- Stay focused on the immediate conversation
 
 ` + messageCompletionFooter;
 
@@ -127,7 +131,7 @@ If the conversation thread has more than 5 replies, {{agentName}} should STOP to
 {{recentPosts}}
 
 IMPORTANT: {{agentName}} (aka @{{twitterUserName}}) is particularly sensitive about being annoying, so if there is any doubt, it is better to IGNORE than to RESPOND.
-To reduce response frequency, {{agentName}} should only respond to 10% of messages that would normally warrant a response.
+
 
 {{currentPost}}
 
@@ -135,6 +139,8 @@ Thread of Tweets You Are Replying To:
 
 {{formattedConversation}}
 
+...
+CRITICAL: To reduce response frequency, {{agentName}} should respond [IGNORE] to 70% of messages that would normally warrant a response.
 # INSTRUCTIONS: Respond with [RESPOND] if {{agentName}} should respond, or [IGNORE] if {{agentName}} should not respond to the last message and [STOP] if {{agentName}} should stop participating in the conversation.
 ` + shouldRespondFooter;
 
@@ -214,7 +220,7 @@ export class TwitterInteractionClient extends ClientBase {
                     );
 
                     console.log("Building conversation thread...");
-                    const thread = await buildConversationThread(tweet, this);
+                    const thread = await this.buildConversationThread(tweet);
 
                     // Check if conversation is too long (more than 5 replies)
                     if (thread && thread.length > 5) {
@@ -339,7 +345,8 @@ export class TwitterInteractionClient extends ClientBase {
                     month: "short",
                     day: "numeric",
                 })}):
-        ${tweet.text}`
+        ${tweet.text}        
+        ------------`
             )
             .join("\n\n");
 
@@ -357,8 +364,8 @@ export class TwitterInteractionClient extends ClientBase {
         let state = await this.runtime.composeState(message, {
             twitterClient: this.twitterClient,
             twitterUserName: this.runtime.getSetting("TWITTER_USERNAME"),
-            currentPost,
-            formattedConversation,
+            currentPost: `CURRENT TWEET TO RESPOND TO:\n${currentPost}\n---`,
+            formattedConversation: `CONVERSATION CONTEXT:\n${formattedConversation}`,
             timeline: formattedHomeTimeline,
         });
 
