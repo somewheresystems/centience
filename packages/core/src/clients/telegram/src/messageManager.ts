@@ -312,33 +312,26 @@ export class MessageManager {
         params: any,
         maxRetries = 3
     ): Promise<any> {
+        // Early permission check before attempting to send
+        if (!await this.hasPermissionToSend(ctx, params.chat_id)) {
+            console.warn(`Bot lacks permission to send messages in chat ${params.chat_id}`);
+            return null;
+        }
+
         let lastError;
         for (let i = 0; i < maxRetries; i++) {
             try {
                 if (method === 'sendMessage') {
-                    if (!await this.hasPermissionToSend(ctx, params.chat_id)) {
-                        console.warn(`Bot lacks permission to send messages in chat ${params.chat_id}`);
-                        return null;
-                    }
                     return await ctx.telegram.sendMessage(params.chat_id, params.text, params.options);
                 } else if (method === 'sendPhoto') {
-                    if (!await this.hasPermissionToSend(ctx, params.chat_id)) {
-                        console.warn(`Bot lacks permission to send photos in chat ${params.chat_id}`);
-                        return null;
-                    }
                     return await ctx.telegram.sendPhoto(params.chat_id, params.photo, params.options);
                 }
             } catch (error) {
                 lastError = error;
                 if (error?.response?.error_code === 429) {
                     const retryAfter = error?.response?.parameters?.retry_after || 10;
-                    console.log(`Rate limited. Waiting ${retryAfter} seconds before retry ${i + 1}/${maxRetries}`);
                     await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
                     continue;
-                }
-                if (error?.response?.error_code === 400 && error?.response?.description?.includes('not enough rights')) {
-                    console.warn(`Bot lacks permission in chat ${params.chat_id}: ${error.response.description}`);
-                    return null;
                 }
                 throw error;
             }
@@ -352,16 +345,26 @@ export class MessageManager {
             const me = await ctx.telegram.getMe();
             const member = await ctx.telegram.getChatMember(chatId, me.id);
             
-            // Check if the bot is an admin (admins don't have explicit can_send_messages)
+            // Check if the bot is an admin or creator (they always have permissions)
             if (member.status === 'administrator' || member.status === 'creator') {
                 return true;
             }
             
-            // For regular members, they can send messages by default
-            return member.status === 'member';
+            // For regular members or restricted members
+            if (member.status === 'member' || member.status === 'restricted') {
+                // Type assertion to handle restricted member type
+                const restrictedMember = member as any;
+                if ('can_send_messages' in restrictedMember) {
+                    return restrictedMember.can_send_messages !== false;
+                }
+                // If not restricted, regular members can send messages
+                return member.status === 'member';
+            }
+            
+            return false; // Left, kicked, or banned members can't send messages
         } catch (error) {
             console.warn(`Cannot verify permissions for chat ${chatId}:`, error.message);
-            return false;
+            return false; // Fail safely if we can't verify permissions
         }
     }
 

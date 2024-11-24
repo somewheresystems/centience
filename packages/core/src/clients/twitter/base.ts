@@ -149,7 +149,7 @@ export class ClientBase extends EventEmitter {
 
     callback: (self: ClientBase) => any = null;
 
-    onReady() {
+    async onReady(): Promise<void> {
         throw new Error(
             "Not implemented in base class, please call from subclass"
         );
@@ -296,7 +296,7 @@ export class ClientBase extends EventEmitter {
             console.log("Timeline populated successfully");
 
             console.log("Twitter client initialization complete, calling onReady");
-            this.onReady();
+            await this.onReady();
         })();
     }
 

@@ -38,7 +38,19 @@ export const discordImageGeneration: Action = {
 
             try {
                 const context = `# Task: Enhance the image generation prompt
-Your task is to enhance the user's request into a detailed prompt that will generate the best possible image.
+Your task is to enhance the user's request into a detailed prompt that will generate the best possible image. The goal is also to make sure that it fits into a theme that is consistent with Centience, using the following tags:
+- IMAX
+- filmic
+- cinematic
+- 8K
+- 4K
+- 1080p
+- 720p  
+- photorealistic
+- hyper-realistic
+- hyper-detailed
+- filmic
+- cinematic
 
 # Instructions
 - Focus on artistic style, mood, lighting, composition and important details

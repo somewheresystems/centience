@@ -58,13 +58,13 @@ Current Tweet:
 + postActionResponseFooter;
 
 export class TwitterPostClient extends ClientBase {
-    onReady() {
+    async onReady(): Promise<void> {
         const generateNewTweetLoop = () => {
             this.generateNewTweet();
             setTimeout(
                 generateNewTweetLoop,
                 (Math.floor(Math.random() * (50 - 10 + 1)) + 10) * 60 * 1000
-            ); // Random interval between 10-50 minutes
+            );
         };
 
         const generateNewTimelineTweetLoop = () => {
@@ -72,7 +72,7 @@ export class TwitterPostClient extends ClientBase {
             setTimeout(
                 generateNewTimelineTweetLoop,
                 (Math.floor(Math.random() * (60 - 30 + 1)) + 30) * 60 * 1000
-            ); // Random interval between 30-60 minutes
+            );
         };
 
         generateNewTweetLoop();
