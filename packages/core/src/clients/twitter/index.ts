@@ -1,3 +1,5 @@
-export { TwitterPostClient } from "./post.ts";
-export { TwitterSearchClient } from "./search.ts";
-export { TwitterInteractionClient } from "./interactions.ts";
+export { TwitterPostClient } from "./post";
+export { TwitterSearchClient } from "./search";
+export { TwitterInteractionClient } from "./interactions";
+export { StorytellingClient } from "./storytelling";
+

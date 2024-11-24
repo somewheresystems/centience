@@ -14,7 +14,7 @@
 
 ### TogetherAI.subModel
 
-> **subModel**: `string` = `"black-forest-labs/FLUX.1-schnell"`
+> **subModel**: `string` = `"black-forest-labs/FLUX.1.1-pro"`
 
 ### Dalle
 

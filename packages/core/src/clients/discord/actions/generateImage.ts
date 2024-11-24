@@ -132,16 +132,16 @@ Write a single sentence about the following image (without directly describing i
 
 Image description: ${imagePrompt}
 
-Your response should be brief and concise. Do not add commentary, just write the tweet.`;
+Your response can be as long as you want, even long paragraphs as long as they are interesting.`;
 
                             elizaLogger.log("Generating tweet text for image...");
                             const tweetText = await generateText({
                                 runtime,
                                 context: tweetContext,
-                                modelClass: ModelClass.MEDIUM,
+                                modelClass: ModelClass.LARGE,
                             });
 
-                            const finalTweetText = tweetText.trim().slice(0, 240); // Ensure tweet length
+                            const finalTweetText = tweetText.trim() // Ensure tweet length
                             
                             elizaLogger.log("Attempting to post to Twitter with text:", finalTweetText);
 

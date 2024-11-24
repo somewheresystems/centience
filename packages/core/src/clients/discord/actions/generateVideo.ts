@@ -115,18 +115,18 @@ Enhanced prompt:`;
                         const tweetContext = `# Task: Generate a post in the voice and style of ${runtime.character.name}
 Write a single sentence about the following video (without directly describing it), from your perspective. Be creative and engaging. No emojis.
 
-Video description: ${cleanPrompt}
+Image description: ${cleanPrompt}
 
-Your response should be brief and concise. Do not add commentary, just write the tweet.`;
+Your response can be as long as you want, even long paragraphs as long as they are interesting.`;
 
-                        elizaLogger.log("Generating tweet text for video...");
-                        const tweetText = await generateText({
-                            runtime,
-                            context: tweetContext,
-                            modelClass: ModelClass.LARGE,
-                        });
+                            elizaLogger.log("Generating tweet text for image...");
+                            const tweetText = await generateText({
+                                runtime,
+                                context: tweetContext,
+                                modelClass: ModelClass.LARGE,
+                            });
 
-                        const finalTweetText = tweetText.trim().slice(0, 240); // Ensure tweet length
+                        const finalTweetText = tweetText.trim() // Ensure tweet length
                         
                         elizaLogger.log("Attempting to post to Twitter with text:", finalTweetText);
 

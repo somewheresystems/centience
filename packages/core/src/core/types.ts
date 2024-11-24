@@ -519,6 +519,12 @@ export interface IAgentRuntime {
     browserService: IBrowserService;
     speechService: ISpeechService;
     pdfService: IPdfService;
+    imageGenerationService: {
+        generateImage: (prompt: string) => Promise<string>;
+    };
+    videoGenerationService: {
+        generateVideo: (prompt: string) => Promise<string>;
+    };
 
     getSetting(key: string): string | null;
 
@@ -554,6 +560,15 @@ export interface IAgentRuntime {
     ): Promise<State>;
     updateRecentMessageState(state: State): Promise<State>;
     getClient(clientName: string): any;
+    handleAction(params: {
+        userId: string;
+        roomId: string;
+        agentId: string;
+        content: {
+            text: string;
+            action: string;
+        };
+    }): Promise<void>;
 }
 
 export interface IImageRecognitionService {

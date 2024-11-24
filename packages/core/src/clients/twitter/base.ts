@@ -150,9 +150,8 @@ export class ClientBase extends EventEmitter {
     callback: (self: ClientBase) => any = null;
 
     async onReady(): Promise<void> {
-        throw new Error(
-            "Not implemented in base class, please call from subclass"
-        );
+        // Default implementation that can be overridden by subclasses
+        return Promise.resolve();
     }
 
     constructor({ runtime }: { runtime: IAgentRuntime }) {
