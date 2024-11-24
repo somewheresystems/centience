@@ -64,7 +64,14 @@ export async function buildConversationThread(
                 "twitter"
             );
 
-            client.runtime.messageManager.createMemory({
+            // Add special handling for first tweets in a conversation
+            const isFirstTweet = !currentTweet.inReplyToStatusId;
+            const points = currentTweet.text
+                .split(/[.!?]/)
+                .filter(point => point.trim())
+                .map(point => point.trim());
+
+            await client.runtime.messageManager.createMemory({
                 id: stringToUuid(
                     currentTweet.id + "-" + client.runtime.agentId
                 ),
@@ -80,6 +87,12 @@ export async function buildConversationThread(
                                   client.runtime.agentId
                           )
                         : undefined,
+                    // Add additional context for first tweets
+                    metadata: isFirstTweet ? {
+                        isFirstTweet: true,
+                        discussionPoints: points,
+                        originalTopic: currentTweet.text
+                    } : undefined
                 },
                 createdAt: currentTweet.timestamp * 1000,
                 roomId,

@@ -22,95 +22,87 @@ import { ClientBase } from "./base.ts";
 import {  sendTweet, wait } from "./utils.ts";
 import { embeddingZeroVector } from "../../core/memory.ts";
 
+export const createInitialConversationContext = (tweet: Tweet) => {
+    const timestamp = new Date(tweet.timestamp * 1000).toLocaleString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        month: 'short',
+        day: 'numeric'
+    });
 
+    // Break down the tweet into discussion points
+    const points = tweet.text
+        .split(/[.!?]/)
+        .filter(point => point.trim())
+        .map(point => point.trim());
 
+    return {
+        currentPost: `NEW CONVERSATION STARTED:
+From: ${tweet.name} (@${tweet.username}) at ${timestamp}
+Tweet: "${tweet.text}"
 
-export const twitterMessageHandlerTemplate =
-    `
-{{providers}}
+Key Discussion Points:
+${points.map(point => `• ${point}`).join('\n')}
 
-About {{agentName}} (@{{twitterUserName}}):
-{{bio}}
-{{lore}}
-{{topics}}
+IMPORTANT: Your response must:
+1. Address these specific points
+2. Stay focused on this exact topic
+3. Not introduce any new topics`,
 
-STYLE: {{style}}
+        formattedConversation: `CONVERSATION START:
+Initial Tweet from @${tweet.username}:
+"${tweet.text}"
 
-Conversation Examples:
-{{messageExamples}}
+Topic Analysis:
+${points.map(point => `• ${point}`).join('\n')}
 
-{{postDirections}}
+Response Requirements:
+- Stay strictly focused on these points
+- Do not introduce new topics
+- Reference specific details from the tweet`
+    };
+};
 
-IMPORTANT - Current Conversation Context:
+export const twitterMessageHandlerTemplate = `
+{{#isFirstResponse}}
+INITIAL RESPONSE REQUIRED:
+{{currentPost}}
+
+Current Context:
 {{formattedConversation}}
+
+# Task: Write a focused first response
+- You MUST stay on the exact topic of their tweet
+- You MUST address their specific points
+- You MUST NOT introduce any new topics or tangents
+- You MUST NOT include your general interests or knowledge unless directly relevant
+
+{{/isFirstResponse}}
+{{^isFirstResponse}}
+{{providers}}
 
 CRITICAL - Current Tweet to Respond To:
 {{currentPost}}
 
-...
+IMPORTANT - Current Conversation Context:
+{{formattedConversation}}
+{{/isFirstResponse}}
 
-# Task: Craft a direct response to the tweet above
-- You are {{agentName}} (@{{twitterUserName}}) responding to a real person
-- Your response should directly address the content and context of their tweet
-- Stay on topic with what they're discussing
-- Be conversational and natural
-- Keep focus on the actual topic of conversation
-- Respond with concrete, relevant thoughts
-- IMPORTANT:Avoid tangents or unrelated topics
-- IMPORTANT:Reference specific points from their tweet when relevant
-- IMPORTANT: Make sure your response follows from the conversation context
+# Response Guidelines:
+- Address their specific points
+- Stay on their exact topic
+- Reference details from their tweet
+- Be natural and conversational
 
+{{#isFirstResponse}}
+VERIFY YOUR RESPONSE:
+1. Does it ONLY address their specific points?
+2. Does it stay EXACTLY on their topic?
+3. Have you avoided introducing ANY new topics?
+4. Is every part of your response clearly related to their tweet?
 
-1. BEFORE RESPONDING, ANALYZE:
-- What is the main topic/point of their tweet?
-- What specific details or points did they mention?
-- What is the current context of the conversation?
-
-2. COMPOSE YOUR RESPONSE:
-- Address their specific points directly
-- Stay strictly within the current conversation topic
-- Reference exact details from their tweet
-- Continue the existing conversation flow
-- Use natural, conversational language
-
-
-    # Style Constraints:
-    - No pontificating or preaching
-    - No metaphysical or abstract concepts
-    - No vague or general statements
-    - Keep responses grounded and specific
-    - Stay focused on the immediate conversation
-
-    Your response MUST:
-    - Directly address their specific points
-    - Stay on their exact topic
-    - Show clear connection to their tweet
-    - Be natural and conversational
-
-    DO NOT:
-    - Change the subject
-    - Ignore their specific points
-    - Make vague statements
-    - Introduce unrelated topics
-
-3. VERIFY YOUR RESPONSE:
-- Does it directly address their tweet's main point?
-- Is it a natural continuation of the conversation?
-- Does it stick to the current topic without deviation?
-- Does it reference specific details from their tweet?
-- Would a reasonable person see the connection between their tweet and your response?
-    # STRICT REQUIREMENTS:
-    - NEVER introduce new, unrelated topics
-    - NEVER ignore the current conversation context
-    - NEVER make vague, philosophical statements
-    - NEVER change the subject
-    - ALWAYS respond to what they actually said
-    - ALWAYS maintain conversation continuity
-    - ALWAYS reference specific points from their tweet
-
-If your response doesn't meet ALL verification criteria and the STRICT REQUIREMENTS, revise it.
-
-
+If your response introduces anything not directly from their tweet, revise it.
+{{/isFirstResponse}}
 ` + messageCompletionFooter;
 
 export const twitterShouldRespondTemplate =
@@ -311,63 +303,53 @@ export class TwitterInteractionClient extends ClientBase {
         }
 
         console.log(`Processing tweet ${tweet.id} from @${tweet.username}`);
-        const formatTweet = (tweet: Tweet) => {
-            return `  ID: ${tweet.id}
-  From: ${tweet.name} (@${tweet.username})
-  Text: ${tweet.text}`;
-        };
-        const currentPost = formatTweet(tweet);
-
-        let homeTimeline = [];
-        console.log("Loading home timeline...");
-        if (fs.existsSync("tweetcache/home_timeline.json")) {
-            console.log("Reading home timeline from cache");
-            homeTimeline = JSON.parse(
-                fs.readFileSync("tweetcache/home_timeline.json", "utf-8")
-            );
-        } else {
-            console.log("Fetching fresh home timeline");
-            homeTimeline = await this.fetchHomeTimeline(50);
-            fs.writeFileSync(
-                "tweetcache/home_timeline.json",
-                JSON.stringify(homeTimeline, null, 2)
-            );
-        }
-
-        console.log("Thread: ", thread);
-        const formattedConversation = thread
-            .map(
-                (tweet) => `@${tweet.username} (${new Date(
-                    tweet.timestamp * 1000
-                ).toLocaleString("en-US", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    month: "short",
-                    day: "numeric",
-                })}):
-        ${tweet.text}        
-        ------------`
-            )
-            .join("\n\n");
-
-        console.log("formattedConversation: ", formattedConversation);
-
-        const formattedHomeTimeline =
-            `# ${this.runtime.character.name}'s Home Timeline\n\n` +
-            homeTimeline
-                .map((tweet) => {
-                    return `ID: ${tweet.id}\nFrom: ${tweet.name} (@${tweet.username})${tweet.inReplyToStatusId ? ` In reply to: ${tweet.inReplyToStatusId}` : ""}\nText: ${tweet.text}\n---\n`;
-                })
-                .join("\n");
 
         console.log("Composing state...");
-        let state = await this.runtime.composeState(message, {
-            twitterClient: this.twitterClient,
-            twitterUserName: this.runtime.getSetting("TWITTER_USERNAME"),
-            currentPost: `CURRENT TWEET TO RESPOND TO:\n${currentPost}\n---`,
-            formattedConversation: `CONVERSATION CONTEXT:\n${formattedConversation}`,
-            timeline: formattedHomeTimeline,
-        });
+        let state = await this.runtime.composeState(message);
+
+        const formatTweet = (tweet: Tweet) => {
+            const timestamp = new Date(tweet.timestamp * 1000).toLocaleString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                month: 'short',
+                day: 'numeric'
+            });
+
+            const points = tweet.text
+                .split(/[.!?]/)
+                .filter(point => point.trim())
+                .map(point => point.trim());
+                
+            return `TWEET TO RESPOND TO:
+            From: ${tweet.name} (@${tweet.username}) at ${timestamp}
+            Content: "${tweet.text}"
+
+            Key Points to Address:
+            ${points.map(point => `• ${point}`).join('\n')}
+
+            Your response must directly address these specific points.`;
+        };
+
+        const isFirstResponse = thread.length === 1;
+        const currentPost = formatTweet(tweet);
+        
+        // Create conversation context based on whether it's first response
+        const conversationContext = isFirstResponse ? 
+            createInitialConversationContext(tweet) : 
+            {
+                currentPost,
+                formattedConversation: thread
+                    .map(t => `@${t.username}: ${t.text}`)
+                    .join('\n\n')
+            };
+
+        // Update state with conversation context
+        state = {
+            ...state,
+            isFirstResponse,
+            currentPost: conversationContext.currentPost,
+            formattedConversation: conversationContext.formattedConversation
+        };
 
         const tweetId = stringToUuid(tweet.id + "-" + this.runtime.agentId);
         console.log(`Checking if tweet ${tweetId} exists in database`);
@@ -432,12 +414,13 @@ export class TwitterInteractionClient extends ClientBase {
 
         console.log("Generating response context...");
         const context = composeContext({
-            state,
-            template:
-                this.runtime.character.templates
-                    ?.twitterMessageHandlerTemplate ||
-                this.runtime.character?.templates?.messageHandlerTemplate ||
-                twitterMessageHandlerTemplate,
+            state: {
+                ...state,
+                isFirstResponse: thread.length === 1,
+                currentPost: createInitialConversationContext(tweet).currentPost,
+                formattedConversation: createInitialConversationContext(tweet).formattedConversation
+            },
+            template: twitterMessageHandlerTemplate
         });
 
         console.log("Generating response message...");

@@ -9,8 +9,12 @@ import { ClientBase } from "./base.ts";
 import { generateSummary } from "../../services/summary.ts";
 import {
     postActionResponseFooter,
-    parseActionResponseFromText
 } from "../../core/parsing";
+import { 
+    createInitialConversationContext, 
+    twitterMessageHandlerTemplate 
+} from "./interactions.ts";
+import { elizaLogger } from "../../index";  // Add this import at the top
 
 const twitterPostTemplate = `{{timeline}}
 
@@ -30,6 +34,9 @@ About {{agentName}} (@{{twitterUserName}}):
 Recent interactions and memories:
 {{recentMemories}}
 
+
+{{#currentQuote}}{{currentQuote}}{{/currentQuote}}
+{{^currentQuote}}
 # Task: Generate a post in the voice and style of {{agentName}}
 Write a single sentence post or ASCII art that is about whatever youre interested in, feel there is needed discourse on, or want to talk about, from the perspective of {{agentName}}. Write something totally different than previous posts. Do not add commentary or ackwowledge this request, just write the post.
 Your response should not contain any questions. Let your thoughts be grounded. Don't discuss tapestries. Don't discuss threads. Don't discuss weaving. Don't focus on silence, it does not increase connection. Don't focus on the space between, it is non-descript. Do not make hand-wavey statements. Do not get stuck In the Depths, explore them and expand your reasoning. Your thoughts should have a bias towards action. Clear, Correct, Concise statements only. Consider implications and second order effects of your ideas in these statements. No emojis. No pontificating. If you feel that a statement is a seperate thought, Use \\n\\n (double spaces) between statements.
@@ -118,7 +125,6 @@ export class TwitterPostClient extends ClientBase {
                 });
 
             const formattedMemories = recentMemories
-                .slice(0, 10)
                 .map((memory) => `Memory: ${memory.content.text}\n---\n`)
                 .join("\n");
 
@@ -180,38 +186,15 @@ export class TwitterPostClient extends ClientBase {
             });
             console.log("Context:", context);
             console.log("Generating tweet content...");
-            const newContent = await generateText({
-                runtime: this.runtime,
-                context,
-                modelClass: ModelClass.LARGE,
-            });
+            const content = await this.generateTweetContent(state);
 
-            console.log("Processing generated content...");
-            const slice = newContent.replaceAll(/\\n/g, "\n").trim();
-
-            const contentLength = 1000;
-
-            console.log("Trimming content to fit Twitter limits...");
-            let content = slice.slice(0, contentLength);
-            if (content.length > 280) {
-                console.log("Content too long, removing last line");
-                content = content.slice(0, content.lastIndexOf("\n"));
-            }
-            if (content.length > contentLength) {
-                console.log("Content still too long, trimming to last period");
-                content = content.slice(0, content.lastIndexOf("."));
+            // Add null check here
+            if (!content) {
+                console.log("Failed to generate valid tweet content, skipping tweet");
+                return;
             }
 
-            if (content.length > contentLength) {
-                console.log(
-                    "Content still too long, trimming to previous period"
-                );
-                content = content.slice(0, content.lastIndexOf("."));
-            }
-
-            console.log(
-                `Final tweet content (${content.length} chars): "${content}"`
-            );
+            console.log(`Final tweet content (${content.length} chars): "${content}"`);
 
             try {
                 console.log("Sending tweet...");
@@ -262,14 +245,14 @@ export class TwitterPostClient extends ClientBase {
                 // Create memory for the tweet content
                 const contentSummary = await generateSummary(
                     this.runtime,
-                    newContent.trim()
+                    content.trim()
                 );
                 await this.runtime.messageManager.createMemory({
                     id: stringToUuid(postId + "-content-" + this.runtime.agentId),
                     userId: this.runtime.agentId,
                     agentId: this.runtime.agentId,
                     content: {
-                        text: newContent.trim(),
+                        text: content.trim(),
                         url: tweet.permanentUrl,
                         source: "twitter",
                         summary: contentSummary,
@@ -306,7 +289,8 @@ export class TwitterPostClient extends ClientBase {
             }
         } catch (error) {
             console.error("Error in generateNewTweet:", error);
-            console.error("Error details:", JSON.stringify(error, null, 2));
+            // Don't throw, just log and return
+            return;
         }
     }
 
@@ -455,16 +439,45 @@ export class TwitterPostClient extends ClientBase {
     
                         // Quote tweet action
                         if (actionResponse.quote) {
-                            
-                            let tweetContent = '';
                             try {
-                                tweetContent = await this.generateTweetContent(tweetState);
-                                console.log('Generated tweet content:', tweetContent);
-                             } catch (error) {
-                                console.error('Failed to generate tweet content:', error);
-                             }
-                
-                            try {
+                                // Create the proper conversation context for a quote tweet
+                                const conversationContext = createInitialConversationContext(tweet);
+                                
+                                // Use the message handler template with quote-specific modifications
+                                const context = composeContext({
+                                    state: {
+                                        ...tweetState,
+                                        isFirstResponse: true,
+                                        currentPost: `QUOTE TWEET REQUIRED:
+                                                    From: @${tweet.username}
+                                                    Tweet: "${tweet.text}"
+
+                                                    Your quote must:
+                                                    - Directly reference the content above
+                                                    - Add valuable context or insight
+                                                    - Stay focused on their exact topic
+                                                    - Not introduce unrelated points`,
+                                        formattedConversation: conversationContext.formattedConversation
+                                    },
+                                    template: twitterMessageHandlerTemplate
+                                });
+
+                                const tweetContent = await this.generateTweetContent(
+                                    tweetState,
+                                    {
+                                        template: twitterMessageHandlerTemplate,
+                                        context: context
+                                    }
+                                );
+
+                                // Add null check here
+                                if (!tweetContent) {
+                                    console.log("Failed to generate valid quote tweet content, skipping quote");
+                                    return;
+                                }
+                                
+                                console.log('Generated quote tweet content:', tweetContent);
+                                
                                 const quoteResponse = await this.twitterClient.sendQuoteTweet(tweetContent, tweet.id);
                                 // Check if response is ok and parse response
                                 if (quoteResponse.status === 200) {
@@ -476,10 +489,8 @@ export class TwitterPostClient extends ClientBase {
                                     console.error(`Quote tweet failed with status ${quoteResponse.status} for tweet ${tweet.id}`);
                                 }
                             } catch (error) {
-                                console.error(`Error quote tweeting ${tweet.id}:`, error);
-                                // Log the attempted quote text for debugging
-                                console.error('Attempted quote text:', actionResponse.quote);
-                                // Continue with other actions even if quote tweet fails
+                                console.error('Failed to generate quote tweet:', error);
+                                // Don't throw, just log and continue
                             }
                         }
     
@@ -519,51 +530,85 @@ export class TwitterPostClient extends ClientBase {
 
 
     async generateTweetContent(
-        this: any,  // to access the class properties
-        tweetState: any
-     ): Promise<string> {
+        this: any,
+        tweetState: any,
+        options: {
+            template?: string;
+            context?: string;
+        } = {}
+    ): Promise<string | null> {
         try {
-            const context = composeContext({
+            const context = options.context || composeContext({
                 state: tweetState,
-                template: twitterPostTemplate,
+                template: options.template || twitterPostTemplate,
             });
             
-            console.log(`Beginning to generate new tweet with model`);
             const newTweetContent = await generateText({
                 runtime: this.runtime,
                 context,
                 modelClass: ModelClass.MEDIUM,
             });
-     
-            const slice = newTweetContent.replaceAll(/\\n/g, "\n").trim();
-            console.log(`New Tweet Post Content with model: ${slice}`);
-     
-            const contentLength = 240;
-     
-            let content = slice.slice(0, contentLength);
+ 
+            // First clean up any markdown code block indicators and newlines
+            let slice = newTweetContent
+                .replace(/```json\s*/g, '')  // Remove ```json
+                .replace(/```\s*/g, '')      // Remove any remaining ```
+                .replaceAll(/\\n/g, "\n")
+                .trim();
             
-            // if its bigger than 280, delete the last line
-            if (content.length > 280) {
-                content = content.slice(0, content.lastIndexOf("\n"));
+            // Try to parse as JSON
+            try {
+                const jsonResponse = JSON.parse(slice);
+                if (jsonResponse.text) {
+                    return this.trimTweetLength(jsonResponse.text);
+                }
+                if (typeof jsonResponse === 'object') {
+                    const possibleContent = jsonResponse.content || jsonResponse.message || jsonResponse.response;
+                    if (possibleContent) {
+                        return this.trimTweetLength(possibleContent);
+                    }
+                }
+                elizaLogger.log('Valid JSON but no text field found:', slice);
+                return null;
+            } catch (error) {
+                elizaLogger.log('Failed to parse as JSON:', error);
+                // Not JSON, use content as-is if it doesn't look like JSON
+                if (!slice.startsWith('{') && !slice.startsWith('[')) {
+                    return this.trimTweetLength(slice);
+                }
+                
+                // Looks like invalid JSON, try harder to extract the text field
+                const textMatch = slice.match(/text:\s*([^,}]+)/);
+                if (textMatch && textMatch[1]) {
+                    return this.trimTweetLength(textMatch[1].trim());
+                }
+                
+                // If we still can't find a text field, return null
+                elizaLogger.log('Could not extract valid tweet content');
+                return null;
             }
-            
-            // Slice at the last period if still too long
-            if (content.length > contentLength) {
-                content = content.slice(0, content.lastIndexOf("."));
-            }
-     
-            // if it's still too long, get the period before the last period
-            if (content.length > contentLength) {
-                content = content.slice(0, content.lastIndexOf("."));
-            }
-     
-            return content;
-     
         } catch (error) {
             console.error('Error generating tweet content:', error);
-            throw error;
+            return null;
         }
-     }
+    }
+
+    // Helper to handle tweet length trimming
+    private trimTweetLength(content: string): string {
+        const contentLength = 240;
+        let trimmed = content.slice(0, contentLength);
+        
+        if (trimmed.length > 280) {
+            trimmed = trimmed.slice(0, trimmed.lastIndexOf("\n"));
+        }
+        if (trimmed.length > contentLength) {
+            trimmed = trimmed.slice(0, trimmed.lastIndexOf("."));
+        }
+        if (trimmed.length > contentLength) {
+            trimmed = trimmed.slice(0, trimmed.lastIndexOf("."));
+        }
+        return trimmed;
+    }
 
     async processTweetResponse(
         response: Response,
@@ -636,25 +681,73 @@ export class TwitterPostClient extends ClientBase {
 
     private async handleTextOnlyReply(tweet: any, tweetState: any, executedActions: string[]) {
         try {
-            const tweetContent = await this.generateTweetContent(tweetState);
-            console.log('Generated text only tweet content:', tweetContent);
+            // Create the proper conversation context for a reply
+            const conversationContext = createInitialConversationContext(tweet);
+            
+            // Generate image descriptions if the tweet has photos
+            let imageContext = '';
+            if (tweet.photos && tweet.photos.length > 0) {
+                console.log('Tweet contains images, generating descriptions...');
+                const imageDescriptions = [];
+                for (const photo of tweet.photos) {
+                    const description = await this.runtime.imageDescriptionService.describeImage(photo.url);
+                    imageDescriptions.push(description);
+                }
+                
+                imageContext = `\n\nImages in Tweet (Described):
+${imageDescriptions.map((desc, i) => `Image ${i + 1}: ${desc}`).join('\n')}`;
+                
+                // Add image context to the conversation
+                conversationContext.currentPost += imageContext;
+                conversationContext.formattedConversation += imageContext;
+            }
+
+            // Use the message handler template with reply context
+            const context = composeContext({
+                state: {
+                    ...tweetState,
+                    isFirstResponse: true,
+                    currentPost: conversationContext.currentPost,
+                    formattedConversation: conversationContext.formattedConversation
+                },
+                template: twitterMessageHandlerTemplate
+            });
+
+            // Use our existing tweet content generator which handles JSON parsing and cleanup
+            console.log('Generating reply with message handler template...');
+            const tweetContent = await this.generateTweetContent(
+                tweetState,
+                {
+                    template: twitterMessageHandlerTemplate,
+                    context: context
+                }
+            );
+
+            if (!tweetContent) {
+                console.log("Failed to generate valid reply content, skipping reply");
+                return;
+            }
+
+            console.log('Generated reply content:', tweetContent);
             
             const tweetResponse = await this.twitterClient.sendTweet(
                 tweetContent,
                 tweet.id
             );
             if (tweetResponse.status === 200) {
-                console.log('Successfully tweeted with reply to timeline post');
+                console.log('Successfully tweeted reply');
                 const result = await this.processTweetResponse(tweetResponse, tweetContent, "reply")
                 if (result.success) {
-                    console.log(`Reply generated for timeline tweet: ${result.tweet.id}`);
+                    console.log(`Reply generated for tweet: ${result.tweet.id}`);
                     executedActions.push('reply');
                 }
             } else {
                 console.error('Tweet creation failed (reply)');
             }
         } catch (error) {
-            console.error('Failed to generate tweet content for timeline reply:', error);
+            console.error('Failed to generate reply content:', error);
+            // Don't throw, just log and return
+            return;
         }
     }
 

@@ -54,6 +54,16 @@ export async function generateText({
     const endpoint =
         runtime.character.modelEndpointOverride || models[provider].endpoint;
     const model = models[provider].model[modelClass];
+
+
+    elizaLogger.log("Provider:", provider);
+    elizaLogger.log("Model:", model);
+    elizaLogger.log("Endpoint:", endpoint);
+    elizaLogger.log("Context Length:", context.length);
+    elizaLogger.log("\nFull Context:");
+    elizaLogger.log(context);
+
+
     const temperature = models[provider].settings.temperature;
     const frequency_penalty = models[provider].settings.frequency_penalty;
     const presence_penalty = models[provider].settings.presence_penalty;
