@@ -127,15 +127,29 @@ Enhanced prompt:`;
 
                 
                         try {
-                            const tweetText = imagePrompt.trim();
-                            
-                            elizaLogger.log("Attempting to post to Twitter with text:", tweetText);
+                            const tweetContext = `# Task: Generate a post in the voice and style of ${runtime.character.name}
+Write a single sentence about the following image (without directly describing it), from your perspective. Be creative and engaging. No emojis.
 
-                            // Create a client instance like in post.ts
+Image description: ${imagePrompt}
+
+Your response should be brief and concise. Do not add commentary, just write the tweet.`;
+
+                            elizaLogger.log("Generating tweet text for image...");
+                            const tweetText = await generateText({
+                                runtime,
+                                context: tweetContext,
+                                modelClass: ModelClass.MEDIUM,
+                            });
+
+                            const finalTweetText = tweetText.trim().slice(0, 240); // Ensure tweet length
+                            
+                            elizaLogger.log("Attempting to post to Twitter with text:", finalTweetText);
+
+                            // Create a client instance
                             const client = new ClientBase({ runtime });
                             const result = await client.requestQueue.add(
                                 async () => await client.twitterClient.sendTweet(
-                                    tweetText,
+                                    finalTweetText,
                                     undefined,
                                     [{
                                         data: imageBuffer,
