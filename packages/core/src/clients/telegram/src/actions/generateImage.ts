@@ -30,7 +30,7 @@ Respond only with "SHARE" or "SKIP" based on if the image meets these criteria.`
 
 const SHOULD_GENERATE_PROMPT = `# Task: Determine if image generation is appropriate
 
-Analyze the user's message and decide if generating an image would be helpful or necessary.
+Analyze the user's message and decide if generating an image would be helpful or necessary. Only generate an image if the user has explicitly asked for an image to be generated.
 
 Consider:
 - Is the user explicitly requesting an image?
