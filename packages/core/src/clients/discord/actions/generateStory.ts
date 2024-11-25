@@ -155,6 +155,7 @@ export const discordStoryGeneration: Action = {
                 .join('\n\n');
 
             // First, generate the opening tweet with video
+            const channelNumber = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
             const openingContext = `# Task: Generate an opening hook for a story based on the context.
 Create a compelling opening line that will grab attention and work well with a video. 
 
@@ -174,11 +175,14 @@ Also, make it sound like a mix of infinite jest, Accelerando, and Nick Land. but
 
 Opening hook:`;
 
-            const openingTweet = await generateText({
+            const rawOpeningTweet = await generateText({
                 runtime,
                 context: openingContext,
                 modelClass: ModelClass.LARGE,
             });
+
+            const openingTweet = `CUMETV: CHANNEL ${channelNumber}
+${rawOpeningTweet}`;
 
             // Generate video for opening tweet
             elizaLogger.log("Generating video for opening tweet...");
