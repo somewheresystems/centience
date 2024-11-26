@@ -24,8 +24,8 @@ export const generateVideo = async (
             },
             body: JSON.stringify({
                 prompt: data.prompt,
-                aspect_ratio: "16:9",
-                loop: true
+                aspect_ratio: "4:3",
+                loop: false
             })
         });
 
