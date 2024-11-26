@@ -7,6 +7,8 @@ embedding-cache.json
 packages/agent/temp/*
 *.png
 .DS_Store
+*.mp4
+*.png
 
 dist/
 # Allow models directory but ignore model files
