@@ -6,6 +6,8 @@ concatenated-output.ts
 embedding-cache.json
 
 .DS_Store
+*.mp4
+*.png
 
 dist/
 # Allow models directory but ignore model files
