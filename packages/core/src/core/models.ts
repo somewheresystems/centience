@@ -35,6 +35,40 @@ const models: Models = {
             [ModelClass.LARGE]: "claude-3-opus-20240229",
         },
     },
+    [ModelProvider.SMAAI]: {
+        endpoint: "https://api.smai.uk/v1",
+        settings: {
+            stop: [],
+            maxInputTokens: 128000,
+            maxOutputTokens: 8192,
+            frequency_penalty: 0.0,
+            presence_penalty: 0.0,
+            temperature: 0.3,
+        },
+        model: {
+            [ModelClass.SMALL]: "/Users/n/agent-q4xs.gguf", //"/home/austin/disk2/aq4.gguf",
+            [ModelClass.MEDIUM]: "/Users/n/agent-q4xs.gguf", //"/home/austin/disk2/aq4.gguf",
+            [ModelClass.LARGE]: "/Users/n/agent-q4xs.gguf", //"/home/austin/disk2/aq4.gguf",
+            [ModelClass.EMBEDDING]: "togethercomputer/m2-bert-80M-32k-retrieval",
+        },
+    },
+    [ModelProvider.TOGETHER]: {
+        endpoint: "https://api.together.ai/v1",
+        settings: {
+            stop: [],
+            maxInputTokens: 128000,
+            maxOutputTokens: 8192,
+            frequency_penalty: 0.0,
+            presence_penalty: 0.0,
+            temperature: 0.9,
+        },
+        model: {
+            [ModelClass.SMALL]: "togethercomputer/m2-bert-80M-32k-retrieval",
+            [ModelClass.MEDIUM]: "togethercomputer/m2-bert-80M-32k-retrieval",
+            [ModelClass.LARGE]: "togethercomputer/m2-bert-80M-32k-retrieval",
+            [ModelClass.EMBEDDING]: "togethercomputer/m2-bert-80M-32k-retrieval",
+        },
+    },
     [ModelProvider.CLAUDE_VERTEX]: {
         settings: {
             stop: [],
@@ -89,17 +123,21 @@ const models: Models = {
         settings: {
             stop: [],
             maxInputTokens: 128000,
-            maxOutputTokens: 1024,
-            repetition_penalty: 0,
-            temperature: 0.9,
+            maxOutputTokens: 8192, // changed from 1024 to 8192
+            repetition_penalty: 0.4, // changed from 0 to 0.4
+            temperature: 0.7, // changed from 0.9 to 0.7
         },
-        endpoint: "https://api.together.ai/v1",
+        imageSettings: {
+            steps: 4,
+        },
+        endpoint: "https://api.smai.uk/v1", // changed from"https://api.together.ai/v1"
         model: {
-            [ModelClass.SMALL]: "meta-llama/Llama-3.2-3B-Instruct-Turbo",
-            [ModelClass.MEDIUM]: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
-            [ModelClass.LARGE]: "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+            [ModelClass.SMALL]: "meta-llama/Llama-3.2-3B-Instruct-Turbo", // "/Users/n/agent-q4xs.gguf",
+            [ModelClass.MEDIUM]: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo", // "/Users/n/agent-q4xs.gguf",
+            [ModelClass.LARGE]: "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo", // "/Users/n/agent-q4xs.gguf",
             [ModelClass.EMBEDDING]:
                 "togethercomputer/m2-bert-80M-32k-retrieval",
+            //[ModelClass.IMAGE]: "black-forest-labs/FLUX.1-schnell",
         },
     },
     [ModelProvider.LLAMALOCAL]: {

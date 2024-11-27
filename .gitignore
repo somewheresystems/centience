@@ -36,6 +36,8 @@ timeline_cache.json
 
 *.sqlite
 characters/
+packages/core/src/core/defaultCharacter.ts
+defaultCharacter.ts
 
 packages/core/src/providers/cache
 packages/core/src/providers/cache/*
@@ -44,3 +46,6 @@ cache/*
 twitter_archive
 test.html
 test.json
+
+# Personal files for SMA AI
+packages/core/src/core/models.ts

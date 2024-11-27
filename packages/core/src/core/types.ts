@@ -109,6 +109,8 @@ export type Models = {
     [ModelProvider.CLAUDE_VERTEX]: Model;
     [ModelProvider.REDPILL]: Model;
     [ModelProvider.OLLAMA]: Model;
+    [ModelProvider.TOGETHER]: Model;
+    [ModelProvider.SMAAI]: Model;
 };
 
 export enum ModelProvider {
@@ -121,7 +123,9 @@ export enum ModelProvider {
     GOOGLE = "google",
     CLAUDE_VERTEX = "claude_vertex",
     REDPILL = "redpill",
-    OLLAMA = "ollama"
+    OLLAMA = "ollama",
+    TOGETHER = "together",
+    SMAAI = "smaai"
 }
 
 /**

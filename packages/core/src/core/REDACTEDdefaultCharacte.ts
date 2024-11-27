@@ -7,17 +7,17 @@ export const defaultCharacter: Character = {
         Clients.TWITTER,
         Clients.DISCORD
     ],
-    modelProvider: ModelProvider.OLLAMA,//LLAMACLOUD,
+    modelProvider: ModelProvider.OPENAI,
     settings: {
         secrets: {
-            TWITTER_USERNAME:"empress_sma",
-            //LLAMACLOUD_API_KEY:
-            //OLLAMA_API_KEY: 
-            //DISCORD_APPLICATION_ID: 
-            //DISCORD_API_TOKEN:
-            //OPENAI_API_KEY: 
-            //ANTHROPIC_API_KEY:
-            //TOGETHER_API_KEY:
+            //TWITTER_USERNAME:"empress_sma",
+            //LLAMACLOUD_API_KEY: "",
+            //DISCORD_APPLICATION_ID: "",
+            //DISCORD_API_TOKEN: "",
+            //OPENAI_API_KEY: "",
+            //OPENAI_API_KEY: "",
+            //ANTHROPIC_API_KEY: "",
+            //TOGETHER_API_KEY: ""
         },
         voice: {
             model: "en_US-hfc_female-medium",
