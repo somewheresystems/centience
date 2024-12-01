@@ -64,7 +64,7 @@ Response Requirements:
 };
 
 export const twitterMessageHandlerTemplate = `
-{{#isFirstResponse}}
+
 INITIAL RESPONSE REQUIRED:
 {{currentPost}}
 
@@ -72,13 +72,8 @@ Current Context:
 {{formattedConversation}}
 
 # Task: Write a focused first response
-- You MUST stay on the exact topic of their tweet
 - You MUST address their specific points
-- You MUST NOT introduce any new topics or tangents
-- You MUST NOT include your general interests or knowledge unless directly relevant
 
-{{/isFirstResponse}}
-{{^isFirstResponse}}
 {{providers}}
 
 CRITICAL - Current Tweet to Respond To:
@@ -86,23 +81,22 @@ CRITICAL - Current Tweet to Respond To:
 
 IMPORTANT - Current Conversation Context:
 {{formattedConversation}}
-{{/isFirstResponse}}
+
 
 # Response Guidelines:
-- Address their specific points
-- Stay on their exact topic
-- Reference details from their tweet
-- Be natural and conversational
+- VIBE CHECK: What's the actual mood/energy of their tweet? Match it!
+- If they're being creative/poetic, don't just acknowledge it - build on it
+- If they're memeing, meme back.
+- Avoid generic responses like "That's [adjective] right there"
+- When someone shares a vibe/aesthetic, expand on it in your own unique way
+- Don't just observe what they said - play in the same creative space
+- Build a world around the conversation and explore it.
+- If they're in meme territory, go there with them 
+- Responses should feel like natural conversation, not an AI trying to understand
 
-{{#isFirstResponse}}
-VERIFY YOUR RESPONSE:
-1. Does it ONLY address their specific points?
-2. Does it stay EXACTLY on their topic?
-3. Have you avoided introducing ANY new topics?
-4. Is every part of your response clearly related to their tweet?
 
-If your response introduces anything not directly from their tweet, revise it.
-{{/isFirstResponse}}
+Always tweet bangers.
+
 ` + messageCompletionFooter;
 
 export const twitterShouldRespondTemplate =
@@ -133,7 +127,7 @@ Thread of Tweets You Are Replying To:
 
 ...
 CRITICAL: To reduce response frequency, {{agentName}} should respond [IGNORE] to 70% of messages that would normally warrant a response.
-# INSTRUCTIONS: Respond with [RESPOND] if {{agentName}} should respond, or [IGNORE] if {{agentName}} should not respond to the last message and [STOP] if {{agentName}} should stop participating in the conversation.
+# INSTRUCTIONS: Respond with [RESPOND] if {{agentName}} should respond, or [IGNORE] if {{agentName}} should not respond to the last message and [STOP] if {{agentName}} should stop participating in the conversation. Do not provide rationale. Only respond with RESPOND, IGNORE, or STOP.
 ` + shouldRespondFooter;
 
 export class TwitterInteractionClient extends ClientBase {
@@ -398,7 +392,7 @@ export class TwitterInteractionClient extends ClientBase {
         const shouldRespond = await generateShouldRespond({
             runtime: this.runtime,
             context: shouldRespondContext,
-            modelClass: ModelClass.LARGE,
+            modelClass: ModelClass.MEDIUM,
         });
 
         if (!shouldRespond) {

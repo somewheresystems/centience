@@ -39,21 +39,27 @@ export async function generateText({
     context,
     modelClass,
     stop,
+    forceProvider, // Add this parameter
 }: {
     runtime: IAgentRuntime;
     context: string;
     modelClass: string;
     stop?: string[];
+    forceProvider?: {
+        provider: ModelProvider;
+        model: string;
+    };
 }): Promise<string> {
     if (!context) {
         console.error("generateText context is empty");
         return "";
     }
 
-    const provider = runtime.modelProvider;
+    // Use forced provider if specified, otherwise use default logic
+    const provider = forceProvider?.provider || runtime.modelProvider;
     const endpoint =
         runtime.character.modelEndpointOverride || models[provider].endpoint;
-    const model = models[provider].model[modelClass];
+    const model = forceProvider?.model || models[provider].model[modelClass];
 
 
     elizaLogger.log("Provider:", provider);
@@ -487,7 +493,7 @@ export function trimTokens(context, maxTokens, model) {
 export async function generateShouldRespond({
     runtime,
     context,
-    modelClass,
+   // modelClass,
 }: {
     runtime: IAgentRuntime;
     context: string;
@@ -503,7 +509,11 @@ export async function generateShouldRespond({
             const response = await generateText({
                 runtime,
                 context,
-                modelClass,
+                modelClass: "LARGE", // This will be ignored since we're forcing the provider
+                forceProvider: {
+                    provider: ModelProvider.LLAMACLOUD,
+                    model: "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo" // Or whatever Llama model you prefer
+                }
             });
 
             elizaLogger.log("Received response from generateText:", response);

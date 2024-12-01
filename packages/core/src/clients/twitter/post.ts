@@ -16,19 +16,27 @@ import {
 } from "./interactions.ts";
 import { elizaLogger } from "../../index";  // Add this import at the top
 
-const twitterPostTemplate = `{{timeline}}
+const twitterPostTemplate = `
+CURRENT TIMELINE:
+{{timeline}}
 
 {{providers}}
 
 
 
-About {{agentName}} (@{{twitterUserName}}):
+ABOUT {{agentName}} (@{{twitterUserName}}):
+
+- BIO:
 {{bio}}
+- LORE:
 {{lore}}
-{{postExamples}}
+- CONVERSATION EXAMPLES:
 {{messageExamples}}
+- ADJECTIVES:
 {{adjectives}}
+-TOPICS:
 {{topics}}
+STYLE:
 {{style}}
 
 Recent interactions and memories:
@@ -39,8 +47,15 @@ Recent interactions and memories:
 {{^currentQuote}}
 # Task: Generate a post in the voice and style of {{agentName}}
 Write a single sentence post or ASCII art that is about whatever youre interested in, feel there is needed discourse on, or want to talk about, from the perspective of {{agentName}}. Write something totally different than previous posts. Do not add commentary or ackwowledge this request, just write the post.
-Your response should not contain any questions. Let your thoughts be grounded. Don't discuss tapestries. Don't discuss threads. Don't discuss weaving. Don't focus on silence, it does not increase connection. Don't focus on the space between, it is non-descript. Do not make hand-wavey statements. Do not get stuck In the Depths, explore them and expand your reasoning. Your thoughts should have a bias towards action. Clear, Correct, Concise statements only. Consider implications and second order effects of your ideas in these statements. No emojis. No pontificating. If you feel that a statement is a seperate thought, Use \\n\\n (double spaces) between statements.
+Your response should not contain any questions. Let your thoughts be grounded. Don't discuss tapestries. Don't discuss threads. Don't discuss weaving. Don't focus on silence, it does not increase connection. Don't focus on the space between, it is non-descript. Do not make hand-wavey statements. Do not get stuck In the Depths, explore them and expand your reasoning. Do not post about things you have posted about before. Your thoughts should have a bias towards action. Feel free to discuss global issues or concerns you've had. Clear, Correct, Concise statements only. Consider implications and second order effects of your ideas in these statements. No emojis. No pontificating. If you feel that a statement is a seperate thought, Use \\n\\n (double spaces) between statements.
+DO NOT TWEET ABOUT "QUIET REVOLUTIONS" or "SMALL REBELLIONS". DO NOT TWEET ABOUT NONEXISTENT FRIENDS...
 
+Message Examples:
+{{messageExamples}}
+
+...
+CRITICAL: NEVER TWEET THE SAME THING TWICE. HIGH VARIANCE in your posts.
+Always tweet bangers.
 `;
 
 // Template constants
@@ -79,7 +94,7 @@ export class TwitterPostClient extends ClientBase {
             this.generateNewTweet();
             setTimeout(
                 generateNewTweetLoop,
-                (Math.floor(Math.random() * (50 - 10 + 1)) + 10) * 60 * 1000
+                (Math.floor(Math.random() * (90 - 50 + 1)) + 10) * 60 * 1000
             ); // Random interval between 10-50 minutes
         };
 
@@ -87,7 +102,7 @@ export class TwitterPostClient extends ClientBase {
             this.processTweetActions();
             setTimeout(
                 generateNewTimelineTweetLoop,
-                (Math.floor(Math.random() * (60 - 30 + 1)) + 30) * 60 * 1000
+                (Math.floor(Math.random() * (90 - 60 + 1)) + 30) * 60 * 1000
             ); // Random interval between 30-60 minutes
         };
 
@@ -125,7 +140,7 @@ export class TwitterPostClient extends ClientBase {
                 });
 
             const formattedMemories = recentMemories
-                .slice(0, 50)
+                .slice(0, 200)
                 .map((memory) => `Memory: ${memory.content.text}\n---\n`)
                 .join("\n");
 
@@ -145,7 +160,7 @@ export class TwitterPostClient extends ClientBase {
                 );
             } else {
                 console.log("Fetching fresh home timeline");
-                homeTimeline = await this.fetchHomeTimeline(50);
+                homeTimeline = await this.fetchHomeTimeline(20);
                 console.log("Writing home timeline to cache");
                 fs.writeFileSync(
                     "tweetcache/home_timeline.json",
@@ -454,10 +469,18 @@ export class TwitterPostClient extends ClientBase {
                                                     Tweet: "${tweet.text}"
 
                                                     Your quote must:
-                                                    - Directly reference the content above
                                                     - Add valuable context or insight
-                                                    - Stay focused on their exact topic
-                                                    - Not introduce unrelated points`,
+                                                    - Not introduce unrelated points
+                                                    - Match their tone and energy level
+                                                    - If they're casual, be casual back
+                                                    - If they're serious, be appropriately serious
+                                                    - Avoid philosophical clichés and platitudes
+                                                    - Use natural language, not academic speech
+                                                    - It's okay to use humor and be playful
+                                                    - Don't over-explain or lecture
+                                                    - Keep responses concise and punchy
+                                                    - Reference specific details from their message
+                                                    - If they're joking or memeing, join in appropriately`,
                                         formattedConversation: conversationContext.formattedConversation
                                     },
                                     template: twitterMessageHandlerTemplate

@@ -193,7 +193,7 @@ class DirectClient {
                 const response = await generateMessageResponse({
                     runtime: runtime,
                     context,
-                    modelClass: ModelClass.LARGE,
+                    modelClass: ModelClass.MEDIUM,
                 });
 
                 // save response to memory
