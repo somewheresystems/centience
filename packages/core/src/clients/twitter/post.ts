@@ -336,6 +336,11 @@ export class TwitterPostClient extends ClientBase {
                 try {
                     console.log(`Processing tweet ID: ${tweet.id}`);
                     
+                    if (await this.hasRespondedToTweet(tweet.id)) {
+                        console.log(`Already responded to tweet ${tweet.id}, skipping`);
+                        continue;
+                    }
+                    
                     // Handle memory storage / checking if the tweet has already been posted / interacted with
                     const memory = await this.runtime.messageManager.getMemoryById(
                         stringToUuid(tweet.id + "-" + this.runtime.agentId)
@@ -459,6 +464,9 @@ export class TwitterPostClient extends ClientBase {
                                 // Create the proper conversation context for a quote tweet
                                 const conversationContext = createInitialConversationContext(tweet);
                                 
+                                // Get quoted content if it exists
+                                const quotedContent = await this.getQuotedContent(tweet);
+                                
                                 // Use the message handler template with quote-specific modifications
                                 const context = composeContext({
                                     state: {
@@ -467,6 +475,7 @@ export class TwitterPostClient extends ClientBase {
                                         currentPost: `QUOTE TWEET REQUIRED:
                                                     From: @${tweet.username}
                                                     Tweet: "${tweet.text}"
+                                                    ${quotedContent ? `\n\nQuoted Content:\n${quotedContent}` : ''}
 
                                                     Your quote must:
                                                     - Add valuable context or insight
@@ -720,11 +729,17 @@ export class TwitterPostClient extends ClientBase {
                 
                 imageContext = `\n\nImages in Tweet (Described):
 ${imageDescriptions.map((desc, i) => `Image ${i + 1}: ${desc}`).join('\n')}`;
-                
-                // Add image context to the conversation
-                conversationContext.currentPost += imageContext;
-                conversationContext.formattedConversation += imageContext;
             }
+
+            // Get quoted content if it exists
+            const quotedContent = await this.getQuotedContent(tweet);
+            if (quotedContent) {
+                imageContext += `\n\n${quotedContent}`;
+            }
+
+            // Add image and quoted content context to the conversation
+            conversationContext.currentPost += imageContext;
+            conversationContext.formattedConversation += imageContext;
 
             // Use the message handler template with reply context
             const context = composeContext({
