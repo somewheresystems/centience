@@ -248,13 +248,33 @@ export async function startTelegram(
 
 export async function startTwitter(runtime: IAgentRuntime) {
     elizaLogger.log("Starting Twitter clients...");
+    
+    // Create all clients first
     const twitterSearchClient = new Client.TwitterSearchClient(runtime);
-    await wait();
-    const twitterInteractionClient = new Client.TwitterInteractionClient(
-        runtime
-    );
-    await wait();
+    const twitterInteractionClient = new Client.TwitterInteractionClient(runtime);
     const twitterGenerationClient = new Client.TwitterPostClient(runtime);
+    
+    // Wait for each client to be ready
+    await Promise.all([
+        new Promise<void>((resolve) => {
+            twitterSearchClient.once('ready', () => {
+                elizaLogger.log("Twitter search client ready");
+                resolve();
+            });
+        }),
+        new Promise<void>((resolve) => {
+            twitterInteractionClient.once('ready', () => {
+                elizaLogger.log("Twitter interaction client ready");
+                resolve();
+            });
+        }),
+        new Promise<void>((resolve) => {
+            twitterGenerationClient.once('ready', () => {
+                elizaLogger.log("Twitter generation client ready");
+                resolve();
+            });
+        })
+    ]);
 
     return [
         twitterInteractionClient,

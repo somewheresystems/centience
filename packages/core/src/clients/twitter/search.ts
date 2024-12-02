@@ -16,6 +16,7 @@ import {
 import { stringToUuid } from "../../core/uuid.ts";
 import { ClientBase } from "./base.ts";
 import { buildConversationThread, sendTweet, wait } from "./utils.ts";
+import { elizaLogger } from "../../index.ts";
 
 const twitterSearchTemplate =
     `{{relevantFacts}}
@@ -66,16 +67,16 @@ export class TwitterSearchClient extends ClientBase {
     private startEngagementLoops() {
         // Start both loops with different initial delays
         setTimeout(() => {
-            this.searchTermsLoop().catch(err => {
-                console.error("Error in search terms loop:", err);
-            });
-        }, 0);
-        
-        setTimeout(() => {
             this.viralTweetsLoop().catch(err => {
                 console.error("Error in viral tweets loop:", err);
             });
-        }, 30 * 60 * 1000); // Start viral loop 30 mins after
+        },0); // Start viral loop 30 mins after
+    
+        setTimeout(() => {
+            this.searchTermsLoop().catch(err => {
+                console.error("Error in search terms loop:", err);
+            });
+        },  30 * 60 * 1000);    
     }
 
     private async searchTermsLoop() {
@@ -106,24 +107,36 @@ export class TwitterSearchClient extends ClientBase {
 
         setTimeout(
             () => this.viralTweetsLoop(),
-            (Math.floor(Math.random() * (120 - 60 + 1)) + 60) * 60 * 1000
+            12 * 60 * 60 * 1000
         );
     }
 
     private async engageWithViralTweets() {
-        console.log("Engaging with viral tweets");
+        elizaLogger.log("=== VIRAL TWEETS LOOP START ===");
+        elizaLogger.log("=== VIRAL TWEETS LOOP START ===");
+        elizaLogger.log("=== VIRAL TWEETS LOOP START ===");
+        elizaLogger.log("=== VIRAL TWEETS LOOP START ===");
+        elizaLogger.log("=== VIRAL TWEETS LOOP START ===");
+        elizaLogger.log("=== VIRAL TWEETS LOOP START ===");
+        elizaLogger.log("=== VIRAL TWEETS LOOP START ===");
         try {
             if (!fs.existsSync("tweetcache")) {
                 fs.mkdirSync("tweetcache");
             }
 
-            // Search for viral tweets from the last 3 hours
-            const threeHoursAgo = Math.floor(Date.now() / 1000) - (3 * 60 * 60);
+            // Get yesterday's date
+            const date = new Date();
+            date.setDate(date.getDate() - 1);
+            const formattedDate = date.toISOString().split('T')[0];
+            elizaLogger.log(`Searching for viral tweets since: ${formattedDate}`);
+            
             const recentTweets = await this.fetchSearchTweets(
-                `min_faves:1000 since_time:${threeHoursAgo}`,
+                `min_faves:1000 since: ${formattedDate}`,
                 20,
                 SearchMode.Top
             );
+
+            elizaLogger.log(`Found ${recentTweets.tweets.length} viral tweets`);
 
             // randomly slice .tweets down to 20
             const slicedTweets = recentTweets.tweets
@@ -131,7 +144,7 @@ export class TwitterSearchClient extends ClientBase {
                 .slice(0, 20);
 
             if (slicedTweets.length === 0) {
-                console.log("No viral tweets found");
+                elizaLogger.error("No viral tweets found");
                 return;
             }
 
@@ -351,7 +364,15 @@ Notes:
                 console.error(`Error sending response post: ${error}`);
             }
         } catch (error) {
-            console.error("Error engaging with viral tweets:", error);
+            elizaLogger.error("Error in viral tweets loop:", error);
+        } finally {
+            elizaLogger.log("=== VIRAL TWEETS LOOP END ===");
+            elizaLogger.log("=== VIRAL TWEETS LOOP END ===");
+            elizaLogger.log("=== VIRAL TWEETS LOOP END ===");
+            elizaLogger.log("=== VIRAL TWEETS LOOP END ===");
+            elizaLogger.log("=== VIRAL TWEETS LOOP END ===");
+            elizaLogger.log("=== VIRAL TWEETS LOOP END ===");
+            elizaLogger.log("=== VIRAL TWEETS LOOP END ===");
         }
     }
 

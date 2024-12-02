@@ -82,7 +82,7 @@ async function startAgent(character: Character) {
             runtime as IAgentRuntime
         );
 
-        directClient.registerAgent(await runtime);
+        directClient.registerAgent(runtime);
 
         return clients;
     } catch (error) {

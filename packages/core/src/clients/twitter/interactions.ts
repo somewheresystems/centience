@@ -325,6 +325,21 @@ export class TwitterInteractionClient extends ClientBase {
         };
 
         const isFirstResponse = thread.length === 1;
+        
+        // Add check for replies to our tweets
+        if (isFirstResponse && tweet.inReplyToStatusId) {
+            // Check if the tweet they're replying to was from us
+            const isReplyingToUs = thread.some(t => 
+                t.id === tweet.inReplyToStatusId && 
+                t.username === this.runtime.getSetting("TWITTER_USERNAME")
+            );
+            
+            if (isReplyingToUs && Math.random() < 0.5) {
+                console.log("Randomly skipping first reply to our tweet (50/50 chance)");
+                return { text: "Response Decision: Random IGNORE (First Reply)", action: "IGNORE" };
+            }
+        }
+
         const currentPost = formatTweet(tweet);
         
         // Create conversation context based on whether it's first response

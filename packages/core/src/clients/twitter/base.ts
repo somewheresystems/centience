@@ -689,40 +689,4 @@ export class ClientBase extends EventEmitter {
         // Add any other context you want (replies, images, etc.)
         return context;
     }
-
-    protected async getThreadContent(tweet: Tweet): Promise<string | null> {
-        try {
-            // If this tweet isn't a reply, it might be the thread start
-            if (!tweet.inReplyToStatusId) {
-                return null;
-            }
-
-            // Get the thread tweets
-            const threadTweets = await this.requestQueue.add(() => 
-                this.twitterClient.getThread(tweet.id)
-            );
-
-            if (!threadTweets || threadTweets.length === 0) {
-                return null;
-            }
-
-            // Filter for only tweets by the original author in chronological order
-            const authorThreadTweets = threadTweets
-                .filter(t => t.username === tweet.username)
-                .sort((a, b) => a.timestamp - b.timestamp);
-
-            if (authorThreadTweets.length <= 1) {
-                return null;
-            }
-
-            // Format the thread content
-            return `Thread by @${tweet.username}:\n${authorThreadTweets
-                .map((t, i) => `${i + 1}. ${t.text}`)
-                .join('\n')}`;
-
-        } catch (error) {
-            console.error('Error fetching thread content:', error);
-            return null;
-        }
-    }
 }
