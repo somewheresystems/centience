@@ -15,6 +15,7 @@ import {
     twitterMessageHandlerTemplate 
 } from "./interactions.ts";
 import { elizaLogger } from "../../index";  // Add this import at the top
+import { UUID } from "crypto";
 
 
 const twitterPostTemplate = `
