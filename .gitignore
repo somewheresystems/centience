@@ -35,12 +35,17 @@ tweetcache/
 twitter_cookies.json
 timeline_cache.json
 
+
 *.sqlite
 characters/
 
 packages/core/src/providers/cache
 packages/core/src/providers/cache/*
 cache/*
+packages/agent/imagecache
+packages/agent/imagecache/*
+
+ROADMAP.md
 
 twitter_archive
 test.html

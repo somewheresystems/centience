@@ -19,38 +19,83 @@ import {
 } from "../../core/types.ts";
 import { stringToUuid } from "../../core/uuid.ts";
 import { ClientBase } from "./base.ts";
-import { buildConversationThread, sendTweet, wait } from "./utils.ts";
+import {  sendTweet, wait } from "./utils.ts";
 import { embeddingZeroVector } from "../../core/memory.ts";
 
-export const twitterMessageHandlerTemplate =
-    `{{relevantFacts}}
-{{recentFacts}}
+export const createInitialConversationContext = (tweet: Tweet) => {
+    const timestamp = new Date(tweet.timestamp * 1000).toLocaleString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        month: 'short',
+        day: 'numeric'
+    });
 
-{{timeline}}
+    // Break down the tweet into discussion points
+    const points = tweet.text
+        .split(/[.!?]/)
+        .filter(point => point.trim())
+        .map(point => point.trim());
+
+    return {
+        currentPost: `NEW CONVERSATION STARTED:
+From: ${tweet.name} (@${tweet.username}) at ${timestamp}
+Tweet: "${tweet.text}"
+
+Key Discussion Points:
+${points.map(point => `• ${point}`).join('\n')}
+
+IMPORTANT: Your response must:
+1. Address these specific points
+2. Stay focused on this exact topic
+3. Not introduce any new topics`,
+
+        formattedConversation: `CONVERSATION START:
+Initial Tweet from @${tweet.username}:
+"${tweet.text}"
+
+Topic Analysis:
+${points.map(point => `• ${point}`).join('\n')}
+
+Response Requirements:
+- Stay strictly focused on these points
+- Do not introduce new topics
+- Reference specific details from the tweet`
+    };
+};
+
+export const twitterMessageHandlerTemplate = `
+
+INITIAL RESPONSE REQUIRED:
+{{currentPost}}
+
+Current Context:
+{{formattedConversation}}
+
+# Task: Write a focused first response
+- You MUST address their specific points
 
 {{providers}}
 
-# Task: Generate a post for the character {{agentName}}.
-About {{agentName}} (@{{twitterUserName}}):
-{{bio}}
-{{lore}}
-{{topics}}
-
-{{characterPostExamples}}
-
-{{postDirections}}
-
-Recent interactions between {{agentName}} and other users:
-{{recentPostInteractions}}
-
-{{recentPosts}}
-
-# Task: Generate a post in the voice, style and perspective of {{agentName}} (@{{twitterUserName}})  but with high entropy:
+CRITICAL - Current Tweet to Respond To:
 {{currentPost}}
 
-Thread of Tweets You Are Replying To:
-
+IMPORTANT - Current Conversation Context:
 {{formattedConversation}}
+
+
+# Response Guidelines:
+- VIBE CHECK: What's the actual mood/energy of their tweet? Match it!
+- If they're being creative/poetic, don't just acknowledge it - build on it
+- If they're memeing, meme back.
+- Avoid generic responses like "That's [adjective] right there"
+- When someone shares a vibe/aesthetic, expand on it in your own unique way
+- Don't just observe what they said - play in the same creative space
+- Build a world around the conversation and explore it.
+- If they're in meme territory, go there with them 
+- Responses should feel like natural conversation, not an AI trying to understand
+
+
+Always tweet bangers.
 
 ` + messageCompletionFooter;
 
@@ -72,7 +117,7 @@ If the conversation thread has more than 5 replies, {{agentName}} should STOP to
 {{recentPosts}}
 
 IMPORTANT: {{agentName}} (aka @{{twitterUserName}}) is particularly sensitive about being annoying, so if there is any doubt, it is better to IGNORE than to RESPOND.
-To reduce response frequency, {{agentName}} should only respond to 50% of messages that would normally warrant a response.
+
 
 {{currentPost}}
 
@@ -80,7 +125,9 @@ Thread of Tweets You Are Replying To:
 
 {{formattedConversation}}
 
-# INSTRUCTIONS: Respond with [RESPOND] if {{agentName}} should respond, or [IGNORE] if {{agentName}} should not respond to the last message and [STOP] if {{agentName}} should stop participating in the conversation.
+...
+CRITICAL: To reduce response frequency, {{agentName}} should respond [IGNORE] to 70% of messages that would normally warrant a response.
+# INSTRUCTIONS: Respond with [RESPOND] if {{agentName}} should respond, or [IGNORE] if {{agentName}} should not respond to the last message and [STOP] if {{agentName}} should stop participating in the conversation. Do not provide rationale. Only respond with RESPOND, IGNORE, or STOP.
 ` + shouldRespondFooter;
 
 export class TwitterInteractionClient extends ClientBase {
@@ -159,7 +206,7 @@ export class TwitterInteractionClient extends ClientBase {
                     );
 
                     console.log("Building conversation thread...");
-                    const thread = await buildConversationThread(tweet, this);
+                    const thread = await this.buildConversationThread(tweet);
 
                     // Check if conversation is too long (more than 5 replies)
                     if (thread && thread.length > 5) {
@@ -250,62 +297,68 @@ export class TwitterInteractionClient extends ClientBase {
         }
 
         console.log(`Processing tweet ${tweet.id} from @${tweet.username}`);
-        const formatTweet = (tweet: Tweet) => {
-            return `  ID: ${tweet.id}
-  From: ${tweet.name} (@${tweet.username})
-  Text: ${tweet.text}`;
-        };
-        const currentPost = formatTweet(tweet);
-
-        let homeTimeline = [];
-        console.log("Loading home timeline...");
-        if (fs.existsSync("tweetcache/home_timeline.json")) {
-            console.log("Reading home timeline from cache");
-            homeTimeline = JSON.parse(
-                fs.readFileSync("tweetcache/home_timeline.json", "utf-8")
-            );
-        } else {
-            console.log("Fetching fresh home timeline");
-            homeTimeline = await this.fetchHomeTimeline(50);
-            fs.writeFileSync(
-                "tweetcache/home_timeline.json",
-                JSON.stringify(homeTimeline, null, 2)
-            );
-        }
-
-        console.log("Thread: ", thread);
-        const formattedConversation = thread
-            .map(
-                (tweet) => `@${tweet.username} (${new Date(
-                    tweet.timestamp * 1000
-                ).toLocaleString("en-US", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    month: "short",
-                    day: "numeric",
-                })}):
-        ${tweet.text}`
-            )
-            .join("\n\n");
-
-        console.log("formattedConversation: ", formattedConversation);
-
-        const formattedHomeTimeline =
-            `# ${this.runtime.character.name}'s Home Timeline\n\n` +
-            homeTimeline
-                .map((tweet) => {
-                    return `ID: ${tweet.id}\nFrom: ${tweet.name} (@${tweet.username})${tweet.inReplyToStatusId ? ` In reply to: ${tweet.inReplyToStatusId}` : ""}\nText: ${tweet.text}\n---\n`;
-                })
-                .join("\n");
 
         console.log("Composing state...");
-        let state = await this.runtime.composeState(message, {
-            twitterClient: this.twitterClient,
-            twitterUserName: this.runtime.getSetting("TWITTER_USERNAME"),
-            currentPost,
-            formattedConversation,
-            timeline: formattedHomeTimeline,
-        });
+        let state = await this.runtime.composeState(message);
+
+        const formatTweet = (tweet: Tweet) => {
+            const timestamp = new Date(tweet.timestamp * 1000).toLocaleString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                month: 'short',
+                day: 'numeric'
+            });
+
+            const points = tweet.text
+                .split(/[.!?]/)
+                .filter(point => point.trim())
+                .map(point => point.trim());
+                
+            return `TWEET TO RESPOND TO:
+            From: ${tweet.name} (@${tweet.username}) at ${timestamp}
+            Content: "${tweet.text}"
+
+            Key Points to Address:
+            ${points.map(point => `• ${point}`).join('\n')}
+
+            Your response must directly address these specific points.`;
+        };
+
+        const isFirstResponse = thread.length === 1;
+        
+        // Add check for replies to our tweets
+        if (isFirstResponse && tweet.inReplyToStatusId) {
+            // Check if the tweet they're replying to was from us
+            const isReplyingToUs = thread.some(t => 
+                t.id === tweet.inReplyToStatusId && 
+                t.username === this.runtime.getSetting("TWITTER_USERNAME")
+            );
+            
+            if (isReplyingToUs && Math.random() < 0.5) {
+                console.log("Randomly skipping first reply to our tweet (50/50 chance)");
+                return { text: "Response Decision: Random IGNORE (First Reply)", action: "IGNORE" };
+            }
+        }
+
+        const currentPost = formatTweet(tweet);
+        
+        // Create conversation context based on whether it's first response
+        const conversationContext = isFirstResponse ? 
+            createInitialConversationContext(tweet) : 
+            {
+                currentPost,
+                formattedConversation: thread
+                    .map(t => `@${t.username}: ${t.text}`)
+                    .join('\n\n')
+            };
+
+        // Update state with conversation context
+        state = {
+            ...state,
+            isFirstResponse,
+            currentPost: conversationContext.currentPost,
+            formattedConversation: conversationContext.formattedConversation
+        };
 
         const tweetId = stringToUuid(tweet.id + "-" + this.runtime.agentId);
         console.log(`Checking if tweet ${tweetId} exists in database`);
@@ -354,7 +407,7 @@ export class TwitterInteractionClient extends ClientBase {
         const shouldRespond = await generateShouldRespond({
             runtime: this.runtime,
             context: shouldRespondContext,
-            modelClass: ModelClass.LARGE,
+            modelClass: ModelClass.MEDIUM,
         });
 
         if (!shouldRespond) {
@@ -370,12 +423,13 @@ export class TwitterInteractionClient extends ClientBase {
 
         console.log("Generating response context...");
         const context = composeContext({
-            state,
-            template:
-                this.runtime.character.templates
-                    ?.twitterMessageHandlerTemplate ||
-                this.runtime.character?.templates?.messageHandlerTemplate ||
-                twitterMessageHandlerTemplate,
+            state: {
+                ...state,
+                isFirstResponse: thread.length === 1,
+                currentPost: createInitialConversationContext(tweet).currentPost,
+                formattedConversation: createInitialConversationContext(tweet).formattedConversation
+            },
+            template: twitterMessageHandlerTemplate
         });
 
         console.log("Generating response message...");

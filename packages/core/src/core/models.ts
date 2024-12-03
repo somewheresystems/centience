@@ -26,7 +26,7 @@ const models: Models = {
             maxOutputTokens: 8192,
             frequency_penalty: 0.0,
             presence_penalty: 0.0,
-            temperature: 0.3,
+            temperature: 0.99,
         },
         endpoint: "https://api.anthropic.com/v1",
         model: {
