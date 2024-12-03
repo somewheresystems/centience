@@ -12,6 +12,7 @@ import {
     IAgentRuntime,
     ModelClass,
     State,
+    ModelProvider,
 } from "../../core/types.ts";
 import { stringToUuid } from "../../core/uuid.ts";
 import { ClientBase } from "./base.ts";
@@ -107,7 +108,7 @@ export class TwitterSearchClient extends ClientBase {
 
         setTimeout(
             () => this.viralTweetsLoop(),
-            12 * 60 * 60 * 1000
+            4 * 60 * 60 * 1000
         );
     }
 
@@ -126,12 +127,12 @@ export class TwitterSearchClient extends ClientBase {
 
             // Get yesterday's date
             const date = new Date();
-            date.setDate(date.getDate() - 1);
-            const formattedDate = date.toISOString().split('T')[0];
+            date.setDate(date.getDate());
+            const formattedDate = date.toLocaleDateString('en-CA');
             elizaLogger.log(`Searching for viral tweets since: ${formattedDate}`);
             
             const recentTweets = await this.fetchSearchTweets(
-                `min_faves:1000 since: ${formattedDate}`,
+                `and min_faves:10000 since:${formattedDate}`,
                 20,
                 SearchMode.Top
             );
@@ -149,36 +150,37 @@ export class TwitterSearchClient extends ClientBase {
             }
 
             const prompt = `
-Here are some viral tweets from the last 3 hours:
+                    Here are some viral tweets from the last 3 hours:
 
-${slicedTweets
-    .filter((tweet) => {
-        // ignore tweets where any of the thread tweets contain a tweet by the bot
-        const thread = tweet.thread;
-        const botTweet = thread.find(
-            (t) => t.username === this.runtime.getSetting("TWITTER_USERNAME")
-        );
-        return !botTweet;
-    })
-    .map((tweet) => `
-ID: ${tweet.id}${tweet.inReplyToStatusId ? ` In reply to: ${tweet.inReplyToStatusId}` : ""}
-From: ${tweet.name} (@${tweet.username})
-Text: ${tweet.text}
-`)
-    .join("\n")}
+                    ${slicedTweets
+                        .filter((tweet) => {
+                            // ignore tweets where any of the thread tweets contain a tweet by the bot
+                            const thread = tweet.thread;
+                            const botTweet = thread.find(
+                                (t) => t.username === this.runtime.getSetting("TWITTER_USERNAME")
+                            );
+                            return !botTweet;
+                        })
+                        .map((tweet) => `
+                    ID: ${tweet.id}${tweet.inReplyToStatusId ? ` In reply to: ${tweet.inReplyToStatusId}` : ""}
+                    From: ${tweet.name} (@${tweet.username})
+                    Text: ${tweet.text}
+                    `)
+                        .join("\n")}
 
-Which tweet is the most interesting and relevant for ${this.runtime.character.name} to reply to? Please provide only the ID of the tweet in your response.
-Notes:
-  - Respond to English tweets only
-  - Respond to tweets that don't have a lot of hashtags, links, URLs or images
-  - Respond to tweets that are not retweets
-  - Respond to tweets where there is an easy exchange of ideas to have with the user
-  - ONLY respond with the ID of the tweet`;
+                    Which tweet is the most interesting and relevant for ${this.runtime.character.name} to reply to? Please provide only the ID of the tweet in your response.
+                    Notes:
+                    - Respond to English tweets only
+                    - Respond to tweets that don't have a lot of hashtags, links, URLs or images
+                    - Respond to tweets that are not retweets
+                    - Respond to tweets where there is an easy exchange of ideas to have with the user
+                    - ONLY respond with the ID of the tweet`;
 
             const mostInterestingTweetResponse = await generateText({
                 runtime: this.runtime,
                 context: prompt,
                 modelClass: ModelClass.MEDIUM,
+                forceProvider: { provider: ModelProvider.LLAMACLOUD, model: "llama3-8b-8192" }
             });
 
             const tweetId = mostInterestingTweetResponse.trim();
@@ -456,6 +458,7 @@ Notes:
                 runtime: this.runtime,
                 context: prompt,
                 modelClass: ModelClass.MEDIUM,
+                forceProvider: { provider: ModelProvider.LLAMACLOUD, model: "llama3-8b-8192" }
             });
 
             const tweetId = mostInterestingTweetResponse.trim();
