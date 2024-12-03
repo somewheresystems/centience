@@ -4,8 +4,10 @@ node_modules
 .env
 concatenated-output.ts
 embedding-cache.json
-
+packages/agent/temp/*
+*.png
 .DS_Store
+.sqlite
 
 dist/
 # Allow models directory but ignore model files

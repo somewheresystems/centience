@@ -36,7 +36,7 @@ export const generateImage = async (
         if (imageGenModel === ImageGenModel.TogetherAI) {
             const together = new Together({ apiKey: apiKey as string });
             const response = await together.images.create({
-                model: "black-forest-labs/FLUX.1-schnell",
+                model: "black-forest-labs/FLUX.1.1-pro",
                 prompt,
                 width,
                 height,

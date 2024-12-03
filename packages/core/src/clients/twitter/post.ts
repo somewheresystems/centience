@@ -16,6 +16,7 @@ import {
 } from "./interactions.ts";
 import { elizaLogger } from "../../index";  // Add this import at the top
 
+
 const twitterPostTemplate = `
 CURRENT TIMELINE:
 {{timeline}}
@@ -88,8 +89,13 @@ Current Tweet:
 # INSTRUCTIONS: Respond with appropriate action tags based on the above criteria and the current tweet. An action must meet its threshold to be included.` 
 + postActionResponseFooter;
 
+// Limit the number of timeline and memory items to reduce context size
+const MAX_TIMELINE_ITEMS = 3;
+const MAX_MEMORY_ITEMS = 2;
+const MAX_CHARS_PER_ITEM = 150;
+
 export class TwitterPostClient extends ClientBase {
-    onReady() {
+    async onReady(): Promise<void> {
         const generateNewTweetLoop = () => {
             this.generateNewTweet();
             setTimeout(
@@ -106,15 +112,36 @@ export class TwitterPostClient extends ClientBase {
             ); // Random interval between 30-60 minutes
         };
 
+        const generateStoryLoop = async () => {
+            try {
+                elizaLogger.log("Triggering story generation action");
+                await this.runtime.handleAction({
+                    userId: this.runtime.agentId as UUID,
+                    roomId: stringToUuid("twitter_story_room"),
+                    agentId: this.runtime.agentId as UUID,
+                    content: {
+                        text: "Generate a new story",
+                        action: "GENERATE_STORY"
+                    }
+                });
+            } catch (error) {
+                elizaLogger.error("Error in story generation loop:", error);
+            }
+            
+            // Random interval between 4-6 hours
+            const nextInterval = (Math.floor(Math.random() * (360 - 240 + 1)) + 240) * 60 * 1000;
+            elizaLogger.log(`Next story scheduled in ${Math.floor(nextInterval / 1000 / 60)} minutes`);
+            setTimeout(generateStoryLoop, nextInterval);
+        };
+
+        // Start all loops
         generateNewTweetLoop();
         generateNewTimelineTweetLoop();
+        generateStoryLoop();
     }
 
     constructor(runtime: IAgentRuntime) {
-        // Initialize the client and pass an optional callback to be called when the client is ready
-        super({
-            runtime,
-        });
+        super({ runtime });
     }
 
     private async generateNewTweet() {
@@ -140,8 +167,13 @@ export class TwitterPostClient extends ClientBase {
                 });
 
             const formattedMemories = recentMemories
-                .slice(0, 200)
-                .map((memory) => `Memory: ${memory.content.text}\n---\n`)
+                .slice(0, MAX_MEMORY_ITEMS) // Only take most recent N memories
+                .map((memory) => {
+                    const text = memory.content.text.length > MAX_CHARS_PER_ITEM ?
+                        memory.content.text.slice(0, MAX_CHARS_PER_ITEM) + '...' :
+                        memory.content.text;
+                    return `Memory: ${text}\n---\n`;
+                })
                 .join("\n");
 
             let homeTimeline = [];
@@ -172,8 +204,12 @@ export class TwitterPostClient extends ClientBase {
             const formattedHomeTimeline =
                 `# ${this.runtime.character.name}'s Home Timeline\n\n` +
                 homeTimeline
+                    .slice(0, MAX_TIMELINE_ITEMS) // Only take most recent N tweets
                     .map((tweet) => {
-                        return `ID: ${tweet.id}\nFrom: ${tweet.name} (@${tweet.username})${tweet.inReplyToStatusId ? ` In reply to: ${tweet.inReplyToStatusId}` : ""}\nText: ${tweet.text}\n---\n`;
+                        const text = tweet.text.length > MAX_CHARS_PER_ITEM ? 
+                            tweet.text.slice(0, MAX_CHARS_PER_ITEM) + '...' : 
+                            tweet.text;
+                        return `From: @${tweet.username}\nText: ${text}\n---\n`;
                     })
                     .join("\n");
 
@@ -323,7 +359,7 @@ export class TwitterPostClient extends ClientBase {
             );
     
             let homeTimeline = [];
-            homeTimeline = await this.fetchHomeTimeline(15);
+            homeTimeline = await this.fetchHomeTimeline(MAX_TIMELINE_ITEMS);
             fs.writeFileSync(
                 "tweetcache/home_timeline.json",
                 JSON.stringify(homeTimeline, null, 2)
@@ -576,11 +612,14 @@ export class TwitterPostClient extends ClientBase {
                 template: options.template || twitterPostTemplate,
             });
             
+            console.log(`CREATING NEW TWEET CONTENT with model`);
+
             const newTweetContent = await generateText({
                 runtime: this.runtime,
                 context,
-                modelClass: ModelClass.MEDIUM,
+                modelClass: ModelClass.LARGE,
             });
+
  
             // First clean up any markdown code block indicators and newlines
             let slice = newTweetContent
@@ -588,6 +627,18 @@ export class TwitterPostClient extends ClientBase {
                 .replace(/```\s*/g, '')      // Remove any remaining ```
                 .replaceAll(/\\n/g, "\n")
                 .trim();
+
+     
+            console.log(`New Tweet Post Content with model: ${slice}`);
+     
+            const contentLength = 1000;
+     
+            let content = slice.slice(0, contentLength);
+            
+            // if its bigger than 280, delete the last line
+            if (content.length > contentLength) {
+                content = content.slice(0, content.lastIndexOf("\n"));
+            }
             
             // Try to parse as JSON
             try {
@@ -807,6 +858,7 @@ ${imageDescriptions.map((desc, i) => `Image ${i + 1}: ${desc}`).join('\n')}`;
      
             await this.runtime.messageManager.createMemory({
                 id: stringToUuid(postId + "-" + this.runtime.agentId),
+                
                 userId: this.runtime.agentId,
                 agentId: this.runtime.agentId,
                 content: {

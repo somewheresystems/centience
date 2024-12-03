@@ -49,6 +49,8 @@ import {
 } from "./actions.ts";
 import { defaultCharacter } from "./defaultCharacter.ts";
 import { generateText } from "./generation.ts";
+import { generateImage } from "../actions/imageGenerationUtils.ts";
+import { generateVideo } from "../actions/videoGenerationUtils.ts";
 import { formatGoalsAsString, getGoals } from "./goals.ts";
 import { ImageGenModel } from "./imageGenModels.ts";
 import { formatActors, formatMessages, getActorDetails } from "./messages.ts";
@@ -172,6 +174,55 @@ export class AgentRuntime implements IAgentRuntime {
      * Searchable document fragments
      */
     fragmentsManager: IMemoryManager;
+
+    imageGenerationService = {
+        generateImage: async (prompt: string) => {
+            try {
+                const images = await generateImage(
+                    {
+                        prompt,
+                        width: 1024,
+                        height: 1024,
+                        count: 1,
+                    },
+                    this
+                );
+
+                if (images.success && images.data && images.data.length > 0) {
+                    return images.data[0].replace(/^data:image\/\w+;base64,/, "");
+                }
+                throw new Error("Image generation failed");
+            } catch (error) {
+                elizaLogger.error("Error in image generation service:", error);
+                throw error;
+            }
+        }
+    };
+
+    videoGenerationService = {
+        generateVideo: async (prompt: string) => {
+            try {
+                const video = await generateVideo(
+                    {
+                        prompt,
+                        duration: 5,
+                        resolution: "1080p"
+                    },
+                    this
+                );
+
+                if (video.success && video.url) {
+                    const response = await fetch(video.url);
+                    const videoBuffer = await response.arrayBuffer();
+                    return Buffer.from(videoBuffer).toString('base64');
+                }
+                throw new Error("Video generation failed");
+            } catch (error) {
+                elizaLogger.error("Error in video generation service:", error);
+                throw error;
+            }
+        }
+    };
 
     /**
      * Creates an instance of AgentRuntime.
@@ -1225,5 +1276,26 @@ Text: ${attachment.text}
 
     getClient(clientName: string): any {
         return null; // Or implement actual client retrieval logic
+    }
+
+    async handleAction(params: {
+        userId: string;
+        roomId: string;
+        agentId: string;
+        content: {
+            text: string;
+            action: string;
+        };
+    }) {
+        const message: Memory = {
+            id: crypto.randomUUID() as UUID,
+            userId: params.userId as UUID,
+            agentId: params.agentId as UUID,
+            roomId: params.roomId as UUID,
+            content: params.content,
+            createdAt: Date.now()
+        };
+
+        await this.processActions(message, [], undefined, undefined);
     }
 }

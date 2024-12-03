@@ -28,7 +28,7 @@ export const VIDEO_GENERATION: Action = {
             prettyConsole.log("Generating video with prompt:", videoPrompt);
             const video = await generateVideo({
                 prompt: videoPrompt,
-                duration: 5,
+                duration: 10,
                 resolution: "1080p"
             }, runtime);
 

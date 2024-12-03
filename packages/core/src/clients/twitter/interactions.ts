@@ -131,12 +131,12 @@ CRITICAL: To reduce response frequency, {{agentName}} should respond [IGNORE] to
 ` + shouldRespondFooter;
 
 export class TwitterInteractionClient extends ClientBase {
-    onReady() {
+    async onReady() {
         console.log(
             "TwitterInteractionClient ready, starting interaction loop"
         );
-        const handleTwitterInteractionsLoop = () => {
-            this.handleTwitterInteractions();
+        const handleTwitterInteractionsLoop = async () => {
+            await this.handleTwitterInteractions();
             const delay =
                 (Math.floor(Math.random() * (5 - 2 + 1)) + 2) * 60 * 1000;
             console.log(
@@ -144,7 +144,7 @@ export class TwitterInteractionClient extends ClientBase {
             );
             setTimeout(handleTwitterInteractionsLoop, delay);
         };
-        handleTwitterInteractionsLoop();
+        await handleTwitterInteractionsLoop();
     }
 
     constructor(runtime: IAgentRuntime) {

@@ -41,6 +41,7 @@ Your task is to enhance the user's request into a detailed prompt that will gene
 
 # Instructions
 - Focus on motion, camera angles, lighting, and composition
+- Focus on taking the user's request and augmenting it with "IMAX, filmic, cinematic, etc."
 - Keep the final prompt under 200 characters
 - If the request is to "generate anything", you have creative control
 - Only respond with the enhanced prompt text, no other commentary
@@ -110,15 +111,30 @@ Enhanced prompt:`;
                     await fs.writeFile(tempFileName, videoBuffer);
 
                     try {
-                        const tweetText = cleanPrompt.trim();
+                        // Replace the direct prompt usage with a generated tweet
+                        const tweetContext = `# Task: Generate a post in the voice and style of ${runtime.character.name}
+Write a single sentence about the following video (without directly describing it), from your perspective. Be creative and engaging. No emojis.
+
+Image description: ${cleanPrompt}
+
+Your response can be as long as you want, even long paragraphs as long as they are interesting.`;
+
+                            elizaLogger.log("Generating tweet text for image...");
+                            const tweetText = await generateText({
+                                runtime,
+                                context: tweetContext,
+                                modelClass: ModelClass.LARGE,
+                            });
+
+                        const finalTweetText = tweetText.trim() // Ensure tweet length
                         
-                        elizaLogger.log("Attempting to post to Twitter with text:", tweetText);
+                        elizaLogger.log("Attempting to post to Twitter with text:", finalTweetText);
 
                         // Create a client instance
                         const client = new ClientBase({ runtime });
                         const result = await client.requestQueue.add(
                             async () => await client.twitterClient.sendTweet(
-                                tweetText,
+                                finalTweetText,
                                 undefined,
                                 [{
                                     data: videoBuffer,
