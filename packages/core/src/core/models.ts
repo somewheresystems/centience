@@ -96,7 +96,7 @@ const models: Models = {
         endpoint: "https://api.together.ai/v1",
         model: {
             [ModelClass.SMALL]: "meta-llama/Llama-3.2-3B-Instruct-Turbo",
-            [ModelClass.MEDIUM]: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+            [ModelClass.MEDIUM]: "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
             [ModelClass.LARGE]: "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
             [ModelClass.EMBEDDING]:
                 "togethercomputer/m2-bert-80M-32k-retrieval",
