@@ -17,28 +17,65 @@ import { defaultActions } from "../core/actions.ts";
 import { Arguments } from "../types/index.ts";
 import { loadActionConfigs, loadCustomActions } from "./config.ts";
 import { elizaLogger } from "../index.ts";
+import { DiscordClient } from "../clients/discord/index.ts";
+import { Worker } from 'worker_threads';
+import path from 'path';
 
 export async function initializeClients(
     character: Character,
     runtime: IAgentRuntime
 ) {
     const clients = [];
-    const clientTypes =
-        character.clients?.map((str) => str.toLowerCase()) || [];
+    const clientTypes = character.clients?.map((str) => str.toLowerCase()) || [];
 
-    elizaLogger.log("clientTypes", clientTypes);
-    if (clientTypes.includes("twitter")) {
-        const twitterClients = await startTwitter(runtime);
-        clients.push(...twitterClients);
-    }
+    elizaLogger.log("Initializing clients:", clientTypes);
+    
+    // Start Discord and Twitter in parallel if they exist
+    const startupPromises = [];
 
     if (clientTypes.includes("discord")) {
-        clients.push(startDiscord(runtime));
+        startupPromises.push(
+            (async () => {
+                try {
+                    elizaLogger.log("Starting Discord...");
+                    const discordClient = await startDiscord(runtime);
+                    clients.push(discordClient);
+                    elizaLogger.log("Discord client initialized");
+                } catch (error) {
+                    elizaLogger.error("Error starting Discord:", error);
+                }
+            })()
+        );
     }
 
+    if (clientTypes.includes("twitter")) {
+        startupPromises.push(
+            (async () => {
+                try {
+                    elizaLogger.log("Starting Twitter clients...");
+                    const twitterClients = await startTwitter(runtime);
+                    clients.push(...twitterClients);
+                    elizaLogger.log("Twitter clients initialized");
+                } catch (error) {
+                    elizaLogger.error("Error starting Twitter:", error);
+                }
+            })()
+        );
+    }
+
+    // Wait for both Discord and Twitter to initialize
+    await Promise.all(startupPromises);
+
+    // Start Telegram last (since it's less critical)
     if (clientTypes.includes("telegram")) {
-        const telegramClient = await startTelegram(runtime, character);
-        if (telegramClient) clients.push(telegramClient);
+        try {
+            elizaLogger.log("Starting Telegram client...");
+            const telegramClient = await startTelegram(runtime, character);
+            if (telegramClient) clients.push(telegramClient);
+            elizaLogger.log("Telegram client initialized");
+        } catch (error) {
+            elizaLogger.error("Error starting Telegram:", error);
+        }
     }
 
     return clients;
@@ -212,8 +249,17 @@ export async function createDirectRuntime(
     });
 }
 
-export function startDiscord(runtime: IAgentRuntime) {
-    return new Client.DiscordClient(runtime);
+export function startDiscord(runtime: IAgentRuntime): Promise<DiscordClient> {
+    elizaLogger.log("Starting Discord client...");
+    const discordClient = new DiscordClient(runtime);
+    
+    // Return a promise that resolves when Discord is ready
+    return new Promise((resolve) => {
+        discordClient.once('ready', () => {
+            elizaLogger.log("Discord client fully initialized");
+            resolve(discordClient);
+        });
+    });
 }
 
 export async function startTelegram(
