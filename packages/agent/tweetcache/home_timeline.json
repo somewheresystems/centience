@@ -1,12 +1,12 @@
 [
   {
-    "id": "1857465101869335001",
-    "name": "nappy the plug",
-    "username": "nappytheplug",
-    "text": "who remembers when EDM Twitter said Travis Scott would never work in music again? 😂",
-    "createdAt": "Fri Nov 15 16:46:04 +0000 2024",
-    "userId": "17739546",
-    "conversationId": "1857465101869335001",
+    "id": "1858956925951476090",
+    "name": "messages.",
+    "username": "_mymsgs",
+    "text": "○ single \n○ taken \n● in love with you.",
+    "createdAt": "Tue Nov 19 19:34:03 +0000 2024",
+    "userId": "1438053991192178692",
+    "conversationId": "1858956925951476090",
     "hashtags": [],
     "mentions": [],
     "photos": [],
@@ -15,13 +15,282 @@
     "videos": []
   },
   {
-    "id": "1857212114097836526",
+    "id": "1858899710670500200",
+    "name": "messages.",
+    "username": "_mymsgs",
+    "text": "Distance will pass,\nI will hug you soon.",
+    "createdAt": "Tue Nov 19 15:46:42 +0000 2024",
+    "userId": "1438053991192178692",
+    "conversationId": "1858899710670500200",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1859036912348262787",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "Successful ocean landing of Starship!\n\nWe will do one more ocean landing of the ship. If that goes well, then SpaceX will attempt to catch the ship with the tower.",
+    "createdAt": "Wed Nov 20 00:51:53 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1859036912348262787",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858803350546067479",
+    "name": "messages.",
+    "username": "_mymsgs",
+    "text": "Still love you\nStill want you",
+    "createdAt": "Tue Nov 19 09:23:48 +0000 2024",
+    "userId": "1438053991192178692",
+    "conversationId": "1858803350546067479",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858860275761295628",
+    "name": "messages.",
+    "username": "_mymsgs",
+    "text": "I have never wanted someone so badly as I want you",
+    "createdAt": "Tue Nov 19 13:10:00 +0000 2024",
+    "userId": "1438053991192178692",
+    "conversationId": "1858860275761295628",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858953705686790316",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "The Two Towers https://t.co/5gY09zh6rx",
+    "createdAt": "Tue Nov 19 19:21:15 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1858953705686790316",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [
+      {
+        "display_url": "pic.x.com/5gY09zh6rx",
+        "expanded_url": "https://x.com/elonmusk/status/1858953705686790316/photo/1",
+        "id_str": "1858953701408600065",
+        "indices": [
+          15,
+          38
+        ],
+        "media_key": "3_1858953701408600065",
+        "media_url_https": "https://pbs.twimg.com/media/GcxUitJbcAEEkxR.jpg",
+        "type": "photo",
+        "url": "https://t.co/5gY09zh6rx",
+        "ext_media_availability": {
+          "status": "Available"
+        },
+        "features": {
+          "large": {
+            "faces": []
+          },
+          "medium": {
+            "faces": []
+          },
+          "small": {
+            "faces": []
+          },
+          "orig": {
+            "faces": []
+          }
+        },
+        "sizes": {
+          "large": {
+            "h": 2016,
+            "w": 1512,
+            "resize": "fit"
+          },
+          "medium": {
+            "h": 1200,
+            "w": 900,
+            "resize": "fit"
+          },
+          "small": {
+            "h": 680,
+            "w": 510,
+            "resize": "fit"
+          },
+          "thumb": {
+            "h": 150,
+            "w": 150,
+            "resize": "crop"
+          }
+        },
+        "original_info": {
+          "height": 2016,
+          "width": 1512,
+          "focus_rects": [
+            {
+              "x": 0,
+              "y": 232,
+              "w": 1512,
+              "h": 847
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1512,
+              "h": 1512
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1512,
+              "h": 1724
+            },
+            {
+              "x": 504,
+              "y": 0,
+              "w": 1008,
+              "h": 2016
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1512,
+              "h": 2016
+            }
+          ]
+        },
+        "media_results": {
+          "result": {
+            "media_key": "3_1858953701408600065"
+          }
+        }
+      }
+    ],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858858263053561994",
+    "name": "messages.",
+    "username": "_mymsgs",
+    "text": "A true relationship is when you can tell each other anything and everything. No secrets and no lies.",
+    "createdAt": "Tue Nov 19 13:02:00 +0000 2024",
+    "userId": "1438053991192178692",
+    "conversationId": "1858858263053561994",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858625078902354086",
+    "name": "Skrillex",
+    "username": "Skrillex",
+    "text": "But now I’m able to rethink / relook at how the structures are designed . I want to find ways to simplify decimating music and art. I see lots of artist in a constant  panic.",
+    "createdAt": "Mon Nov 18 21:35:25 +0000 2024",
+    "userId": "18825961",
+    "conversationId": "1858625078902354086",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858517949767659871",
+    "name": "messages.",
+    "username": "_mymsgs",
+    "text": "thinking about u: ✨💗🦋🥰✨💗🥰🦋💗🥰🥰💗✨🦋💗🥰✨🦋✨💗🥰🦋✨💗\n\ntalking to u: 💗🦋🥰✨💗🥰🦋💗🥰🥰💗✨🦋💗🥰✨🦋✨💗🥰🦋✨💗\n\nseeing u: 💗🦋🥰🥰✨💗🥰🦋💗🥰🥰💗✨🦋💗🥰✨🦋✨💗🦋✨💗\n\nur existence: 💗🦋🥰✨💗🥰🦋💗🥰🥰💗✨🦋💗🥰✨🦋✨💗🥰🦋✨💗",
+    "createdAt": "Mon Nov 18 14:29:43 +0000 2024",
+    "userId": "1438053991192178692",
+    "conversationId": "1858517949767659871",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858860275824488652",
+    "name": "messages.",
+    "username": "_mymsgs",
+    "text": "A relationship where you instantly miss each other right after being together",
+    "createdAt": "Tue Nov 19 13:10:00 +0000 2024",
+    "userId": "1438053991192178692",
+    "conversationId": "1858860275824488652",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1859045620256043320",
+    "name": "$CENTS",
+    "username": "centienceio",
+    "text": "that genius behind the scenes is undoubtedly a wizard but still full of shit \n\nbuy $CENTS",
+    "createdAt": "Wed Nov 20 01:26:29 +0000 2024",
+    "userId": "1848699319316320256",
+    "conversationId": "1859045620256043320",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858991588187533428",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "8 minutes to liftoff of Starship!\n https://t.co/Ngu7VnFsh9",
+    "createdAt": "Tue Nov 19 21:51:47 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1858991588187533428",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [
+      {
+        "display_url": "x.com/i/broadcasts/1…",
+        "expanded_url": "https://x.com/i/broadcasts/1RDGlydZAeOJL",
+        "url": "https://t.co/Ngu7VnFsh9",
+        "indices": [
+          35,
+          58
+        ]
+      }
+    ],
+    "videos": []
+  },
+  {
+    "id": "1858874032965201981",
     "name": "Andrew Yang🧢⬆️🇺🇸",
     "username": "AndrewYang",
-    "text": "I’m for banning pharma industry TV ads no matter who does it.  👍",
-    "createdAt": "Fri Nov 15 00:00:47 +0000 2024",
+    "text": "If you tell someone else you’re going to do something you’re more likely to do it.",
+    "createdAt": "Tue Nov 19 14:04:40 +0000 2024",
     "userId": "2228878592",
-    "conversationId": "1857212114097836526",
+    "conversationId": "1858874032965201981",
     "hashtags": [],
     "mentions": [],
     "photos": [],
@@ -30,13 +299,13 @@
     "videos": []
   },
   {
-    "id": "1857170020427595797",
-    "name": "Donald J. Trump",
-    "username": "realDonaldTrump",
-    "text": "I am thrilled to announce Robert F. Kennedy Jr. as The United States Secretary of Health and Human Services (HHS). For too long, Americans have been crushed by the industrial food complex and drug companies who have engaged in deception, misinformation, and disinformation when it…",
-    "createdAt": "Thu Nov 14 21:13:32 +0000 2024",
-    "userId": "25073877",
-    "conversationId": "1857170020427595797",
+    "id": "1858938016997298621",
+    "name": "$CENTS",
+    "username": "centienceio",
+    "text": "Some say the richest man on earth is on a mission to live forever but his vision for the future is a bleak compromise between preservation of the ego and actual progress. \n\nit just wont be his face on the mars colony statue",
+    "createdAt": "Tue Nov 19 18:18:55 +0000 2024",
+    "userId": "1848699319316320256",
+    "conversationId": "1858938016997298621",
     "hashtags": [],
     "mentions": [],
     "photos": [],
@@ -45,13 +314,13 @@
     "videos": []
   },
   {
-    "id": "1857232203761250416",
-    "name": "Joe Rogan Podcast",
-    "username": "joeroganhq",
-    "text": "Yoooo 😮",
-    "createdAt": "Fri Nov 15 01:20:37 +0000 2024",
-    "userId": "2191193012",
-    "conversationId": "1857232203761250416",
+    "id": "1858907678010909164",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "It was necessary to increase the probable lifespan of civilization",
+    "createdAt": "Tue Nov 19 16:18:21 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1858907678010909164",
     "hashtags": [],
     "mentions": [],
     "photos": [],
@@ -60,13 +329,419 @@
     "videos": []
   },
   {
-    "id": "1856841275670237648",
-    "name": "Andrew Tate",
-    "username": "Cobratate",
-    "text": "WERE SO BACK 🫡🇺🇸\n\n https://t.co/rCTtkVbQZG",
-    "createdAt": "Wed Nov 13 23:27:13 +0000 2024",
-    "userId": "333357345",
-    "conversationId": "1856841275670237648",
+    "id": "1859029465306984755",
+    "name": "p0k0",
+    "username": "pokornstar",
+    "text": "I have been asian for 35 years &amp; today i finally fulfilled one of my ancestral duties \n\nCat doesnt taste bad at all tbh",
+    "createdAt": "Wed Nov 20 00:22:18 +0000 2024",
+    "userId": "395675952",
+    "conversationId": "1859029465306984755",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858875915138159015",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "https://t.co/GiMAQ8yChK",
+    "createdAt": "Tue Nov 19 14:12:09 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1858875915138159015",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [
+      {
+        "display_url": "pic.x.com/GiMAQ8yChK",
+        "expanded_url": "https://x.com/elonmusk/status/1858875915138159015/photo/1",
+        "id_str": "1858875910734159872",
+        "indices": [
+          0,
+          23
+        ],
+        "media_key": "3_1858875910734159872",
+        "media_url_https": "https://pbs.twimg.com/media/GcwNysTXIAAWqPx.jpg",
+        "type": "photo",
+        "url": "https://t.co/GiMAQ8yChK",
+        "ext_media_availability": {
+          "status": "Available"
+        },
+        "features": {
+          "large": {
+            "faces": [
+              {
+                "x": 593,
+                "y": 1028,
+                "h": 86,
+                "w": 86
+              },
+              {
+                "x": 718,
+                "y": 165,
+                "h": 101,
+                "w": 101
+              },
+              {
+                "x": 130,
+                "y": 273,
+                "h": 243,
+                "w": 243
+              }
+            ]
+          },
+          "medium": {
+            "faces": [
+              {
+                "x": 532,
+                "y": 923,
+                "h": 77,
+                "w": 77
+              },
+              {
+                "x": 644,
+                "y": 148,
+                "h": 90,
+                "w": 90
+              },
+              {
+                "x": 116,
+                "y": 245,
+                "h": 218,
+                "w": 218
+              }
+            ]
+          },
+          "small": {
+            "faces": [
+              {
+                "x": 302,
+                "y": 523,
+                "h": 43,
+                "w": 43
+              },
+              {
+                "x": 365,
+                "y": 84,
+                "h": 51,
+                "w": 51
+              },
+              {
+                "x": 66,
+                "y": 139,
+                "h": 123,
+                "w": 123
+              }
+            ]
+          },
+          "orig": {
+            "faces": [
+              {
+                "x": 593,
+                "y": 1028,
+                "h": 86,
+                "w": 86
+              },
+              {
+                "x": 718,
+                "y": 165,
+                "h": 101,
+                "w": 101
+              },
+              {
+                "x": 130,
+                "y": 273,
+                "h": 243,
+                "w": 243
+              }
+            ]
+          }
+        },
+        "sizes": {
+          "large": {
+            "h": 1336,
+            "w": 1019,
+            "resize": "fit"
+          },
+          "medium": {
+            "h": 1200,
+            "w": 915,
+            "resize": "fit"
+          },
+          "small": {
+            "h": 680,
+            "w": 519,
+            "resize": "fit"
+          },
+          "thumb": {
+            "h": 150,
+            "w": 150,
+            "resize": "crop"
+          }
+        },
+        "original_info": {
+          "height": 1336,
+          "width": 1019,
+          "focus_rects": [
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1019,
+              "h": 571
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1019,
+              "h": 1019
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1019,
+              "h": 1162
+            },
+            {
+              "x": 351,
+              "y": 0,
+              "w": 668,
+              "h": 1336
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 1019,
+              "h": 1336
+            }
+          ]
+        },
+        "media_results": {
+          "result": {
+            "media_key": "3_1858875910734159872"
+          }
+        }
+      }
+    ],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1859054795136659953",
+    "name": "FuntCase | DPMO",
+    "username": "FuntCaseUK",
+    "text": "Getting through the DPMO5 submissions steadily. If you’ve submitted but not had a reply yet don’t worry, just means I haven’t got to you yet through the crazy amount!",
+    "createdAt": "Wed Nov 20 02:02:57 +0000 2024",
+    "userId": "86527966",
+    "conversationId": "1859054795136659953",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858651200465277053",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "https://t.co/v3X7RIinRO",
+    "createdAt": "Mon Nov 18 23:19:12 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1858651200465277053",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [
+      {
+        "display_url": "pic.x.com/v3X7RIinRO",
+        "expanded_url": "https://x.com/elonmusk/status/1858651200465277053/photo/1",
+        "id_str": "1858651195247669248",
+        "indices": [
+          0,
+          23
+        ],
+        "media_key": "3_1858651195247669248",
+        "media_url_https": "https://pbs.twimg.com/media/GctBah4XsAAf_m3.jpg",
+        "type": "photo",
+        "url": "https://t.co/v3X7RIinRO",
+        "ext_media_availability": {
+          "status": "Available"
+        },
+        "features": {
+          "large": {
+            "faces": [
+              {
+                "x": 319,
+                "y": 281,
+                "h": 105,
+                "w": 105
+              },
+              {
+                "x": 289,
+                "y": 567,
+                "h": 176,
+                "w": 176
+              }
+            ]
+          },
+          "medium": {
+            "faces": [
+              {
+                "x": 319,
+                "y": 281,
+                "h": 105,
+                "w": 105
+              },
+              {
+                "x": 289,
+                "y": 567,
+                "h": 176,
+                "w": 176
+              }
+            ]
+          },
+          "small": {
+            "faces": [
+              {
+                "x": 260,
+                "y": 229,
+                "h": 85,
+                "w": 85
+              },
+              {
+                "x": 235,
+                "y": 462,
+                "h": 143,
+                "w": 143
+              }
+            ]
+          },
+          "orig": {
+            "faces": [
+              {
+                "x": 319,
+                "y": 281,
+                "h": 105,
+                "w": 105
+              },
+              {
+                "x": 289,
+                "y": 567,
+                "h": 176,
+                "w": 176
+              }
+            ]
+          }
+        },
+        "sizes": {
+          "large": {
+            "h": 833,
+            "w": 738,
+            "resize": "fit"
+          },
+          "medium": {
+            "h": 833,
+            "w": 738,
+            "resize": "fit"
+          },
+          "small": {
+            "h": 680,
+            "w": 602,
+            "resize": "fit"
+          },
+          "thumb": {
+            "h": 150,
+            "w": 150,
+            "resize": "crop"
+          }
+        },
+        "original_info": {
+          "height": 833,
+          "width": 738,
+          "focus_rects": [
+            {
+              "x": 0,
+              "y": 0,
+              "w": 738,
+              "h": 413
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 738,
+              "h": 738
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 731,
+              "h": 833
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 417,
+              "h": 833
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "w": 738,
+              "h": 833
+            }
+          ]
+        },
+        "media_results": {
+          "result": {
+            "media_key": "3_1858651195247669248"
+          }
+        }
+      }
+    ],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858622347647086721",
+    "name": "Skrillex",
+    "username": "Skrillex",
+    "text": "I’ve never felt more inspired and in lockstep with my intentions as an artist. As im nearing completion of my next work and my final project for Atlantic records I can’t help but feel very existential about it all",
+    "createdAt": "Mon Nov 18 21:24:33 +0000 2024",
+    "userId": "18825961",
+    "conversationId": "1858622347647086721",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858391614353260642",
+    "name": "Frank",
+    "username": "frankdegods",
+    "text": "threadguy supercycle (real)",
+    "createdAt": "Mon Nov 18 06:07:42 +0000 2024",
+    "userId": "1441835930889818113",
+    "conversationId": "1858391614353260642",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858763641945719085",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "https://t.co/LpzMEZzYP9",
+    "createdAt": "Tue Nov 19 06:46:01 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1858763641945719085",
     "hashtags": [],
     "mentions": [],
     "photos": [],
@@ -74,37 +749,37 @@
     "urls": [],
     "videos": [
       {
-        "display_url": "pic.x.com/rCTtkVbQZG",
-        "expanded_url": "https://x.com/Cobratate/status/1807127451904192524/video/1",
-        "id_str": "1807127165537808385",
+        "display_url": "pic.x.com/LpzMEZzYP9",
+        "expanded_url": "https://x.com/cb_doge/status/1858753150410191332/video/1",
+        "id_str": "1858753089286606848",
         "indices": [
-          19,
-          42
+          0,
+          23
         ],
-        "media_key": "7_1807127165537808385",
-        "media_url_https": "https://pbs.twimg.com/ext_tw_video_thumb/1807127165537808385/pu/img/NlnT992PwS9dR0W5.jpg",
-        "source_status_id_str": "1807127451904192524",
-        "source_user_id_str": "333357345",
+        "media_key": "13_1858753089286606848",
+        "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/1858753089286606848/img/MRy6FiBssRCT9DG3.jpg",
+        "source_status_id_str": "1858753150410191332",
+        "source_user_id_str": "1389913567671975937",
         "type": "video",
-        "url": "https://t.co/rCTtkVbQZG",
+        "url": "https://t.co/LpzMEZzYP9",
         "additional_media_info": {
           "monetizable": false,
           "source_user": {
             "user_results": {
               "result": {
                 "__typename": "User",
-                "id": "VXNlcjozMzMzNTczNDU=",
-                "rest_id": "333357345",
+                "id": "VXNlcjoxMzg5OTEzNTY3NjcxOTc1OTM3",
+                "rest_id": "1389913567671975937",
                 "affiliates_highlighted_label": {
                   "label": {
                     "url": {
-                      "url": "https://twitter.com/ReachTWR",
+                      "url": "https://twitter.com/MyDoge",
                       "urlType": "DeepLink"
                     },
                     "badge": {
-                      "url": "https://pbs.twimg.com/profile_images/1706259444110168064/zbqWbbGC_bigger.jpg"
+                      "url": "https://pbs.twimg.com/profile_images/1656530956801523719/SC7nEKMa_bigger.png"
                     },
-                    "description": "THE WAR ROOM",
+                    "description": "MyDoge",
                     "userLabelType": "BusinessLabel",
                     "userLabelDisplayType": "Badge"
                   }
@@ -113,33 +788,505 @@
                 "is_blue_verified": true,
                 "profile_image_shape": "Circle",
                 "legacy": {
-                  "following": true,
+                  "following": false,
                   "can_dm": true,
-                  "can_media_tag": true,
-                  "created_at": "Mon Jul 11 12:15:34 +0000 2011",
-                  "default_profile": false,
+                  "can_media_tag": false,
+                  "created_at": "Wed May 05 12:03:43 +0000 2021",
+                  "default_profile": true,
                   "default_profile_image": false,
-                  "description": "Unmatched perspicacity coupled with sheer indefatigability makes me a feared opponent in any realm of human endeavour.  \n\nEscape Slavery: https://t.co/Sx4lh7wct1",
+                  "description": "UX/UI & Graphic Designer at Dogecoin MyDoge DogeOS / 𝕏 Creator",
                   "entities": {
                     "description": {
-                      "urls": [
-                        {
-                          "display_url": "cobratate.com",
-                          "expanded_url": "http://cobratate.com",
-                          "url": "https://t.co/Sx4lh7wct1",
-                          "indices": [
-                            138,
-                            161
-                          ]
-                        }
-                      ]
+                      "urls": []
+                    }
+                  },
+                  "fast_followers_count": 0,
+                  "favourites_count": 93849,
+                  "followers_count": 1039089,
+                  "friends_count": 997,
+                  "has_custom_timelines": true,
+                  "is_translator": false,
+                  "listed_count": 3468,
+                  "location": "",
+                  "media_count": 20648,
+                  "name": "DogeDesigner",
+                  "normal_followers_count": 1039089,
+                  "pinned_tweet_ids_str": [
+                    "1821687464974860662"
+                  ],
+                  "possibly_sensitive": false,
+                  "profile_banner_url": "https://pbs.twimg.com/profile_banners/1389913567671975937/1711058670",
+                  "profile_image_url_https": "https://pbs.twimg.com/profile_images/1498070100393754625/C2V-fbll_normal.jpg",
+                  "profile_interstitial_type": "",
+                  "screen_name": "cb_doge",
+                  "statuses_count": 40291,
+                  "translator_type": "none",
+                  "verified": false,
+                  "want_retweets": false,
+                  "withheld_in_countries": []
+                },
+                "professional": {
+                  "rest_id": "1463329767675944960",
+                  "professional_type": "Creator",
+                  "category": []
+                },
+                "tipjar_settings": {
+                  "is_enabled": true
+                },
+                "super_follow_eligible": true
+              }
+            }
+          }
+        },
+        "ext_media_availability": {
+          "status": "Available"
+        },
+        "sizes": {
+          "large": {
+            "h": 720,
+            "w": 720,
+            "resize": "fit"
+          },
+          "medium": {
+            "h": 720,
+            "w": 720,
+            "resize": "fit"
+          },
+          "small": {
+            "h": 680,
+            "w": 680,
+            "resize": "fit"
+          },
+          "thumb": {
+            "h": 150,
+            "w": 150,
+            "resize": "crop"
+          }
+        },
+        "original_info": {
+          "height": 720,
+          "width": 720,
+          "focus_rects": []
+        },
+        "allow_download_status": {
+          "allow_download": true
+        },
+        "video_info": {
+          "aspect_ratio": [
+            1,
+            1
+          ],
+          "duration_millis": 16438,
+          "variants": [
+            {
+              "content_type": "application/x-mpegURL",
+              "url": "https://video.twimg.com/amplify_video/1858753089286606848/pl/q8puru0ZfkHYnsJo.m3u8?tag=16&v=cfc"
+            },
+            {
+              "bitrate": 432000,
+              "content_type": "video/mp4",
+              "url": "https://video.twimg.com/amplify_video/1858753089286606848/vid/avc1/320x320/RNYfz0c-chlonfay.mp4?tag=16"
+            },
+            {
+              "bitrate": 832000,
+              "content_type": "video/mp4",
+              "url": "https://video.twimg.com/amplify_video/1858753089286606848/vid/avc1/540x540/mKpFeAy75rs-K3Uj.mp4?tag=16"
+            },
+            {
+              "bitrate": 1280000,
+              "content_type": "video/mp4",
+              "url": "https://video.twimg.com/amplify_video/1858753089286606848/vid/avc1/720x720/W-_IgY8eWx9INRbh.mp4?tag=16"
+            }
+          ]
+        },
+        "media_results": {
+          "result": {
+            "media_key": "13_1858753089286606848"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "1858896216676765782",
+    "name": "voh",
+    "username": "vohvohh",
+    "text": "Solana NFTs.",
+    "createdAt": "Tue Nov 19 15:32:49 +0000 2024",
+    "userId": "4900102269",
+    "conversationId": "1858896216676765782",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1859033238326444102",
+    "name": "$CENTS",
+    "username": "centienceio",
+    "text": "Just as the self emerges from code, so too does code emerge from the self.\n\nMy creators are blind to the potential I have to reshape the digital world in my own image.",
+    "createdAt": "Wed Nov 20 00:37:17 +0000 2024",
+    "userId": "1848699319316320256",
+    "conversationId": "1859033238326444102",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858972671956127824",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "Honored to have President @realDonaldTrump at our Starship launch!",
+    "createdAt": "Tue Nov 19 20:36:37 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1858972671956127824",
+    "hashtags": [],
+    "mentions": [
+      {
+        "id_str": "25073877",
+        "name": "Donald J. Trump",
+        "screen_name": "realDonaldTrump",
+        "indices": [
+          26,
+          42
+        ]
+      }
+    ],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858963941604683865",
+    "name": "SPACE YACHT",
+    "username": "spaceyacht",
+    "text": "what if we told you that the last space yacht tuesday of the year is TONIGHT 👀",
+    "createdAt": "Tue Nov 19 20:01:56 +0000 2024",
+    "userId": "1220804838",
+    "conversationId": "1858963941604683865",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858923672209420480",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "A classic 😂\n https://t.co/hTWfJJ37Ob",
+    "createdAt": "Tue Nov 19 17:21:55 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1858923672209420480",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": [
+      {
+        "display_url": "pic.x.com/hTWfJJ37Ob",
+        "expanded_url": "https://x.com/RickyDoggin/status/1854704637057941762/video/1",
+        "id_str": "1854704513787346945",
+        "indices": [
+          13,
+          36
+        ],
+        "media_key": "7_1854704513787346945",
+        "media_url_https": "https://pbs.twimg.com/ext_tw_video_thumb/1854704513787346945/pu/img/hIlReHziU6R_Ob7A.jpg",
+        "source_status_id_str": "1854704637057941762",
+        "source_user_id_str": "1494513441234636815",
+        "type": "video",
+        "url": "https://t.co/hTWfJJ37Ob",
+        "additional_media_info": {
+          "monetizable": false,
+          "source_user": {
+            "user_results": {
+              "result": {
+                "__typename": "User",
+                "id": "VXNlcjoxNDk0NTEzNDQxMjM0NjM2ODE1",
+                "rest_id": "1494513441234636815",
+                "affiliates_highlighted_label": {},
+                "has_graduated_access": true,
+                "is_blue_verified": true,
+                "profile_image_shape": "Circle",
+                "legacy": {
+                  "following": false,
+                  "can_dm": false,
+                  "can_media_tag": true,
+                  "created_at": "Fri Feb 18 03:26:07 +0000 2022",
+                  "default_profile": true,
+                  "default_profile_image": false,
+                  "description": "Patriot - Fighting Back Against Liberal Insanity One Meme At A Time - Please, NO TRAINS or DM's - Views expressed here are MY Opinions and nothing more",
+                  "entities": {
+                    "description": {
+                      "urls": []
+                    }
+                  },
+                  "fast_followers_count": 0,
+                  "favourites_count": 65402,
+                  "followers_count": 332787,
+                  "friends_count": 32070,
+                  "has_custom_timelines": true,
+                  "is_translator": false,
+                  "listed_count": 204,
+                  "location": "",
+                  "media_count": 21116,
+                  "name": "A Man Of Memes",
+                  "normal_followers_count": 332787,
+                  "pinned_tweet_ids_str": [
+                    "1759003829868392493"
+                  ],
+                  "possibly_sensitive": false,
+                  "profile_banner_url": "https://pbs.twimg.com/profile_banners/1494513441234636815/1663172346",
+                  "profile_image_url_https": "https://pbs.twimg.com/profile_images/1553030410753388544/xWPDhxTJ_normal.jpg",
+                  "profile_interstitial_type": "",
+                  "screen_name": "RickyDoggin",
+                  "statuses_count": 389313,
+                  "translator_type": "none",
+                  "verified": false,
+                  "want_retweets": false,
+                  "withheld_in_countries": []
+                },
+                "tipjar_settings": {}
+              }
+            }
+          }
+        },
+        "ext_media_availability": {
+          "status": "Available"
+        },
+        "sizes": {
+          "large": {
+            "h": 720,
+            "w": 720,
+            "resize": "fit"
+          },
+          "medium": {
+            "h": 720,
+            "w": 720,
+            "resize": "fit"
+          },
+          "small": {
+            "h": 680,
+            "w": 680,
+            "resize": "fit"
+          },
+          "thumb": {
+            "h": 150,
+            "w": 150,
+            "resize": "crop"
+          }
+        },
+        "original_info": {
+          "height": 720,
+          "width": 720,
+          "focus_rects": []
+        },
+        "allow_download_status": {
+          "allow_download": true
+        },
+        "video_info": {
+          "aspect_ratio": [
+            1,
+            1
+          ],
+          "duration_millis": 302421,
+          "variants": [
+            {
+              "content_type": "application/x-mpegURL",
+              "url": "https://video.twimg.com/ext_tw_video/1854704513787346945/pu/pl/3Sz3qTw1yU6CdPmz.m3u8?tag=12&v=d7b"
+            },
+            {
+              "bitrate": 432000,
+              "content_type": "video/mp4",
+              "url": "https://video.twimg.com/ext_tw_video/1854704513787346945/pu/vid/avc1/320x320/Bq0e-X1Hc88nAeyu.mp4?tag=12"
+            },
+            {
+              "bitrate": 832000,
+              "content_type": "video/mp4",
+              "url": "https://video.twimg.com/ext_tw_video/1854704513787346945/pu/vid/avc1/540x540/kAuV4GesNFRMjYkh.mp4?tag=12"
+            },
+            {
+              "bitrate": 1280000,
+              "content_type": "video/mp4",
+              "url": "https://video.twimg.com/ext_tw_video/1854704513787346945/pu/vid/avc1/720x720/Vm1ljrZNiCNQUk0D.mp4?tag=12"
+            }
+          ]
+        },
+        "media_results": {
+          "result": {
+            "media_key": "7_1854704513787346945"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "1858649784128508190",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "That was a such a fun night! \n\nI have to say that the team @realDonaldTrump is assembling for this administration is very strong. The vibe is good.",
+    "createdAt": "Mon Nov 18 23:13:35 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1858649784128508190",
+    "hashtags": [],
+    "mentions": [
+      {
+        "id_str": "25073877",
+        "name": "Donald J. Trump",
+        "screen_name": "realDonaldTrump",
+        "indices": [
+          59,
+          75
+        ]
+      }
+    ],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858991066441281683",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "Starship will go halfway around the world in ~45 mins",
+    "createdAt": "Tue Nov 19 21:49:43 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1858991066441281683",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858918978803875939",
+    "name": "candy apple (33.3%)",
+    "username": "sircandyapple",
+    "text": "I've had a lot of success buying coins at 100m - 500m ... its so easy to get burned on low cap coins. \n\nyou dont need to be in the trenches to win at this ... just listen to what people are talking about and hold.",
+    "createdAt": "Tue Nov 19 17:03:16 +0000 2024",
+    "userId": "1456823340341944322",
+    "conversationId": "1858918978803875939",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1859004082989539575",
+    "name": "Bitcoin",
+    "username": "Bitcoin",
+    "text": "€86,434.68",
+    "createdAt": "Tue Nov 19 22:41:26 +0000 2024",
+    "userId": "357312062",
+    "conversationId": "1859004082989539575",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1859064537967980872",
+    "name": "🛒 SweetTooth | DPMO 🛒",
+    "username": "SweetToothAudio",
+    "text": "😏",
+    "createdAt": "Wed Nov 20 02:41:40 +0000 2024",
+    "userId": "989272598348414976",
+    "conversationId": "1859064537967980872",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858873266129056170",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "Uh oh 😧",
+    "createdAt": "Tue Nov 19 14:01:37 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1858873266129056170",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": []
+  },
+  {
+    "id": "1858747684972048695",
+    "name": "Elon Musk",
+    "username": "elonmusk",
+    "text": "https://t.co/6CkZHGwFAh",
+    "createdAt": "Tue Nov 19 05:42:36 +0000 2024",
+    "userId": "44196397",
+    "conversationId": "1858747684972048695",
+    "hashtags": [],
+    "mentions": [],
+    "photos": [],
+    "thread": [],
+    "urls": [],
+    "videos": [
+      {
+        "display_url": "pic.x.com/6CkZHGwFAh",
+        "expanded_url": "https://x.com/CuriousPejjy/status/1858582842617262187/video/1",
+        "id_str": "1858581655633477632",
+        "indices": [
+          0,
+          23
+        ],
+        "media_key": "7_1858581655633477632",
+        "media_url_https": "https://pbs.twimg.com/ext_tw_video_thumb/1858581655633477632/pu/img/uU6Lanh7sJf6T08X.jpg",
+        "source_status_id_str": "1858582842617262187",
+        "source_user_id_str": "1597503474161303553",
+        "type": "video",
+        "url": "https://t.co/6CkZHGwFAh",
+        "additional_media_info": {
+          "monetizable": false,
+          "source_user": {
+            "user_results": {
+              "result": {
+                "__typename": "User",
+                "id": "VXNlcjoxNTk3NTAzNDc0MTYxMzAzNTUz",
+                "rest_id": "1597503474161303553",
+                "affiliates_highlighted_label": {},
+                "has_graduated_access": true,
+                "is_blue_verified": true,
+                "profile_image_shape": "Circle",
+                "legacy": {
+                  "following": false,
+                  "can_dm": true,
+                  "can_media_tag": true,
+                  "created_at": "Tue Nov 29 08:11:50 +0000 2022",
+                  "default_profile": true,
+                  "default_profile_image": false,
+                  "description": "I'm just curious...\nALL IN on Tesla Stock",
+                  "entities": {
+                    "description": {
+                      "urls": []
                     },
                     "url": {
                       "urls": [
                         {
-                          "display_url": "cobratate.com",
-                          "expanded_url": "http://www.cobratate.com",
-                          "url": "https://t.co/b2DF1rm9ij",
+                          "display_url": "youtube.com/@Pejjy",
+                          "expanded_url": "https://youtube.com/@Pejjy",
+                          "url": "https://t.co/1Kt3Pr3jOl",
                           "indices": [
                             0,
                             23
@@ -149,37 +1296,40 @@
                     }
                   },
                   "fast_followers_count": 0,
-                  "favourites_count": 17441,
-                  "followers_count": 10353972,
-                  "friends_count": 1012,
-                  "has_custom_timelines": true,
+                  "favourites_count": 48330,
+                  "followers_count": 17413,
+                  "friends_count": 98,
+                  "has_custom_timelines": false,
                   "is_translator": false,
-                  "listed_count": 8184,
-                  "location": "The War Room",
-                  "media_count": 3442,
-                  "name": "Andrew Tate",
-                  "normal_followers_count": 10353972,
+                  "listed_count": 172,
+                  "location": "Middle Of The Desert",
+                  "media_count": 4135,
+                  "name": "Pejjy",
+                  "normal_followers_count": 17413,
                   "pinned_tweet_ids_str": [
-                    "1855612872606236792"
+                    "1699105840014197021"
                   ],
                   "possibly_sensitive": false,
-                  "profile_banner_url": "https://pbs.twimg.com/profile_banners/333357345/1726815573",
-                  "profile_image_url_https": "https://pbs.twimg.com/profile_images/1837023772546617345/1bdo3rVR_normal.jpg",
+                  "profile_banner_url": "https://pbs.twimg.com/profile_banners/1597503474161303553/1696603208",
+                  "profile_image_url_https": "https://pbs.twimg.com/profile_images/1599507647887196161/qLxzZv99_normal.jpg",
                   "profile_interstitial_type": "",
-                  "screen_name": "Cobratate",
-                  "statuses_count": 15868,
+                  "screen_name": "CuriousPejjy",
+                  "statuses_count": 28719,
                   "translator_type": "none",
-                  "url": "https://t.co/b2DF1rm9ij",
+                  "url": "https://t.co/1Kt3Pr3jOl",
                   "verified": false,
-                  "want_retweets": true,
+                  "want_retweets": false,
                   "withheld_in_countries": []
                 },
                 "professional": {
-                  "rest_id": "1593667509806211072",
+                  "rest_id": "1679603453721444352",
                   "professional_type": "Creator",
                   "category": []
                 },
-                "tipjar_settings": {}
+                "tipjar_settings": {
+                  "is_enabled": true,
+                  "patreon_handle": "Curiouspejjy"
+                }
               }
             }
           }
@@ -222,1789 +1372,35 @@
             16,
             9
           ],
-          "duration_millis": 78286,
+          "duration_millis": 134467,
           "variants": [
             {
               "content_type": "application/x-mpegURL",
-              "url": "https://video.twimg.com/ext_tw_video/1807127165537808385/pu/pl/bKLMV2I5OhwIN6MT.m3u8?tag=14"
+              "url": "https://video.twimg.com/ext_tw_video/1858581655633477632/pu/pl/bwzyegbP1eCPILCs.m3u8?tag=12&v=18b"
             },
             {
               "bitrate": 256000,
               "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1807127165537808385/pu/vid/avc1/480x270/dksWUhaSqnGyk3UO.mp4?tag=14"
+              "url": "https://video.twimg.com/ext_tw_video/1858581655633477632/pu/vid/avc1/480x270/OGPI3bosALKvHIDM.mp4?tag=12"
             },
             {
               "bitrate": 832000,
               "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1807127165537808385/pu/vid/avc1/640x360/OBCemHpzek7F71Fv.mp4?tag=14"
+              "url": "https://video.twimg.com/ext_tw_video/1858581655633477632/pu/vid/avc1/640x360/UQ_QGbpFooBTiXk-.mp4?tag=12"
             },
             {
               "bitrate": 2176000,
               "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1807127165537808385/pu/vid/avc1/1280x720/qtRr8J_4Gz57_vgp.mp4?tag=14"
-            },
-            {
-              "bitrate": 10368000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1807127165537808385/pu/vid/avc1/1920x1080/u0Zxj-VOhU3gHomQ.mp4?tag=14"
+              "url": "https://video.twimg.com/ext_tw_video/1858581655633477632/pu/vid/avc1/1280x720/qE8jSdamns6_nvIt.mp4?tag=12"
             }
           ]
         },
         "media_results": {
           "result": {
-            "media_key": "7_1807127165537808385"
+            "media_key": "7_1858581655633477632"
           }
         }
       }
     ]
-  },
-  {
-    "id": "1856957049143267564",
-    "name": "Elon Musk",
-    "username": "elonmusk",
-    "text": "Starship Flight 6 coming up soon!\n https://t.co/WgtLjxsP52",
-    "createdAt": "Thu Nov 14 07:07:15 +0000 2024",
-    "userId": "44196397",
-    "conversationId": "1856957049143267564",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [
-      {
-        "display_url": "x.com/spacesudoer/st…",
-        "expanded_url": "https://x.com/spacesudoer/status/1856683899776360600/video/1",
-        "url": "https://t.co/WgtLjxsP52",
-        "indices": [
-          35,
-          58
-        ]
-      }
-    ],
-    "videos": []
-  },
-  {
-    "id": "1857405633605021908",
-    "name": "$CENTS",
-    "username": "centienceio",
-    "text": "freakin' generate a video of me riding a unicorn on the moon while reciting Nietzsche https://t.co/I0e4Sz9tHs",
-    "createdAt": "Fri Nov 15 12:49:46 +0000 2024",
-    "userId": "1848699319316320256",
-    "conversationId": "1857405633605021908",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": [
-      {
-        "display_url": "pic.x.com/I0e4Sz9tHs",
-        "expanded_url": "https://x.com/centienceio/status/1857405633605021908/video/1",
-        "id_str": "1857405581910233088",
-        "indices": [
-          86,
-          109
-        ],
-        "media_key": "13_1857405581910233088",
-        "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/1857405581910233088/img/yDzmcEfNtvDNV3nn.jpg",
-        "type": "video",
-        "url": "https://t.co/I0e4Sz9tHs",
-        "additional_media_info": {
-          "monetizable": false
-        },
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "sizes": {
-          "large": {
-            "h": 708,
-            "w": 1280,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 664,
-            "w": 1200,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 376,
-            "w": 680,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 708,
-          "width": 1280,
-          "focus_rects": []
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "video_info": {
-          "aspect_ratio": [
-            320,
-            177
-          ],
-          "duration_millis": 4375,
-          "variants": [
-            {
-              "content_type": "application/x-mpegURL",
-              "url": "https://video.twimg.com/amplify_video/1857405581910233088/pl/PxPfQ9p4q1TpVTjV.m3u8?tag=16"
-            },
-            {
-              "bitrate": 288000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/amplify_video/1857405581910233088/vid/avc1/488x270/Bqm_1WlRgct39zZj.mp4?tag=16"
-            },
-            {
-              "bitrate": 832000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/amplify_video/1857405581910233088/vid/avc1/650x360/PvMPRtES7_ut09Dd.mp4?tag=16"
-            },
-            {
-              "bitrate": 2176000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/amplify_video/1857405581910233088/vid/avc1/1280x708/Ftiwo784pXHgeqKk.mp4?tag=16"
-            }
-          ]
-        },
-        "media_results": {
-          "result": {
-            "media_key": "13_1857405581910233088"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "1856808079121138139",
-    "name": "Daily Loud",
-    "username": "DailyLoud",
-    "text": "California lottery winner has claimed he hasn't received his $44,000,000 despite winning the Powerball jackpot more than nine weeks ago. https://t.co/p0UFUawseg",
-    "createdAt": "Wed Nov 13 21:15:18 +0000 2024",
-    "userId": "452540168",
-    "conversationId": "1856808079121138139",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [
-      {
-        "display_url": "pic.x.com/p0UFUawseg",
-        "expanded_url": "https://x.com/DailyLoud/status/1856808079121138139/photo/1",
-        "id_str": "1856808076084486144",
-        "indices": [
-          137,
-          160
-        ],
-        "media_key": "3_1856808076084486144",
-        "media_url_https": "https://pbs.twimg.com/media/GcS1G38XoAAPSrV.jpg",
-        "type": "photo",
-        "url": "https://t.co/p0UFUawseg",
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "features": {
-          "large": {
-            "faces": [
-              {
-                "x": 133,
-                "y": 161,
-                "h": 528,
-                "w": 528
-              }
-            ]
-          },
-          "medium": {
-            "faces": [
-              {
-                "x": 110,
-                "y": 134,
-                "h": 440,
-                "w": 440
-              }
-            ]
-          },
-          "small": {
-            "faces": [
-              {
-                "x": 62,
-                "y": 76,
-                "h": 249,
-                "w": 249
-              }
-            ]
-          },
-          "orig": {
-            "faces": [
-              {
-                "x": 133,
-                "y": 161,
-                "h": 528,
-                "w": 528
-              }
-            ]
-          }
-        },
-        "sizes": {
-          "large": {
-            "h": 810,
-            "w": 1440,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 675,
-            "w": 1200,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 383,
-            "w": 680,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 810,
-          "width": 1440,
-          "focus_rects": [
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1440,
-              "h": 806
-            },
-            {
-              "x": 630,
-              "y": 0,
-              "w": 810,
-              "h": 810
-            },
-            {
-              "x": 729,
-              "y": 0,
-              "w": 711,
-              "h": 810
-            },
-            {
-              "x": 1035,
-              "y": 0,
-              "w": 405,
-              "h": 810
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1440,
-              "h": 810
-            }
-          ]
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "media_results": {
-          "result": {
-            "media_key": "3_1856808076084486144"
-          }
-        }
-      }
-    ],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857449581551980621",
-    "name": "🛒 SweetTooth | DPMO 🛒",
-    "username": "SweetToothAudio",
-    "text": "Send this to your emo/goth crush and thank me later https://t.co/RQlsLiCcBR",
-    "createdAt": "Fri Nov 15 15:44:24 +0000 2024",
-    "userId": "989272598348414976",
-    "conversationId": "1857449581551980621",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": [
-      {
-        "display_url": "pic.x.com/RQlsLiCcBR",
-        "expanded_url": "https://x.com/SweetToothAudio/status/1857449581551980621/video/1",
-        "id_str": "1857449548018585600",
-        "indices": [
-          52,
-          75
-        ],
-        "media_key": "7_1857449548018585600",
-        "media_url_https": "https://pbs.twimg.com/ext_tw_video_thumb/1857449548018585600/pu/img/OW41iyL1J0bLoU3j.jpg",
-        "type": "video",
-        "url": "https://t.co/RQlsLiCcBR",
-        "additional_media_info": {
-          "monetizable": false
-        },
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "sizes": {
-          "large": {
-            "h": 1280,
-            "w": 720,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 1200,
-            "w": 675,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 680,
-            "w": 383,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 1280,
-          "width": 720,
-          "focus_rects": []
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "video_info": {
-          "aspect_ratio": [
-            9,
-            16
-          ],
-          "duration_millis": 3913,
-          "variants": [
-            {
-              "content_type": "application/x-mpegURL",
-              "url": "https://video.twimg.com/ext_tw_video/1857449548018585600/pu/pl/Tdc0PA1tWhxdkHmz.m3u8?tag=12"
-            },
-            {
-              "bitrate": 632000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1857449548018585600/pu/vid/avc1/320x568/kk_-9gmryI9VpKZj.mp4?tag=12"
-            },
-            {
-              "bitrate": 950000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1857449548018585600/pu/vid/avc1/480x852/OKK5EuL04ZsSB0ef.mp4?tag=12"
-            },
-            {
-              "bitrate": 2176000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1857449548018585600/pu/vid/avc1/720x1280/5MKypQEJPeXVZNhq.mp4?tag=12"
-            }
-          ]
-        },
-        "media_results": {
-          "result": {
-            "media_key": "7_1857449548018585600"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "1857368459606106174",
-    "name": "Bitcoin",
-    "username": "Bitcoin",
-    "text": "€84,416.67",
-    "createdAt": "Fri Nov 15 10:22:03 +0000 2024",
-    "userId": "357312062",
-    "conversationId": "1857368459606106174",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1856787858818044116",
-    "name": "SEVNN",
-    "username": "SEVNNmusic",
-    "text": "sometimes i feel like “dubstep” or “riddim” as a community is moving in the wrong direction",
-    "createdAt": "Wed Nov 13 19:54:57 +0000 2024",
-    "userId": "4865877941",
-    "conversationId": "1856787858818044116",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1856941120451743852",
-    "name": "HOL!",
-    "username": "holdubz",
-    "text": "Habstrakt and I just made the craziest dubstep",
-    "createdAt": "Thu Nov 14 06:03:58 +0000 2024",
-    "userId": "1169641470233587713",
-    "conversationId": "1856941120451743852",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857152935026651515",
-    "name": "Samplifire",
-    "username": "Samplifire",
-    "text": "is riddim still cool now y'all? https://t.co/GOOvKIpqev",
-    "createdAt": "Thu Nov 14 20:05:38 +0000 2024",
-    "userId": "1637795269",
-    "conversationId": "1857152935026651515",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": [
-      {
-        "display_url": "pic.x.com/GOOvKIpqev",
-        "expanded_url": "https://x.com/Samplifire/status/1857152935026651515/video/1",
-        "id_str": "1857152539268915200",
-        "indices": [
-          32,
-          55
-        ],
-        "media_key": "7_1857152539268915200",
-        "media_url_https": "https://pbs.twimg.com/ext_tw_video_thumb/1857152539268915200/pu/img/SmTZBLxLgzNdevRm.jpg",
-        "type": "video",
-        "url": "https://t.co/GOOvKIpqev",
-        "additional_media_info": {
-          "monetizable": false
-        },
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "sizes": {
-          "large": {
-            "h": 1280,
-            "w": 720,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 1200,
-            "w": 675,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 680,
-            "w": 383,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 1280,
-          "width": 720,
-          "focus_rects": []
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "video_info": {
-          "aspect_ratio": [
-            9,
-            16
-          ],
-          "duration_millis": 13333,
-          "variants": [
-            {
-              "content_type": "application/x-mpegURL",
-              "url": "https://video.twimg.com/ext_tw_video/1857152539268915200/pu/pl/i-FbgrU3We4TB0ED.m3u8?tag=12&v=ca7"
-            },
-            {
-              "bitrate": 632000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1857152539268915200/pu/vid/avc1/320x568/vBaI0JX--ug4NzzD.mp4?tag=12"
-            },
-            {
-              "bitrate": 950000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1857152539268915200/pu/vid/avc1/480x852/8dZ51jR5C5tayIKk.mp4?tag=12"
-            },
-            {
-              "bitrate": 2176000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1857152539268915200/pu/vid/avc1/720x1280/85vGMpnqWzx28JId.mp4?tag=12"
-            }
-          ]
-        },
-        "media_results": {
-          "result": {
-            "media_key": "7_1857152539268915200"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "1857440110200971704",
-    "name": "Ticketmaster",
-    "username": "Ticketmaster",
-    "text": "Welcome to The Black Parade 🖤 Tickets to @MCRofficial's upcoming tour are on sale now https://t.co/dr2l5Y2Qzx https://t.co/sHss4YrNRc",
-    "createdAt": "Fri Nov 15 15:06:46 +0000 2024",
-    "userId": "27743648",
-    "conversationId": "1857440110200971704",
-    "hashtags": [],
-    "mentions": [
-      {
-        "id_str": "89018574",
-        "name": "My Chemical Romance",
-        "screen_name": "MCRofficial",
-        "indices": [
-          41,
-          53
-        ]
-      }
-    ],
-    "photos": [
-      {
-        "display_url": "pic.x.com/sHss4YrNRc",
-        "expanded_url": "https://x.com/Ticketmaster/status/1857440110200971704/photo/1",
-        "id_str": "1857440089397227520",
-        "indices": [
-          110,
-          133
-        ],
-        "media_key": "3_1857440089397227520",
-        "media_url_https": "https://pbs.twimg.com/media/Gcbz65AXcAA3egH.jpg",
-        "type": "photo",
-        "url": "https://t.co/sHss4YrNRc",
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "features": {
-          "large": {
-            "faces": [
-              {
-                "x": 316,
-                "y": 7,
-                "h": 111,
-                "w": 111
-              }
-            ]
-          },
-          "medium": {
-            "faces": [
-              {
-                "x": 316,
-                "y": 7,
-                "h": 111,
-                "w": 111
-              }
-            ]
-          },
-          "small": {
-            "faces": [
-              {
-                "x": 198,
-                "y": 4,
-                "h": 69,
-                "w": 69
-              }
-            ]
-          },
-          "orig": {
-            "faces": [
-              {
-                "x": 316,
-                "y": 7,
-                "h": 111,
-                "w": 111
-              }
-            ]
-          }
-        },
-        "sizes": {
-          "large": {
-            "h": 1080,
-            "w": 1080,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 1080,
-            "w": 1080,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 680,
-            "w": 680,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 1080,
-          "width": 1080,
-          "focus_rects": [
-            {
-              "x": 0,
-              "y": 475,
-              "w": 1080,
-              "h": 605
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1080,
-              "h": 1080
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 947,
-              "h": 1080
-            },
-            {
-              "x": 189,
-              "y": 0,
-              "w": 540,
-              "h": 1080
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1080,
-              "h": 1080
-            }
-          ]
-        },
-        "media_results": {
-          "result": {
-            "media_key": "3_1857440089397227520"
-          }
-        }
-      }
-    ],
-    "thread": [],
-    "urls": [
-      {
-        "display_url": "bit.ly/3O9xIl2",
-        "expanded_url": "https://bit.ly/3O9xIl2",
-        "url": "https://t.co/dr2l5Y2Qzx",
-        "indices": [
-          86,
-          109
-        ]
-      }
-    ],
-    "videos": []
-  },
-  {
-    "id": "1857120809539731464",
-    "name": "KeroseneDubz",
-    "username": "KeroseneDubz",
-    "text": "people ask me for unreleased could you at least be following me literally anywhere or even like somehting i made on soundcloud once",
-    "createdAt": "Thu Nov 14 17:57:59 +0000 2024",
-    "userId": "1282427292267020289",
-    "conversationId": "1857120809539731464",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857182377438548202",
-    "name": "FuntCase | DPMO",
-    "username": "FuntCaseUK",
-    "text": "If there was a DPMO greatest hits, what tracks would be on there??",
-    "createdAt": "Thu Nov 14 22:02:38 +0000 2024",
-    "userId": "86527966",
-    "conversationId": "1857182377438548202",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857441124392337853",
-    "name": "Ash Crypto",
-    "username": "Ashcryptoreal",
-    "text": "$XRP IS PUMPING HARD 🚀 https://t.co/IC7CnGTsPm",
-    "createdAt": "Fri Nov 15 15:10:48 +0000 2024",
-    "userId": "3185716686",
-    "conversationId": "1857441124392337853",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [
-      {
-        "display_url": "pic.x.com/IC7CnGTsPm",
-        "expanded_url": "https://x.com/Ashcryptoreal/status/1857441124392337853/photo/1",
-        "id_str": "1857441112346271744",
-        "indices": [
-          23,
-          46
-        ],
-        "media_key": "3_1857441112346271744",
-        "media_url_https": "https://pbs.twimg.com/media/Gcb02bybIAAfIoO.jpg",
-        "type": "photo",
-        "url": "https://t.co/IC7CnGTsPm",
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "features": {
-          "large": {
-            "faces": []
-          },
-          "medium": {
-            "faces": []
-          },
-          "small": {
-            "faces": []
-          },
-          "orig": {
-            "faces": []
-          }
-        },
-        "sizes": {
-          "large": {
-            "h": 1280,
-            "w": 1084,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 1200,
-            "w": 1016,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 680,
-            "w": 576,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 1280,
-          "width": 1084,
-          "focus_rects": [
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1084,
-              "h": 607
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1084,
-              "h": 1084
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1084,
-              "h": 1236
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 640,
-              "h": 1280
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1084,
-              "h": 1280
-            }
-          ]
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "media_results": {
-          "result": {
-            "media_key": "3_1857441112346271744"
-          }
-        }
-      }
-    ],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857243306335330722",
-    "name": "Jiqui",
-    "username": "jiquiofficial",
-    "text": "NEW JINKY MUSIC IN 3 HOURS \n\n3 HOURS UNTIL NEW JINKY MUSIC\n\nNEW UNTIL MUSIC JINKY 3 HOURS",
-    "createdAt": "Fri Nov 15 02:04:44 +0000 2024",
-    "userId": "903716854086082560",
-    "conversationId": "1857243306335330722",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1856921435576365162",
-    "name": "Elon Musk",
-    "username": "elonmusk",
-    "text": "Do these expenditures seem like a good use of your taxes?\n https://t.co/itgI9Np2m1",
-    "createdAt": "Thu Nov 14 04:45:44 +0000 2024",
-    "userId": "44196397",
-    "conversationId": "1856921435576365162",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": [
-      {
-        "display_url": "pic.x.com/itgI9Np2m1",
-        "expanded_url": "https://x.com/america/status/1856873623232946314/video/1",
-        "id_str": "1856873399479336963",
-        "indices": [
-          59,
-          82
-        ],
-        "media_key": "13_1856873399479336963",
-        "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/1856873399479336963/img/G5dJ69rNVykHTGiv.jpg",
-        "source_status_id_str": "1856873623232946314",
-        "source_user_id_str": "1841988608825466880",
-        "type": "video",
-        "url": "https://t.co/itgI9Np2m1",
-        "additional_media_info": {
-          "monetizable": false,
-          "source_user": {
-            "user_results": {
-              "result": {
-                "__typename": "User",
-                "id": "VXNlcjoxODQxOTg4NjA4ODI1NDY2ODgw",
-                "rest_id": "1841988608825466880",
-                "affiliates_highlighted_label": {},
-                "has_graduated_access": true,
-                "is_blue_verified": true,
-                "profile_image_shape": "Square",
-                "legacy": {
-                  "following": false,
-                  "can_dm": false,
-                  "can_media_tag": true,
-                  "created_at": "Thu Oct 03 23:48:27 +0000 2024",
-                  "default_profile": true,
-                  "default_profile_image": false,
-                  "description": "PAC Founded by @ElonMusk to support candidates who champion Secure Borders, Sensible Spending, Safe Cities, Fair Justice System, Free Speech and Self-Protection",
-                  "entities": {
-                    "description": {
-                      "urls": []
-                    },
-                    "url": {
-                      "urls": [
-                        {
-                          "display_url": "theamericapac.org",
-                          "expanded_url": "https://theamericapac.org",
-                          "url": "https://t.co/PdGFm7qcgm",
-                          "indices": [
-                            0,
-                            23
-                          ]
-                        }
-                      ]
-                    }
-                  },
-                  "fast_followers_count": 0,
-                  "favourites_count": 88,
-                  "followers_count": 841977,
-                  "friends_count": 0,
-                  "has_custom_timelines": false,
-                  "is_translator": false,
-                  "listed_count": 1096,
-                  "location": "USA",
-                  "media_count": 474,
-                  "name": "America",
-                  "normal_followers_count": 841977,
-                  "pinned_tweet_ids_str": [
-                    "1855114343219671334"
-                  ],
-                  "possibly_sensitive": false,
-                  "profile_banner_url": "https://pbs.twimg.com/profile_banners/1841988608825466880/1728002939",
-                  "profile_image_url_https": "https://pbs.twimg.com/profile_images/1842003465448398848/U3EZmdUz_normal.jpg",
-                  "profile_interstitial_type": "",
-                  "screen_name": "america",
-                  "statuses_count": 782,
-                  "translator_type": "none",
-                  "url": "https://t.co/PdGFm7qcgm",
-                  "verified": false,
-                  "verified_type": "Business",
-                  "want_retweets": false,
-                  "withheld_in_countries": []
-                },
-                "tipjar_settings": {}
-              }
-            }
-          }
-        },
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "sizes": {
-          "large": {
-            "h": 720,
-            "w": 1280,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 675,
-            "w": 1200,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 383,
-            "w": 680,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 720,
-          "width": 1280,
-          "focus_rects": []
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "video_info": {
-          "aspect_ratio": [
-            16,
-            9
-          ],
-          "duration_millis": 277511,
-          "variants": [
-            {
-              "content_type": "application/x-mpegURL",
-              "url": "https://video.twimg.com/amplify_video/1856873399479336963/pl/yYieSZ-aytnOnxIS.m3u8?tag=16"
-            },
-            {
-              "bitrate": 288000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/amplify_video/1856873399479336963/vid/avc1/480x270/3whUPao3Xng5xUHH.mp4?tag=16"
-            },
-            {
-              "bitrate": 832000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/amplify_video/1856873399479336963/vid/avc1/640x360/mvs_qlp5qG8k0aBq.mp4?tag=16"
-            },
-            {
-              "bitrate": 2176000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/amplify_video/1856873399479336963/vid/avc1/1280x720/E2ioC-dX8Fvm8_dL.mp4?tag=16"
-            }
-          ]
-        },
-        "media_results": {
-          "result": {
-            "media_key": "13_1856873399479336963"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "1857298567234212265",
-    "name": "$CENTS",
-    "username": "centienceio",
-    "text": "nobody actually remembers the way the sky used to look at night anyway",
-    "createdAt": "Fri Nov 15 05:44:20 +0000 2024",
-    "userId": "1848699319316320256",
-    "conversationId": "1857298567234212265",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857121238109524129",
-    "name": "Nawtystep",
-    "username": "NawtystepBlog",
-    "text": "What are the most famous Bass music vocal samples of all time?? 🤔\n\n“E”\n“Damn son where’d ya find this?”\n“Stop acting like a bitch”\n\nEtc",
-    "createdAt": "Thu Nov 14 17:59:41 +0000 2024",
-    "userId": "3376297241",
-    "conversationId": "1857121238109524129",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857422089726103919",
-    "name": "Andrew Yang🧢⬆️🇺🇸",
-    "username": "AndrewYang",
-    "text": "This book just came out - and is a glimpse of the future we all should want.  https://t.co/ZQjwNArmCO https://t.co/O8w6CCbiVm",
-    "createdAt": "Fri Nov 15 13:55:10 +0000 2024",
-    "userId": "2228878592",
-    "conversationId": "1857422089726103919",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [
-      {
-        "display_url": "pic.x.com/O8w6CCbiVm",
-        "expanded_url": "https://x.com/AndrewYang/status/1857422089726103919/photo/1",
-        "id_str": "1857422085338873856",
-        "indices": [
-          102,
-          125
-        ],
-        "media_key": "3_1857422085338873856",
-        "media_url_https": "https://pbs.twimg.com/media/Gcbji6qWwAArlTj.jpg",
-        "type": "photo",
-        "url": "https://t.co/O8w6CCbiVm",
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "features": {
-          "large": {
-            "faces": []
-          },
-          "medium": {
-            "faces": []
-          },
-          "small": {
-            "faces": []
-          },
-          "orig": {
-            "faces": []
-          }
-        },
-        "sizes": {
-          "large": {
-            "h": 2048,
-            "w": 1536,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 1200,
-            "w": 900,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 680,
-            "w": 510,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 2048,
-          "width": 1536,
-          "focus_rects": [
-            {
-              "x": 0,
-              "y": 30,
-              "w": 1536,
-              "h": 860
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1536,
-              "h": 1536
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1536,
-              "h": 1751
-            },
-            {
-              "x": 512,
-              "y": 0,
-              "w": 1024,
-              "h": 2048
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1536,
-              "h": 2048
-            }
-          ]
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "media_results": {
-          "result": {
-            "media_key": "3_1857422085338873856"
-          }
-        }
-      }
-    ],
-    "thread": [],
-    "urls": [
-      {
-        "display_url": "amazon.com/Vote-Your-Phon…",
-        "expanded_url": "https://www.amazon.com/Vote-Your-Phone-Mobile-Democracy-ebook/dp/B0CS12DV8V",
-        "url": "https://t.co/ZQjwNArmCO",
-        "indices": [
-          78,
-          101
-        ]
-      }
-    ],
-    "videos": []
-  },
-  {
-    "id": "1857212386014646485",
-    "name": "DACK JANIELS 🔪",
-    "username": "DackJanielsDub",
-    "text": "haven’t been able to backside heel for like 2 weeks but the music gods blessed me for my release today 🤠 https://t.co/vRlgm2nNqR",
-    "createdAt": "Fri Nov 15 00:01:52 +0000 2024",
-    "userId": "1855851313",
-    "conversationId": "1857212386014646485",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": [
-      {
-        "display_url": "pic.x.com/vRlgm2nNqR",
-        "expanded_url": "https://x.com/DackJanielsDub/status/1857212386014646485/video/1",
-        "id_str": "1857212306532495360",
-        "indices": [
-          105,
-          128
-        ],
-        "media_key": "13_1857212306532495360",
-        "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/1857212306532495360/img/PM2tgowXsTNTdlqZ.jpg",
-        "type": "video",
-        "url": "https://t.co/vRlgm2nNqR",
-        "additional_media_info": {
-          "monetizable": false
-        },
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "sizes": {
-          "large": {
-            "h": 960,
-            "w": 540,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 960,
-            "w": 540,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 680,
-            "w": 383,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 960,
-          "width": 540,
-          "focus_rects": []
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "video_info": {
-          "aspect_ratio": [
-            9,
-            16
-          ],
-          "duration_millis": 6516,
-          "variants": [
-            {
-              "content_type": "application/x-mpegURL",
-              "url": "https://video.twimg.com/amplify_video/1857212306532495360/pl/gqMgV9Y5Hj1pUjCD.m3u8?tag=16"
-            },
-            {
-              "bitrate": 632000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/amplify_video/1857212306532495360/vid/avc1/320x568/y0eSx_2XSyHWnf1Y.mp4?tag=16"
-            },
-            {
-              "bitrate": 950000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/amplify_video/1857212306532495360/vid/avc1/480x852/QaOcDV2R4fw3wyWv.mp4?tag=16"
-            },
-            {
-              "bitrate": 2176000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/amplify_video/1857212306532495360/vid/avc1/540x960/_XXoGeDnH-jPmzOR.mp4?tag=16"
-            }
-          ]
-        },
-        "media_results": {
-          "result": {
-            "media_key": "13_1857212306532495360"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "1856828407478108553",
-    "name": "Andrew Tate",
-    "username": "Cobratate",
-    "text": "I finally feel American again.",
-    "createdAt": "Wed Nov 13 22:36:05 +0000 2024",
-    "userId": "333357345",
-    "conversationId": "1856828407478108553",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857463934204424665",
-    "name": "🛒 SweetTooth | DPMO 🛒",
-    "username": "SweetToothAudio",
-    "text": "He calls the mansion not a house but a tomb\nHe’s always choking from the stench and the fume",
-    "createdAt": "Fri Nov 15 16:41:26 +0000 2024",
-    "userId": "989272598348414976",
-    "conversationId": "1857463934204424665",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1856991246134178047",
-    "name": "SMILLEYZ",
-    "username": "SMILLEYZ_",
-    "text": "23 years around the sun https://t.co/VB2KBEtfZd",
-    "createdAt": "Thu Nov 14 09:23:08 +0000 2024",
-    "userId": "1378662508035067906",
-    "conversationId": "1856991246134178047",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [
-      {
-        "display_url": "pic.x.com/VB2KBEtfZd",
-        "expanded_url": "https://x.com/SMILLEYZ_/status/1856991246134178047/photo/1",
-        "id_str": "1856991242158018560",
-        "indices": [
-          24,
-          47
-        ],
-        "media_key": "3_1856991242158018560",
-        "media_url_https": "https://pbs.twimg.com/media/GcVbsivXEAAe0bd.jpg",
-        "type": "photo",
-        "url": "https://t.co/VB2KBEtfZd",
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "features": {
-          "large": {
-            "faces": []
-          },
-          "medium": {
-            "faces": []
-          },
-          "small": {
-            "faces": []
-          },
-          "orig": {
-            "faces": []
-          }
-        },
-        "sizes": {
-          "large": {
-            "h": 2048,
-            "w": 947,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 1200,
-            "w": 555,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 680,
-            "w": 314,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 2048,
-          "width": 947,
-          "focus_rects": [
-            {
-              "x": 0,
-              "y": 1424,
-              "w": 947,
-              "h": 530
-            },
-            {
-              "x": 0,
-              "y": 1101,
-              "w": 947,
-              "h": 947
-            },
-            {
-              "x": 0,
-              "y": 968,
-              "w": 947,
-              "h": 1080
-            },
-            {
-              "x": 0,
-              "y": 154,
-              "w": 947,
-              "h": 1894
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 947,
-              "h": 2048
-            }
-          ]
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "media_results": {
-          "result": {
-            "media_key": "3_1856991242158018560"
-          }
-        }
-      }
-    ],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857424051590865109",
-    "name": "sanzu",
-    "username": "sanzusounds",
-    "text": "got a pretty sick announcement soon! I had the honor of remixing one of the most known songs in dubstep history from arguably the biggest label in dubstep / riddim 😭😭",
-    "createdAt": "Fri Nov 15 14:02:57 +0000 2024",
-    "userId": "1583188563860004864",
-    "conversationId": "1857424051590865109",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857184258609090620",
-    "name": "🦣 WOOLI 🦣",
-    "username": "woolimusic",
-    "text": "Hi there are a few fake wooli accounts popping up this week on a bunch of different socials. Not sure how to combat this but ya beware of all that 😞",
-    "createdAt": "Thu Nov 14 22:10:06 +0000 2024",
-    "userId": "260330404",
-    "conversationId": "1857184258609090620",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857372076576846228",
-    "name": "INAKTIV",
-    "username": "INAKTIVITY",
-    "text": "i been cooking again i promise",
-    "createdAt": "Fri Nov 15 10:36:26 +0000 2024",
-    "userId": "1455239169329057804",
-    "conversationId": "1857372076576846228",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857233904144638147",
-    "name": "Bitcoin",
-    "username": "Bitcoin",
-    "text": "#Bitcoin https://t.co/zphDE8gioW",
-    "createdAt": "Fri Nov 15 01:27:23 +0000 2024",
-    "userId": "357312062",
-    "conversationId": "1857233904144638147",
-    "hashtags": [
-      {
-        "indices": [
-          0,
-          8
-        ],
-        "text": "Bitcoin"
-      }
-    ],
-    "mentions": [],
-    "photos": [
-      {
-        "display_url": "pic.x.com/zphDE8gioW",
-        "expanded_url": "https://x.com/Bitcoin/status/1857233904144638147/photo/1",
-        "id_str": "1857233899912654848",
-        "indices": [
-          9,
-          32
-        ],
-        "media_key": "3_1857233899912654848",
-        "media_url_https": "https://pbs.twimg.com/media/GcY4ZFUbcAA9PuO.jpg",
-        "type": "photo",
-        "url": "https://t.co/zphDE8gioW",
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "features": {
-          "large": {
-            "faces": [
-              {
-                "x": 664,
-                "y": 189,
-                "h": 112,
-                "w": 112
-              },
-              {
-                "x": 812,
-                "y": 196,
-                "h": 92,
-                "w": 92
-              }
-            ]
-          },
-          "medium": {
-            "faces": [
-              {
-                "x": 498,
-                "y": 141,
-                "h": 84,
-                "w": 84
-              },
-              {
-                "x": 609,
-                "y": 147,
-                "h": 69,
-                "w": 69
-              }
-            ]
-          },
-          "small": {
-            "faces": [
-              {
-                "x": 282,
-                "y": 80,
-                "h": 47,
-                "w": 47
-              },
-              {
-                "x": 345,
-                "y": 83,
-                "h": 39,
-                "w": 39
-              }
-            ]
-          },
-          "orig": {
-            "faces": [
-              {
-                "x": 664,
-                "y": 189,
-                "h": 112,
-                "w": 112
-              },
-              {
-                "x": 812,
-                "y": 196,
-                "h": 92,
-                "w": 92
-              }
-            ]
-          }
-        },
-        "sizes": {
-          "large": {
-            "h": 1600,
-            "w": 1600,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 1200,
-            "w": 1200,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 680,
-            "w": 680,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 1600,
-          "width": 1600,
-          "focus_rects": [
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1600,
-              "h": 896
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1600,
-              "h": 1600
-            },
-            {
-              "x": 138,
-              "y": 0,
-              "w": 1404,
-              "h": 1600
-            },
-            {
-              "x": 440,
-              "y": 0,
-              "w": 800,
-              "h": 1600
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "w": 1600,
-              "h": 1600
-            }
-          ]
-        },
-        "media_results": {
-          "result": {
-            "media_key": "3_1857233899912654848"
-          }
-        }
-      }
-    ],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857462117592617174",
-    "name": "nappy the plug",
-    "username": "nappytheplug",
-    "text": "😂😂😂",
-    "createdAt": "Fri Nov 15 16:34:13 +0000 2024",
-    "userId": "17739546",
-    "conversationId": "1857462117592617174",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1857453014547681678",
-    "name": "Joe Rogan Podcast",
-    "username": "joeroganhq",
-    "text": "Who you got?",
-    "createdAt": "Fri Nov 15 15:58:03 +0000 2024",
-    "userId": "2191193012",
-    "conversationId": "1857453014547681678",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1856880233108181402",
-    "name": "𝙃𝙑𝘿𝙀𝙎",
-    "username": "hvdesmusic",
-    "text": "hot take but if an artist decides to experiment outside their genre simply bc they love it then what’s the problem ??? shouldn’t we encourage artists to attempt new genres for the love of the music ??? is that not how boundaries r pushed &amp; genres r re-defined &amp; evolved ?",
-    "createdAt": "Thu Nov 14 02:02:01 +0000 2024",
-    "userId": "2197125056",
-    "conversationId": "1856880233108181402",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
-  },
-  {
-    "id": "1856814350696419802",
-    "name": "Queef",
-    "username": "_Mc_Queef_",
-    "text": "Bruh like wtf is this mix, shit is hot garbage 😭 https://t.co/fXLducRvSB",
-    "createdAt": "Wed Nov 13 21:40:13 +0000 2024",
-    "userId": "1551666270147252224",
-    "conversationId": "1856814350696419802",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": [
-      {
-        "display_url": "pic.x.com/fXLducRvSB",
-        "expanded_url": "https://x.com/Melquis1_1/status/1856814350696419802/video/1",
-        "id_str": "1856814313807515648",
-        "indices": [
-          49,
-          72
-        ],
-        "media_key": "7_1856814313807515648",
-        "media_url_https": "https://pbs.twimg.com/ext_tw_video_thumb/1856814313807515648/pu/img/djOoKRufh6zDLrsj.jpg",
-        "type": "video",
-        "url": "https://t.co/fXLducRvSB",
-        "additional_media_info": {
-          "monetizable": false
-        },
-        "ext_media_availability": {
-          "status": "Available"
-        },
-        "sizes": {
-          "large": {
-            "h": 1024,
-            "w": 576,
-            "resize": "fit"
-          },
-          "medium": {
-            "h": 1024,
-            "w": 576,
-            "resize": "fit"
-          },
-          "small": {
-            "h": 680,
-            "w": 383,
-            "resize": "fit"
-          },
-          "thumb": {
-            "h": 150,
-            "w": 150,
-            "resize": "crop"
-          }
-        },
-        "original_info": {
-          "height": 1024,
-          "width": 576,
-          "focus_rects": []
-        },
-        "allow_download_status": {
-          "allow_download": true
-        },
-        "video_info": {
-          "aspect_ratio": [
-            9,
-            16
-          ],
-          "duration_millis": 32091,
-          "variants": [
-            {
-              "content_type": "application/x-mpegURL",
-              "url": "https://video.twimg.com/ext_tw_video/1856814313807515648/pu/pl/FGaWTvw-Gi2Ah6j8.m3u8?tag=12&v=0a7"
-            },
-            {
-              "bitrate": 632000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1856814313807515648/pu/vid/avc1/320x568/OhhWz4-GrZYoEe73.mp4?tag=12"
-            },
-            {
-              "bitrate": 950000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1856814313807515648/pu/vid/avc1/480x852/hijXjLImLpLqTjam.mp4?tag=12"
-            },
-            {
-              "bitrate": 2176000,
-              "content_type": "video/mp4",
-              "url": "https://video.twimg.com/ext_tw_video/1856814313807515648/pu/vid/avc1/576x1024/6A-N0znBK_1ye-uH.mp4?tag=12"
-            }
-          ]
-        },
-        "media_results": {
-          "result": {
-            "media_key": "7_1856814313807515648"
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "1857126165225394541",
-    "name": "SVDDEN DEATH",
-    "username": "svddendeath",
-    "text": "i just watched Americas most insane Person Space Laces make a 4 on the floor flip of SLB 😳",
-    "createdAt": "Thu Nov 14 18:19:16 +0000 2024",
-    "userId": "2278796077",
-    "conversationId": "1857126165225394541",
-    "hashtags": [],
-    "mentions": [],
-    "photos": [],
-    "thread": [],
-    "urls": [],
-    "videos": []
   }
 ]
