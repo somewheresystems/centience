@@ -16,11 +16,9 @@ export const imageGeneration: Action = {
         // TODO: Abstract this to an image provider thing
 
         const anthropicApiKeyOk = !!runtime.getSetting("ANTHROPIC_API_KEY");
-        const togetherApiKeyOk = !!runtime.getSetting("TOGETHER_API_KEY");
+        const replicateApiKeyOk = !!runtime.getSetting("REPLICATE_API_KEY");
 
-        // TODO: Add openai DALL-E generation as well
-
-        return anthropicApiKeyOk && togetherApiKeyOk;
+        return anthropicApiKeyOk && replicateApiKeyOk;
     },
     handler: async (
         runtime: IAgentRuntime,

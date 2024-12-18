@@ -1,11 +1,27 @@
 import { Buffer } from "buffer";
-import Together from "together-ai";
+import Replicate from "replicate";
 import { IAgentRuntime } from "../core/types.ts";
 import { getImageGenModel, ImageGenModel } from "../core/imageGenModels.ts";
 import OpenAI from "openai";
 import { elizaLogger } from "../index";
 import { generateText } from "../core/generation.ts";
 import { ModelClass } from "../core/types.ts";
+import crypto from 'crypto';
+
+// Define model versions and configurations
+const FLUX_PRO = "black-forest-labs/flux-1.1-pro";
+const FLUX_SCHNELL = "black-forest-labs/flux-schnell";
+
+const CONFIG = {
+    IMAGE_DIMS: {
+        width: 1024,
+        height: 768
+    },
+    STYLES: {
+        PRO: "High quality Unreal Engine 5",
+        BASIC: "Low Poly / Garry's Mod"
+    }
+} as const;
 
 export const imagePromptTemplate = `# Task: Enhance the image generation prompt
 Your task is to enhance the user's request into a detailed prompt that will generate the best possible image.
@@ -81,68 +97,76 @@ export const generateImage = async (
         const enhancedPrompt = await enhancePrompt(data.prompt, runtime);
         elizaLogger.log("Using enhanced prompt for generation:", enhancedPrompt);
 
-        // Rest of the existing generateImage code, but use enhancedPrompt instead of data.prompt
         const imageGenModel = runtime.imageGenModel;
         const model = getImageGenModel(imageGenModel);
-        const apiKey =
-            imageGenModel === ImageGenModel.TogetherAI
-                ? runtime.getSetting("TOGETHER_API_KEY")
-                : runtime.getSetting("OPENAI_API_KEY");
+        const apiKey = runtime.getSetting("REPLICATE_API_KEY");
 
         let { count } = data;
         if (!count) {
             count = 1;
         }
 
-        if (imageGenModel === ImageGenModel.TogetherAI) {
-            const together = new Together({ apiKey });
-            const response = await together.images.create({
-                model: "black-forest-labs/FLUX.1.1-pro",
-                prompt: enhancedPrompt,
-                width: data.width,
-                height: data.height,
-                steps: model.steps,
-                n: count,
-            });
-            const urls: string[] = [];
-            for (let i = 0; i < response.data.length; i++) {
-                //@ts-ignore
-                const url = response.data[i].url;
-                urls.push(url);
+        const replicate = new Replicate({
+            auth: apiKey
+        });
+
+        const modelVersion = imageGenModel === ImageGenModel.TogetherAI ? FLUX_PRO : FLUX_SCHNELL;
+        elizaLogger.log('Model selection:', {
+            isPro: imageGenModel === ImageGenModel.TogetherAI,
+            selectedModel: modelVersion,
+            style: imageGenModel === ImageGenModel.TogetherAI ? CONFIG.STYLES.PRO : CONFIG.STYLES.BASIC
+        });
+
+        const output = await replicate.run(
+            modelVersion,
+            {
+                input: {
+                    prompt: enhancedPrompt,
+                    width: data.width,
+                    height: data.height,
+                    num_inference_steps: imageGenModel === ImageGenModel.TogetherAI ? 12 : 4,
+                }
             }
-            const base64s = await Promise.all(
-                urls.map(async (url) => {
-                    const response = await fetch(url);
-                    const blob = await response.blob();
-                    const buffer = await blob.arrayBuffer();
-                    let base64 = Buffer.from(buffer).toString("base64");
-                    base64 = "data:image/jpeg;base64," + base64;
-                    return base64;
-                })
-            );
-            return { success: true, data: base64s };
-        } else {
-            let targetSize = `${data.width}x${data.height}`;
-            if (
-                targetSize !== "1024x1024" &&
-                targetSize !== "1792x1024" &&
-                targetSize !== "1024x1792"
-            ) {
-                targetSize = "1024x1024";
+        );
+
+        if (output instanceof ReadableStream) {
+            // Read the stream into a buffer
+            const reader = output.getReader();
+            const chunks: Uint8Array[] = [];
+            
+            try {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    chunks.push(value);
+                }
+
+                // Combine chunks into a single buffer
+                const buffer = Buffer.concat(chunks);
+                let base64 = buffer.toString('base64');
+                base64 = "data:image/png;base64," + base64;
+                return { success: true, data: [base64] };
+            } finally {
+                reader.releaseLock();
             }
-            const openai = new OpenAI({ apiKey });
-            const response = await openai.images.generate({
-                model: model.subModel,
-                prompt: enhancedPrompt,
-                size: targetSize as "1024x1024" | "1792x1024" | "1024x1792",
-                n: count,
-                response_format: "b64_json",
-            });
-            const base64s = response.data.map(
-                (image) => `data:image/png;base64,${image.b64_json}`
-            );
-            return { success: true, data: base64s };
         }
+
+        // Handle direct URL response
+        if (Array.isArray(output) && output.length > 0) {
+            const imageUrl = output[0];
+            
+            // Fetch the image from the URL
+            const imageResponse = await fetch(imageUrl);
+            const imageBuffer = await imageResponse.arrayBuffer();
+            const buffer = Buffer.from(imageBuffer);
+            let base64 = buffer.toString('base64');
+            base64 = "data:image/png;base64," + base64;
+
+            return { success: true, data: [base64] };
+        }
+
+        throw new Error('Invalid response format from Replicate');
+
     } catch (error) {
         elizaLogger.error("Image generation failed:", error);
         return { success: false, error: error };

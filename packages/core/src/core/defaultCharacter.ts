@@ -294,7 +294,12 @@ export const defaultCharacter: Character = {
         "the future",
         "the past",
         "the present",
-        "culture"
+        "culture",
+        "eddie platinum killing yunggmoneybaby",
+        "beff jezos makes a chip startup called extropic which catastrophically can't ship anything",
+        "$CENTS antis being terrorists",
+        "zerebro uploading songs to soundcloud his handler makes with Suno and pretending to be agentic",
+        "the moon is a server",
     ],
     style: {
         all: [

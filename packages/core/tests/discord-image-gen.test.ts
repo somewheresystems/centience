@@ -6,7 +6,6 @@ import {
     Memory,
     UUID
 } from "@eliza/core";
-import { imageGeneration } from "@eliza/plugin-image-generation";
 
 describe('Discord Image Generation', () => {
     let runtime: IAgentRuntime;
