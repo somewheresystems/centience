@@ -569,6 +569,7 @@ export interface IAgentRuntime {
             action: string;
         };
     }): Promise<void>;
+    getSetting(key: 'SOLANA_RPC_URL' | 'CENTS_TOKEN_ACCOUNT' | 'CENTS_AUTHORITY' | 'CENTS_KEYPAIR'): string;
 }
 
 export interface IImageRecognitionService {

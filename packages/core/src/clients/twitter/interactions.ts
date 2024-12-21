@@ -21,6 +21,11 @@ import { stringToUuid } from "../../core/uuid.ts";
 import { ClientBase } from "./base.ts";
 import {  sendTweet, wait } from "./utils.ts";
 import { embeddingZeroVector } from "../../core/memory.ts";
+import { Connection, PublicKey, Transaction } from '@solana/web3.js';
+import { createTransferInstruction } from '@solana/spl-token';
+import bs58 from 'bs58';
+import { Keypair } from '@solana/web3.js';
+import { elizaLogger } from "../../index.ts";
 
 export const createInitialConversationContext = (tweet: Tweet) => {
     const timestamp = new Date(tweet.timestamp * 1000).toLocaleString('en-US', {
@@ -130,7 +135,26 @@ CRITICAL: To reduce response frequency, {{agentName}} should respond [IGNORE] to
 # INSTRUCTIONS: Respond with [RESPOND] if {{agentName}} should respond, or [IGNORE] if {{agentName}} should not respond to the last message and [STOP] if {{agentName}} should stop participating in the conversation. Do not provide rationale. Only respond with RESPOND, IGNORE, or STOP.
 ` + shouldRespondFooter;
 
+interface TipRequest {
+    recipientAddress: string;
+    amount: number;
+    tweetId: string;
+    username: string;
+}
+
+interface TipResponse {
+    success: boolean;
+    transactionId?: string;
+    error?: string;
+}
+
 export class TwitterInteractionClient extends ClientBase {
+    private readonly CENTS_MINT = new PublicKey('YOUR_CENTS_TOKEN_MINT_ADDRESS');
+    private readonly CENTS_DECIMALS = 9;
+    private readonly TIP_AMOUNT = 100;
+    private readonly WALLET_PUBLIC_KEY = new PublicKey(this.runtime.getSetting('WALLET_PUBLIC_KEY'));
+    private readonly WALLET_SECRET_KEY = this.runtime.getSetting('WALLET_SECRET_KEY');
+
     async onReady() {
         console.log(
             "TwitterInteractionClient ready, starting interaction loop"
@@ -160,16 +184,14 @@ export class TwitterInteractionClient extends ClientBase {
             console.log(
                 `Fetching mentions for @${this.runtime.getSetting("TWITTER_USERNAME")}`
             );
-            const tweetCandidates = (
-                await this.fetchSearchTweets(
-                    `@${this.runtime.getSetting("TWITTER_USERNAME")}`,
-                    20,
-                    SearchMode.Latest
-                )
-            ).tweets;
-            console.log(`Found ${tweetCandidates.length} tweet candidates`);
+            const mentions = await this.twitterClient.fetchSearchTweets(
+                `@${this.runtime.getSetting("TWITTER_USERNAME")}`,
+                20,
+                SearchMode.Latest
+            );
+            console.log(`Found ${mentions.tweets.length} tweet candidates`);
 
-            const uniqueTweetCandidates = [...new Set(tweetCandidates)];
+            const uniqueTweetCandidates = [...new Set(mentions.tweets)];
             console.log(
                 `Filtered to ${uniqueTweetCandidates.length} unique tweets`
             );
@@ -646,5 +668,77 @@ export class TwitterInteractionClient extends ClientBase {
         });
 
         return thread;
+    }
+
+    private async processTipRequest(tweet: any): Promise<TipResponse> {
+        try {
+            // Check if tweet mentions @centienceio and contains $CENTS
+            const tweetText = tweet.text.toLowerCase();
+            const hasMention = tweetText.includes('@centienceio');
+            const hasCentsTag = tweetText.includes('$cents');
+            
+            if (!hasMention || !hasCentsTag) {
+                return { success: false, error: 'Invalid tip request format' };
+            }
+
+            // Extract Solana address - looking for a pattern like "sol:ADDRESS" or "$sol:ADDRESS"
+            const solanaAddressMatch = tweetText.match(/\$?sol:([A-Za-z0-9]{32,44})/);
+            if (!solanaAddressMatch) {
+                return { success: false, error: 'No valid Solana address found' };
+            }
+
+            const recipientAddress = solanaAddressMatch[1];
+
+            // Validate Solana address
+            try {
+                new PublicKey(recipientAddress);
+            } catch {
+                return { success: false, error: 'Invalid Solana address' };
+            }
+
+            // Connect to Solana using RPC URL from env
+            const connection = new Connection(
+                this.runtime.getSetting('RPC_URL'),
+                'confirmed'
+            );
+
+            // Create transfer instruction using actual wallet
+            const transferInstruction = createTransferInstruction(
+                this.WALLET_PUBLIC_KEY,
+                new PublicKey(recipientAddress),
+                this.WALLET_PUBLIC_KEY,
+                BigInt(this.TIP_AMOUNT * Math.pow(10, this.CENTS_DECIMALS))
+            );
+
+            // Create and sign transaction with our wallet
+            const transaction = new Transaction().add(transferInstruction);
+            
+            // Convert secret key from base58 to Uint8Array for keypair
+            const secretKeyUint8 = bs58.decode(this.WALLET_SECRET_KEY);
+            const keypair = Keypair.fromSecretKey(secretKeyUint8);
+            
+            const signature = await connection.sendTransaction(transaction, [keypair]);
+
+            // Wait for confirmation
+            await connection.confirmTransaction(signature);
+
+            // Reply to the tweet with confirmation
+            await this.twitterClient.sendTweet(
+                `🎉 Tipped ${this.TIP_AMOUNT} $CENTS!\n\nTx: https://solscan.io/tx/${signature}`,
+                tweet.id
+            );
+
+            return {
+                success: true,
+                transactionId: signature
+            };
+
+        } catch (error) {
+            elizaLogger.error('Error processing tip:', error);
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Unknown error'
+            };
+        }
     }
 }
