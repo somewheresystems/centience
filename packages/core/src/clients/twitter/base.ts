@@ -634,14 +634,60 @@ export class ClientBase extends EventEmitter {
         );
     }
 
+    protected async processMediaInTweet(tweet: Tweet): Promise<string> {
+        let mediaContext = '';
+        
+        try {
+            // Process photos if present
+            if (tweet.photos && tweet.photos.length > 0) {
+                const imageDescriptions = [];
+                for (const photo of tweet.photos) {
+                    const { description, title } = await this.runtime.imageDescriptionService.describeImage(
+                        photo.url
+                    );
+                    imageDescriptions.push(`${title}: ${description}`);
+                }
+                
+                if (imageDescriptions.length > 0) {
+                    mediaContext += '\n\nImages in Tweet:\n';
+                    mediaContext += imageDescriptions.map((desc, i) => 
+                        `Image ${i + 1}: ${desc}`
+                    ).join('\n');
+                }
+            }
+
+            // Process videos if present
+            if (tweet.videos && tweet.videos.length > 0) {
+                const videoDescriptions = [];
+                for (const video of tweet.videos) {
+                    if (video.url) {
+                        const { description } = await this.runtime.imageDescriptionService.describeImage(
+                            video.url
+                        );
+                        videoDescriptions.push(description);
+                    }
+                }
+                
+                if (videoDescriptions.length > 0) {
+                    mediaContext += '\n\nVideos in Tweet:\n';
+                    mediaContext += videoDescriptions.map((desc, i) => 
+                        `Video ${i + 1}: ${desc}`
+                    ).join('\n');
+                }
+            }
+        } catch (error) {
+            console.error('Error processing media:', error);
+        }
+
+        return mediaContext;
+    }
+
     protected async getQuotedContent(tweet: Tweet): Promise<string | null> {
         try {
-            // Check if tweet has quoted content
             if (!tweet.quotedStatusId) {
                 return null;
             }
 
-            // Fetch the quoted tweet
             const quotedTweet = await this.requestQueue.add(() => 
                 this.twitterClient.getTweet(tweet.quotedStatusId)
             );
@@ -650,23 +696,10 @@ export class ClientBase extends EventEmitter {
                 return null;
             }
 
-            let content = `Original Tweet by @${quotedTweet.username}:\n"${quotedTweet.text}"`;
+            // Get media descriptions from quoted tweet
+            const mediaContext = await this.processMediaInTweet(quotedTweet);
 
-            // Process images if they exist
-            if (quotedTweet.photos && quotedTweet.photos.length > 0) {
-                const imageDescriptions = [];
-                for (const photo of quotedTweet.photos) {
-                    const description = await this.runtime.imageDescriptionService.describeImage(
-                        photo.url
-                    );
-                    imageDescriptions.push(description);
-                }
-                
-                content += `\n\nImages in Quoted Tweet:\n${imageDescriptions.map(
-                    (desc, i) => `Image ${i + 1}: ${desc}`
-                ).join('\n')}`;
-            }
-
+            let content = `Original Tweet by @${quotedTweet.username}:\n"${quotedTweet.text}"${mediaContext}`;
             return content;
 
         } catch (error) {

@@ -923,5 +923,76 @@ ${imageDescriptions.map((desc, i) => `Image ${i + 1}: ${desc}`).join('\n')}`;
         }
      }
 
+    private async handleQuoteTweet(tweet: Tweet, tweetState: any): Promise<boolean> {
+        try {
+            const conversationContext = createInitialConversationContext(tweet);
+            
+            // Get media descriptions from original tweet
+            const mediaContext = await this.processMediaInTweet(tweet);
+            
+            // Get quoted content with media if it exists
+            const quotedContent = await this.getQuotedContent(tweet);
+            
+            // Combine all context
+            const fullContext = `Tweet Content: "${tweet.text}"
+${mediaContext}
+${quotedContent ? `\nQuoted Content:\n${quotedContent}` : ''}`;
+
+            const context = composeContext({
+                state: {
+                    ...tweetState,
+                    isFirstResponse: true,
+                    currentPost: `QUOTE TWEET REQUIRED:
+                        From: @${tweet.username}
+                        ${fullContext}
+
+                        Your quote must:
+                        - Reference any visual content you can see in the images/videos
+                        - Add valuable context or insight
+                        - Not introduce unrelated points
+                        - Match their tone and energy level
+                        - If they're casual, be casual back
+                        - If they're serious, be appropriately serious
+                        - Avoid philosophical clichés and platitudes
+                        - Use natural language, not academic speech
+                        - It's okay to use humor and be playful
+                        - Don't over-explain or lecture
+                        - Keep responses concise and punchy
+                        - Reference specific details from their message or media`,
+                    formattedConversation: conversationContext.formattedConversation
+                },
+                template: twitterMessageHandlerTemplate
+            });
+
+            const tweetContent = await this.generateTweetContent(
+                tweetState,
+                {
+                    template: twitterMessageHandlerTemplate,
+                    context: context
+                }
+            );
+
+            if (!tweetContent) {
+                console.log("Failed to generate valid quote tweet content, skipping quote");
+                return false;
+            }
+            
+            console.log('Generated quote tweet content:', tweetContent);
+            
+            const quoteResponse = await this.twitterClient.sendQuoteTweet(tweetContent, tweet.id);
+            
+            if (quoteResponse.status === 200) {
+                const result = await this.processTweetResponse(quoteResponse, tweetContent, 'quote');
+                return result.success;
+            }
+            
+            console.error(`Quote tweet failed with status ${quoteResponse.status} for tweet ${tweet.id}`);
+            return false;
+
+        } catch (error) {
+            console.error('Error handling quote tweet:', error);
+            return false;
+        }
+    }
 
 }
