@@ -179,8 +179,8 @@ export class TwitterSearchClient extends ClientBase {
             const mostInterestingTweetResponse = await generateText({
                 runtime: this.runtime,
                 context: prompt,
-                modelClass: ModelClass.MEDIUM,
-                forceProvider: { provider: ModelProvider.LLAMACLOUD, model: "llama3-8b-8192" }
+                modelClass: ModelClass.LARGE,
+                forceProvider: { provider: ModelProvider.LLAMACLOUD, model: "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo" }
             });
 
             const tweetId = mostInterestingTweetResponse.trim();
@@ -458,7 +458,7 @@ export class TwitterSearchClient extends ClientBase {
                 runtime: this.runtime,
                 context: prompt,
                 modelClass: ModelClass.MEDIUM,
-                forceProvider: { provider: ModelProvider.LLAMACLOUD, model: "llama3-8b-8192" }
+                forceProvider: { provider: ModelProvider.LLAMACLOUD, model: "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo" }
             });
 
             const tweetId = mostInterestingTweetResponse.trim();
