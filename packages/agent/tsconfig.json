@@ -5,6 +5,10 @@
         "rootDir": ".",
         "module": "ESNext",
         "moduleResolution": "Bundler",
+        "target": "ESNext",
+        "allowJs": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
         "types": ["node"]
     },
     "include": ["src"]

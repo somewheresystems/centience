@@ -15,5 +15,5 @@ export * from "./posts.ts";
 export * from "./providers.ts";
 export * from "./relationships.ts";
 export * from "./runtime.ts";
-export * from "./settings.ts";
+export { default as settings } from "./settings.ts";
 export * from "./types.ts";

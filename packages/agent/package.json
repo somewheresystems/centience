@@ -5,8 +5,8 @@
     "type": "module",
     "scripts": {
         "build": "tsup --format esm --dts",
-        "start": "node --loader ts-node/esm src/index.ts",
-        "dev": "nodemon --watch src --watch ../core/dist --ext ts,json --exec 'node --loader ts-node/esm' src/index.ts"
+        "start": "tsx src/index.ts",
+        "dev": "nodemon --watch src --watch ../core/dist --ext ts,json --exec 'tsx' src/index.ts"
     },
     "dependencies": {
         "@eliza/core": "workspace:*",
@@ -14,7 +14,8 @@
         "tsup": "^8.3.5"
     },
     "devDependencies": {
-        "ts-node": "10.9.2",
-        "tsx": "^4.19.2"
+        "tsx": "^4.7.0",
+        "typescript": "^5.3.3",
+        "nodemon": "^3.0.2"
     }
 }

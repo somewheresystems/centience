@@ -175,6 +175,10 @@ export class AgentRuntime implements IAgentRuntime {
      */
     fragmentsManager: IMemoryManager;
 
+    private _settings: { OPENAI_API_KEY: string; [key: string]: any } = { 
+        OPENAI_API_KEY: settings.OPENAI_API_KEY || process.env.OPENAI_API_KEY || '' 
+    };
+
     imageGenerationService = {
         generateImage: async (prompt: string) => {
             try {
@@ -255,6 +259,7 @@ export class AgentRuntime implements IAgentRuntime {
         fetch?: typeof fetch | unknown;
         speechModelPath?: string;
         twitterAuth?: TwitterAuth;
+        settings?: { OPENAI_API_KEY: string; [key: string]: any };
     }) {
         this.#conversationLength =
             opts.conversationLength ?? this.#conversationLength;
@@ -379,6 +384,36 @@ export class AgentRuntime implements IAgentRuntime {
         }
 
         this.twitterAuth = opts.twitterAuth;
+
+        // Load settings with priority: passed settings > character settings > environment settings
+        this._settings = {
+            ...this._settings,
+            ...settings,  // Load from settings.ts
+            ...(this.character.settings?.secrets || {}),  // Load from character settings
+            ...(opts.settings || {})  // Load from passed settings
+        };
+
+        // Ensure OPENAI_API_KEY is set
+        if (!this._settings.OPENAI_API_KEY) {
+            console.warn("No OpenAI API key found in settings");
+        }
+    }
+
+    get settings(): { OPENAI_API_KEY: string; [key: string]: any } {
+        return this._settings;
+    }
+
+    getSetting(key: string): string | null {
+        // First check character settings
+        if (this.character.settings?.secrets?.[key]) {
+            return this.character.settings.secrets[key];
+        }
+        if (this.character.settings?.[key]) {
+            return this.character.settings[key];
+        }
+        
+        // Then check runtime settings
+        return this._settings[key] || null;
     }
 
     /**
@@ -444,24 +479,6 @@ export class AgentRuntime implements IAgentRuntime {
             //     }
             // }
         }
-    }
-
-    getSetting(key: string) {
-        // check if the key is in the character.settings.secrets object
-        if (this.character.settings?.secrets?.[key]) {
-            return this.character.settings.secrets[key];
-        }
-        // if not, check if it's in the settings object
-        if (this.character.settings?.[key]) {
-            return this.character.settings[key];
-        }
-
-        // if not, check if it's in the settings object
-        if (settings[key]) {
-            return settings[key];
-        }
-
-        return null;
     }
 
     /**

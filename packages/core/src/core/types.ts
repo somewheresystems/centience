@@ -171,6 +171,18 @@ export interface Memory {
     embedding?: number[]; // An optional embedding vector representing the semantic content of the memory.
     roomId: UUID; // The room or conversation ID associated with the memory.
     unique?: boolean; // Whether the memory is unique or not
+    metadata?: {
+        year?: number;
+        month?: number;
+        day?: number;
+        hour?: number;
+        people?: string[];
+        urls?: string[];
+        hasUrls?: boolean;
+        hasMentions?: boolean;
+        textLength?: number;
+        hasAttachments?: boolean;
+    }; // Optional metadata for filtering
 }
 
 /**
@@ -507,6 +519,10 @@ export interface IAgentRuntime {
     providers: Provider[];
     actions: Action[];
     twitterAuth?: TwitterAuth;
+    settings: {
+        OPENAI_API_KEY: string;
+        [key: string]: any;
+    };
 
     messageManager: IMemoryManager;
     descriptionManager: IMemoryManager;
@@ -526,9 +542,8 @@ export interface IAgentRuntime {
         generateVideo: (prompt: string) => Promise<string>;
     };
 
-    getSetting(key: string): string | null;
-
     // Methods
+    getSetting(key: string): string | null;
     getConversationLength(): number;
     processActions(
         message: Memory,

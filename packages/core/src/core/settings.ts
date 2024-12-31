@@ -1,55 +1,28 @@
 import { config } from "dotenv";
-import fs from "fs";
-import path from "path";
+import { resolve, parse, join, dirname } from "path";
+import { existsSync } from "fs";
 
-/**
- * Recursively searches for a .env file starting from the current directory
- * and moving up through parent directories
- * @param {string} [startDir=process.cwd()] - Starting directory for the search
- * @returns {string|null} Path to the nearest .env file or null if not found
- */
-function findNearestEnvFile(startDir = process.cwd()) {
+function findNearestFile(filename: string, startDir = process.cwd()): string | null {
     let currentDir = startDir;
-    
-    // Continue searching until we reach the root directory
-    while (currentDir !== path.parse(currentDir).root) {
-        const envPath = path.join(currentDir, '.env');
-        
-        if (fs.existsSync(envPath)) {
-            return envPath;
-        }
-        
-        // Move up to parent directory
-        currentDir = path.dirname(currentDir);
+    while (currentDir !== parse(currentDir).root) {
+        const filePath = join(currentDir, filename);
+        if (existsSync(filePath)) return filePath;
+        currentDir = dirname(currentDir);
     }
-    
-    // Check root directory as well
-    const rootEnvPath = path.join(path.parse(currentDir).root, '.env');
-    return fs.existsSync(rootEnvPath) ? rootEnvPath : null;
+    return null;
 }
 
-/**
- * Loads environment variables from the nearest .env file
- * @returns {Object} Environment variables object
- * @throws {Error} If no .env file is found
- */
-function loadEnvConfig() {
-    const envPath = findNearestEnvFile();
-    
-    if (!envPath) {
-        throw new Error("No .env file found in current or parent directories.");
-    }
-    
-    // Load the .env file
-    const result = config({ path: envPath });
-    
-    if (result.error) {
-        throw new Error(`Error loading .env file: ${result.error}`);
-    }
-    
-    console.log(`Loaded .env file from: ${envPath}`);
-    return process.env;
+// Load environment variables from .env file
+const envPath = findNearestFile(".env");
+if (envPath) {
+    config({ path: envPath });
+} else {
+    console.warn("No .env file found");
 }
 
-export const settings = loadEnvConfig();
-export default settings;
+// Export settings with environment variables
+export default {
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    // Add other environment variables as needed
+    ...process.env
+} as { [key: string]: string };
