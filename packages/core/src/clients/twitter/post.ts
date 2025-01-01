@@ -3,7 +3,7 @@ import fs from "fs";
 import { composeContext } from "../../core/context.ts";
 import { generateText, generateTweetActions } from "../../core/generation.ts";
 import { embeddingZeroVector } from "../../core/memory.ts";
-import { IAgentRuntime, ModelClass } from "../../core/types.ts";
+import { IAgentRuntime, ModelClass, ModelProvider } from "../../core/types.ts";
 import { stringToUuid } from "../../core/uuid.ts";
 import { ClientBase } from "./base.ts";
 import { generateSummary } from "../../services/summary.ts";
@@ -16,6 +16,7 @@ import {
 } from "./interactions.ts";
 import { elizaLogger } from "../../index";  // Add this import at the top
 import { UUID } from "crypto";
+import { embed } from "../../core/embedding.ts";
 
 // Add this interface near the top of the file
 interface ThreadTweet {
@@ -777,6 +778,12 @@ export class TwitterPostClient extends ClientBase {
             );
     
             await this.cacheTweet(newTweet);
+
+            // Generate embedding for the tweet content
+            const embedding = await embed(this.runtime, tweetContent.trim());
+            if (!embedding) {
+                console.warn("Failed to generate embedding for tweet content, using zero vector");
+            }
     
             await this.runtime.messageManager.createMemory({
                 id: stringToUuid(postId + "-" + this.runtime.agentId),
@@ -788,7 +795,7 @@ export class TwitterPostClient extends ClientBase {
                     source: "twitter",
                 },
                 roomId,
-                embedding: embeddingZeroVector,
+                embedding: embedding || embeddingZeroVector,
                 createdAt: newTweet.timestamp * 1000,
             });
     
@@ -807,8 +814,83 @@ export class TwitterPostClient extends ClientBase {
         }
     }
 
+    private async generateSearchQueryFromTweet(tweet: any, tweetState: any): Promise<{ query: string; explanation: string }> {
+        const context = `Given this tweet and context, generate a semantic search query that would find relevant memories to help craft a response.
+
+Tweet: ${tweet.text}
+Author: ${tweet.author?.username || 'unknown'}
+Context: ${tweetState.bio || ''}
+
+First, analyze the key themes and concepts in this tweet. Then provide:
+1. A search query to find relevant memories (start with "QUERY:")
+2. A brief explanation of why these search terms will help craft a good response (start with "EXPLANATION:")
+
+Example:
+QUERY: artificial intelligence ethics and responsibility
+EXPLANATION: This search will find memories related to AI ethics discussions, helping craft a response that addresses the tweet's concerns about AI safety.
+
+Your response:`;
+
+        const response = await generateText({
+            runtime: this.runtime,
+            context,
+            modelClass: "SMALL",
+            forceProvider: {
+                provider: ModelProvider.LLAMACLOUD,
+                model: "meta-llama/Llama-3b-Instruct-Turbo"
+            }
+        });
+
+        const lines = response.trim().split('\n');
+        let query = '';
+        let explanation = '';
+
+        for (const line of lines) {
+            if (line.startsWith('QUERY:')) {
+                query = line.replace('QUERY:', '').trim();
+            } else if (line.startsWith('EXPLANATION:')) {
+                explanation = line.replace('EXPLANATION:', '').trim();
+            }
+        }
+
+        // Fallback if parsing fails
+        if (!query) {
+            query = response.trim();
+        }
+        if (!explanation) {
+            explanation = "Generated search query based on tweet content";
+        }
+
+        return { query, explanation };
+    }
+
     private async handleTextOnlyReply(tweet: any, tweetState: any, executedActions: string[]) {
         try {
+            // Generate semantic search query with explanation
+            const searchResult = await this.generateSearchQueryFromTweet(tweet, tweetState);
+            console.log('Generated search query:', searchResult.query);
+            console.log('Search explanation:', searchResult.explanation);
+
+            // Get embedding for the search query
+            const searchEmbedding = await embed(this.runtime, searchResult.query);
+            
+            // Search for relevant memories
+            const relevantMemories = await this.runtime.messageManager.searchMemoriesByEmbedding(
+                searchEmbedding,
+                {
+                    roomId: stringToUuid(tweet.conversationId + "-" + this.runtime.agentId),
+                    count: 5,
+                    match_threshold: 0.7
+                }
+            );
+
+            console.log('Found relevant memories:', relevantMemories.length);
+
+            // Format memories for context
+            const memoryContext = relevantMemories
+                .map(memory => `Related Memory: ${memory.content.text}`)
+                .join('\n\n');
+
             // Create the proper conversation context for a reply
             const conversationContext = createInitialConversationContext(tweet);
             
@@ -832,9 +914,14 @@ ${imageDescriptions.map((desc, i) => `Image ${i + 1}: ${desc}`).join('\n')}`;
                 imageContext += `\n\n${quotedContent}`;
             }
 
-            // Add image and quoted content context to the conversation
+            // Add all context components
             conversationContext.currentPost += imageContext;
             conversationContext.formattedConversation += imageContext;
+            
+            // Add memory context if available
+            if (memoryContext) {
+                conversationContext.formattedConversation += `\n\nRelevant Past Context:\n${memoryContext}`;
+            }
 
             // Use the message handler template with reply context
             const context = composeContext({

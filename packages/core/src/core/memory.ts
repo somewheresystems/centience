@@ -201,14 +201,24 @@ export class MemoryManager implements IMemoryManager {
                         hasMentions: mentions.length > 0,
                         textLength: memory.content.text.length,
                         
-                        // Additional content fields
-                        action: memory.content.action || null,
-                        source: memory.content.source || null,
-                        inReplyTo: memory.content.inReplyTo || null,
+                        // Additional content fields - ensure no null values
+                        action: memory.content.action || "",
+                        source: memory.content.source || "",
+                        inReplyTo: memory.content.inReplyTo || "",
+                        client: memory.content.client || "",
                         
                         // Flags
                         isUnique: !!memory.unique,
-                        hasAttachments: !!(memory.content.attachments && memory.content.attachments.length > 0)
+                        hasAttachments: !!(memory.content.attachments && memory.content.attachments.length > 0),
+                        
+                        // Additional metadata from memory object
+                        ...(memory.metadata || {}),
+                        
+                        // Content type flags
+                        isReply: !!memory.content.inReplyTo,
+                        isAction: !!memory.content.action,
+                        platform: memory.content.platform || "",
+                        messageType: memory.content.messageType || "text"
                     }
                 };
                 
@@ -404,6 +414,14 @@ export class MemoryManager implements IMemoryManager {
             unique,
         } = opts;
 
+        console.log("Searching memories with params:", {
+            match_threshold,
+            count,
+            roomId,
+            unique,
+            embeddingLength: embedding.length
+        });
+
         const searchOpts = {
             tableName: this.tableName,
             roomId,
@@ -415,62 +433,90 @@ export class MemoryManager implements IMemoryManager {
 
         // Search in local database
         const localResults = await this.runtime.databaseAdapter.searchMemories(searchOpts);
+        console.log(`Found ${localResults.length} results in local database`);
 
         // Search in Pinecone if available
         let pineconeResults: Memory[] = [];
         if (pineconeIndex) {
             try {
+                console.log("Querying Pinecone with filter:", {
+                    roomId,
+                    type: this.tableName,
+                    unique: !!unique
+                });
+
                 const queryResponse = await pineconeIndex.query({
                     vector: embedding,
                     topK: count,
                     filter: {
                         roomId: roomId,
                         type: this.tableName,
-                        ...(unique ? { unique: true } : {})
+                        ...(unique ? { isUnique: true } : {})
                     },
                     includeMetadata: true,
                     includeValues: true
                 });
 
+                console.log(`Pinecone returned ${queryResponse.matches?.length || 0} matches`);
+
                 // Convert Pinecone results to Memory objects
-                pineconeResults = queryResponse.matches.map(match => ({
-                    id: match.id as UUID,
-                    content: {
-                        text: match.metadata.text,
-                        action: match.metadata.action,
-                        source: match.metadata.source,
-                        inReplyTo: match.metadata.inReplyTo,
-                        attachments: match.metadata.hasAttachments ? [] : undefined // Placeholder for attachments
-                    },
-                    embedding: match.values,
-                    userId: match.metadata.userId,
-                    roomId: match.metadata.roomId,
-                    agentId: match.metadata.agentId,
-                    createdAt: match.metadata.timestamp,
-                    unique: match.metadata.isUnique,
-                    // Add additional metadata for filtering
-                    metadata: {
-                        year: match.metadata.year,
-                        month: match.metadata.month,
-                        day: match.metadata.day,
-                        hour: match.metadata.hour,
-                        people: match.metadata.people,
-                        urls: match.metadata.urls,
-                        hasUrls: match.metadata.hasUrls,
-                        hasMentions: match.metadata.hasMentions,
-                        textLength: match.metadata.textLength,
-                        hasAttachments: match.metadata.hasAttachments
-                    }
-                }));
+                pineconeResults = (queryResponse.matches || []).map(match => {
+                    console.log("Processing match:", {
+                        id: match.id,
+                        score: match.score,
+                        metadata: match.metadata
+                    });
+
+                    return {
+                        id: match.id as UUID,
+                        content: {
+                            text: match.metadata.text,
+                            action: match.metadata.action || "",
+                            source: match.metadata.source || "",
+                            inReplyTo: match.metadata.inReplyTo || "",
+                            client: match.metadata.client || "",
+                            platform: match.metadata.platform || "",
+                            messageType: match.metadata.messageType || "text",
+                            attachments: match.metadata.hasAttachments ? [] : undefined
+                        },
+                        embedding: match.values,
+                        userId: match.metadata.userId,
+                        roomId: match.metadata.roomId,
+                        agentId: match.metadata.agentId,
+                        createdAt: match.metadata.timestamp,
+                        unique: match.metadata.isUnique,
+                        metadata: {
+                            year: match.metadata.year,
+                            month: match.metadata.month,
+                            day: match.metadata.day,
+                            hour: match.metadata.hour,
+                            people: match.metadata.people || [],
+                            urls: match.metadata.urls || [],
+                            hasUrls: match.metadata.hasUrls || false,
+                            hasMentions: match.metadata.hasMentions || false,
+                            textLength: match.metadata.textLength,
+                            hasAttachments: match.metadata.hasAttachments || false
+                        }
+                    };
+                });
             } catch (error) {
                 console.error("Failed to search memories in Pinecone:", error);
             }
+        } else {
+            console.log("Pinecone index not available, skipping vector search");
         }
 
         // Merge and deduplicate results
         const allResults = [...localResults, ...pineconeResults];
         const uniqueResults = Array.from(new Map(allResults.map(item => [item.id, item])).values());
         
+        console.log("Search results summary:", {
+            localCount: localResults.length,
+            pineconeCount: pineconeResults.length,
+            totalUnique: uniqueResults.length,
+            returning: Math.min(uniqueResults.length, count)
+        });
+
         return uniqueResults.slice(0, count);
     }
 
