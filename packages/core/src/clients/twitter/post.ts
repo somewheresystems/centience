@@ -1,5 +1,6 @@
 import { Tweet } from "goat-x";
 import fs from "fs";
+import fsPromises from "fs/promises";
 import { composeContext } from "../../core/context.ts";
 import { generateText, generateTweetActions } from "../../core/generation.ts";
 import { embeddingZeroVector } from "../../core/memory.ts";
@@ -7,16 +8,99 @@ import { IAgentRuntime, ModelClass, ModelProvider } from "../../core/types.ts";
 import { stringToUuid } from "../../core/uuid.ts";
 import { ClientBase } from "./base.ts";
 import { generateSummary } from "../../services/summary.ts";
-import {
-    postActionResponseFooter,
-} from "../../core/parsing";
-import { 
-    createInitialConversationContext, 
-    twitterMessageHandlerTemplate 
-} from "./interactions.ts";
-import { elizaLogger } from "../../index";  // Add this import at the top
+import { postActionResponseFooter } from "../../core/parsing";
+import { createInitialConversationContext, twitterMessageHandlerTemplate } from "./interactions.ts";
+import { elizaLogger } from "../../index";
 import { UUID } from "crypto";
 import { embed } from "../../core/embedding.ts";
+import path from "path";
+import { randomUUID } from "crypto";
+import { generateVideo } from "../../actions/videoGenerationUtils";
+import { generateImage } from "../../actions/imageGenerationUtils";
+
+// Constants for retries and delays
+const MAX_VIDEO_RETRIES = 3;
+const VIDEO_RETRY_DELAY = 5000; // 5 seconds
+const MAX_TWITTER_RETRIES = 3;
+const TWITTER_RETRY_DELAY = 5000;
+
+// Helper function for delay
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Helper function for video generation with retries
+async function generateVideoWithRetry(
+    prompt: string,
+    runtime: IAgentRuntime,
+    retries = MAX_VIDEO_RETRIES
+): Promise<any> {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            elizaLogger.log(`Attempting to generate video (attempt ${attempt}/${retries})...`);
+            const video = await generateVideo(
+                {
+                    prompt,
+                    duration: 5,
+                    resolution: "1080p"
+                },
+                runtime
+            );
+            
+            if (!video?.url) {
+                throw new Error("Video generation failed - no URL returned");
+            }
+            
+            return video;
+        } catch (error) {
+            elizaLogger.error(`Video generation attempt ${attempt} failed:`, error);
+            if (attempt === retries) {
+                throw error;
+            }
+            await delay(VIDEO_RETRY_DELAY);
+        }
+    }
+}
+
+// Helper function for posting to Twitter with retries
+async function postTweetWithMedia(
+    client: ClientBase,
+    text: string,
+    mediaBuffer: Buffer,
+    mediaType: 'video/mp4' | 'image/png',
+    inReplyTo?: string
+) {
+    for (let attempt = 1; attempt <= MAX_TWITTER_RETRIES; attempt++) {
+        try {
+            elizaLogger.log(`Attempting to post tweet with media (attempt ${attempt}/${MAX_TWITTER_RETRIES})...`);
+            const result = await client.requestQueue.add(
+                async () => await client.twitterClient.sendTweet(
+                    text,
+                    inReplyTo,
+                    [{
+                        data: mediaBuffer,
+                        mediaType
+                    }]
+                )
+            );
+            
+            const body = await result.json();
+            return body;
+        } catch (error) {
+            elizaLogger.error(`Tweet posting attempt ${attempt} failed:`, error);
+            if (attempt === MAX_TWITTER_RETRIES) {
+                // On final attempt, try posting without media as fallback
+                elizaLogger.log("Attempting to post without media as fallback...");
+                const textOnlyResult = await client.requestQueue.add(
+                    async () => await client.twitterClient.sendTweet(
+                        text,
+                        inReplyTo
+                    )
+                );
+                return await textOnlyResult.json();
+            }
+            await delay(TWITTER_RETRY_DELAY);
+        }
+    }
+}
 
 // Add this interface near the top of the file
 interface ThreadTweet {
@@ -140,16 +224,13 @@ export class TwitterPostClient extends ClientBase {
 
         const generateStoryLoop = async () => {
             try {
-                elizaLogger.log("Triggering story generation action");
-                await this.runtime.handleAction({
-                    userId: this.runtime.agentId as UUID,
-                    roomId: stringToUuid("twitter_story_room"),
-                    agentId: this.runtime.agentId as UUID,
-                    content: {
-                        text: "Generate a new story",
-                        action: "GENERATE_STORY"
-                    }
-                });
+                elizaLogger.log("Starting autonomous story generation");
+                const result = await this.generateStory();
+                if (result.success) {
+                    elizaLogger.log("Successfully generated and posted story:", result.url);
+                } else {
+                    elizaLogger.error("Failed to generate story:", result.error);
+                }
             } catch (error) {
                 elizaLogger.error("Error in story generation loop:", error);
             }
@@ -224,7 +305,7 @@ export class TwitterPostClient extends ClientBase {
                     });
 
                 const formattedMemories = recentMemories
-                    .slice(0, MAX_MEMORY_ITEMS) // Only take most recent N memories
+                    .slice(0, MAX_MEMORY_ITEMS)
                     .map((memory) => {
                         const text = memory.content.text.length > MAX_CHARS_PER_ITEM ?
                             memory.content.text.slice(0, MAX_CHARS_PER_ITEM) + '...' :
@@ -1079,6 +1160,238 @@ ${quotedContent ? `\nQuoted Content:\n${quotedContent}` : ''}`;
         } catch (error) {
             console.error('Error handling quote tweet:', error);
             return false;
+        }
+    }
+
+    private async generateStory() {
+        try {
+            elizaLogger.log("Starting story generation for Twitter");
+            
+            // Get recent memories for context
+            const rooms = await this.runtime.databaseAdapter.getRoomsForParticipant(
+                this.runtime.agentId
+            );
+            const recentMemories = await this.runtime.messageManager.getMemoriesByRoomIds({
+                roomIds: rooms,
+                agentId: this.runtime.agentId,
+            });
+
+            const formattedMemories = recentMemories
+                .slice(0, 5)
+                .map((memory) => {
+                    const text = memory.content.text.length > 280 ? 
+                        memory.content.text.slice(0, 280) + '...' : 
+                        memory.content.text;
+                    return `Memory: ${text}\n`;
+                })
+                .join("\n");
+
+            const randomPosts = formattedMemories
+                .split('\n')
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 5)
+                .join('\n\n');
+
+            // Generate opening tweet with video
+            const channelNumber = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+            const openingContext = `# Task: Generate an opening hook for a story
+Create a compelling opening line that will grab attention and work well with a video. 
+
+Requirements:
+- Must be under 180 characters
+- Must be insanely novel
+- No hashtags, but can use unicode symbols
+- sounds like fucky funny schizo shit
+- Must be relevant to recent memories/conversations
+
+Example memories for tone and style:
+${randomPosts}
+
+Also, make it sound like a mix of infinite jest, Accelerando, and Nick Land. but with a personal touch.
+
+Opening hook:`;
+
+            const rawOpeningTweet = await generateText({
+                runtime: this.runtime,
+                context: openingContext,
+                modelClass: ModelClass.LARGE,
+            });
+
+            const openingTweet = `CUMETV: CHANNEL ${channelNumber}
+${rawOpeningTweet}`;
+
+            // Generate video for opening tweet
+            elizaLogger.log("Generating video for opening tweet...");
+            const video = await generateVideoWithRetry(
+                openingTweet,
+                this.runtime
+            );
+
+            // Generate middle part with image
+            const middleContext = `# Task: Generate the middle part of the story
+Create the main body of the story that follows this opening:
+${openingTweet}
+
+Requirements:
+- Must be under 180 characters
+- Should expand on the opening
+- Should include vivid imagery that can be turned into a picture
+- No hashtags, but can use unicode symbols
+- Must continue the theme and tone
+
+Middle part:`;
+
+            const middleTweet = await generateText({
+                runtime: this.runtime,
+                context: middleContext,
+                modelClass: ModelClass.LARGE,
+            });
+
+            // Generate closing tweet
+            const closingContext = `# Task: Generate the closing part of the CumeTV story
+Following these previous parts:
+${openingTweet}
+${middleTweet}
+
+Requirements:
+- Must be under 180 characters
+- Should provide a satisfying conclusion or a complete non-sequitur
+- No hashtags, but can use unicode symbols
+- Must tie back to the theme
+
+Closing part:`;
+
+            const closingTweet = await generateText({
+                runtime: this.runtime,
+                context: closingContext,
+                modelClass: ModelClass.LARGE,
+            });
+
+            // Generate image for middle tweet
+            elizaLogger.log("Generating image for middle tweet...");
+            const image = await generateImage(
+                {
+                    prompt: middleTweet,
+                    width: 1024,
+                    height: 1024,
+                    count: 1,
+                },
+                this.runtime
+            );
+
+            // Convert base64 image to Buffer
+            const imageBuffer = Buffer.from(
+                image.data[0].replace(/^data:image\/\w+;base64,/, ""),
+                'base64'
+            );
+
+            // Create temp directory if it doesn't exist
+            const tempDir = path.join(process.cwd(), 'temp');
+            await fsPromises.mkdir(tempDir, { recursive: true });
+            
+            // Download and save video
+            elizaLogger.log("Downloading video...");
+            const videoResponse = await fetch(video.url);
+            const videoBuffer = Buffer.from(await videoResponse.arrayBuffer());
+            
+            // Save to temp file
+            const tempFileName = path.join(tempDir, `${randomUUID()}.mp4`);
+            await fsPromises.writeFile(tempFileName, videoBuffer);
+
+            try {
+                // Post opening tweet with video
+                elizaLogger.log("Posting opening tweet with video...");
+                const openingBody = await postTweetWithMedia(
+                    this,
+                    openingTweet,
+                    videoBuffer,
+                    'video/mp4'
+                );
+
+                const firstTweetId = openingBody.data.create_tweet.tweet_results.result.rest_id;
+                let lastTweetId = firstTweetId;
+
+                await delay(10000);
+
+                // Post middle tweet with image
+                elizaLogger.log("Posting middle tweet with image...");
+                const middleBody = await postTweetWithMedia(
+                    this,
+                    middleTweet,
+                    imageBuffer,
+                    'image/png',
+                    lastTweetId
+                );
+                
+                lastTweetId = middleBody.data.create_tweet.tweet_results.result.rest_id;
+
+                await delay(10000);
+
+                // Post closing tweet (text only)
+                elizaLogger.log("Posting closing tweet...");
+                const closingResult = await this.requestQueue.add(
+                    async () => await this.twitterClient.sendTweet(
+                        closingTweet,
+                        lastTweetId
+                    )
+                );
+
+                const tweetUrl = `https://twitter.com/${this.runtime.getSetting("TWITTER_USERNAME")}/status/${firstTweetId}`;
+                elizaLogger.log("Successfully posted story thread to Twitter:", tweetUrl);
+
+                // Save the entire story to memory
+                await this.runtime.messageManager.createMemory({
+                    id: stringToUuid(`story-${Date.now()}-${this.runtime.agentId}`),
+                    userId: this.runtime.agentId,
+                    agentId: this.runtime.agentId,
+                    content: {
+                        text: [openingTweet, middleTweet, closingTweet].join("\n\n"),
+                        url: tweetUrl,
+                        source: "twitter_story"
+                    },
+                    roomId: stringToUuid("twitter_story_room"),
+                    embedding: embeddingZeroVector,
+                    createdAt: Date.now(),
+                });
+
+                return {
+                    success: true,
+                    url: tweetUrl
+                };
+
+            } catch (error) {
+                elizaLogger.error("Error posting story to Twitter:", error);
+                // Save story to memory even if Twitter fails
+                await this.runtime.messageManager.createMemory({
+                    id: stringToUuid(`story-${Date.now()}-${this.runtime.agentId}`),
+                    userId: this.runtime.agentId,
+                    agentId: this.runtime.agentId,
+                    content: {
+                        text: [openingTweet, middleTweet, closingTweet].join("\n\n"),
+                        source: "twitter_story"
+                    },
+                    roomId: stringToUuid("twitter_story_room"),
+                    embedding: embeddingZeroVector,
+                    createdAt: Date.now(),
+                });
+
+                return {
+                    success: false,
+                    error
+                };
+            } finally {
+                // Cleanup temp file
+                await fsPromises.unlink(tempFileName).catch(err => 
+                    elizaLogger.error("Error cleaning up temp file:", err)
+                );
+            }
+
+        } catch (error) {
+            elizaLogger.error("Error in story generation:", error);
+            return {
+                success: false,
+                error
+            };
         }
     }
 
