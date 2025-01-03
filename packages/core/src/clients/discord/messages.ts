@@ -887,7 +887,7 @@ export class MessageManager {
         const response = await generateMessageResponse({
             runtime: this.runtime,
             context: contextWithMemories,
-            modelClass: ModelClass.MEDIUM,
+            modelClass: ModelClass.LARGE,
         });
 
         if (!response) {

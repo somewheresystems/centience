@@ -512,7 +512,7 @@ export async function generateShouldRespond({
                 modelClass: "LARGE", // This will be ignored since we're forcing the provider
                 forceProvider: {
                     provider: ModelProvider.LLAMACLOUD,
-                    model: "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo" // Or whatever Llama model you prefer
+                    model: "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo" // Or whatever Llama model you prefer
                 }
             });
 

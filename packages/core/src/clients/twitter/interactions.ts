@@ -524,118 +524,125 @@ export class TwitterInteractionClient extends ClientBase {
     ): Promise<Tweet[]> {
         const thread: Tweet[] = [];
         const visited: Set<string> = new Set();
+        const self = this; // Store reference to the class instance
 
         async function processThread(currentTweet: Tweet, depth: number = 0) {
+            if (!currentTweet) {
+                console.log("No current tweet found for thread building");
+                return;
+            }
+
             console.log("Processing tweet:", {
                 id: currentTweet.id,
                 inReplyToStatusId: currentTweet.inReplyToStatusId,
                 depth: depth,
             });
 
-            if (!currentTweet) {
-                console.log("No current tweet found for thread building");
-                return;
-            }
-
             if (depth >= maxReplies) {
                 console.log("Reached maximum reply depth", depth);
                 return;
             }
 
-            // Handle memory storage
-            const memory = await this.runtime.messageManager.getMemoryById(
-                stringToUuid(currentTweet.id + "-" + this.runtime.agentId)
-            );
-            if (!memory) {
-                const roomId = stringToUuid(
-                    currentTweet.conversationId + "-" + this.runtime.agentId
+            try {
+                // Handle memory storage
+                const memory = await self.runtime.messageManager.getMemoryById(
+                    stringToUuid(currentTweet.id + "-" + self.runtime.agentId)
                 );
-                const userId = stringToUuid(currentTweet.userId);
+                if (!memory) {
+                    const roomId = stringToUuid(
+                        currentTweet.conversationId + "-" + self.runtime.agentId
+                    );
+                    const userId = stringToUuid(currentTweet.userId);
 
-                await this.runtime.ensureConnection(
-                    userId,
-                    roomId,
-                    currentTweet.username,
-                    currentTweet.name,
-                    "twitter"
-                );
-
-                this.runtime.messageManager.createMemory({
-                    id: stringToUuid(
-                        currentTweet.id + "-" + this.runtime.agentId
-                    ),
-                    agentId: this.runtime.agentId,
-                    content: {
-                        text: currentTweet.text,
-                        source: "twitter",
-                        url: currentTweet.permanentUrl,
-                        inReplyTo: currentTweet.inReplyToStatusId
-                            ? stringToUuid(
-                                  currentTweet.inReplyToStatusId +
-                                      "-" +
-                                      this.runtime.agentId
-                              )
-                            : undefined,
-                    },
-                    createdAt: currentTweet.timestamp * 1000,
-                    roomId,
-                    userId:
-                        currentTweet.userId === this.twitterUserId
-                            ? this.runtime.agentId
-                            : stringToUuid(currentTweet.userId),
-                    embedding: embeddingZeroVector,
-                });
-            }
-
-            if (visited.has(currentTweet.id)) {
-                console.log("Already visited tweet:", currentTweet.id);
-                return;
-            }
-
-            visited.add(currentTweet.id);
-            thread.unshift(currentTweet);
-
-            console.log("Current thread state:", {
-                length: thread.length,
-                currentDepth: depth,
-                tweetId: currentTweet.id,
-            });
-
-            if (currentTweet.inReplyToStatusId) {
-                console.log(
-                    "Fetching parent tweet:",
-                    currentTweet.inReplyToStatusId
-                );
-                try {
-                    const parentTweet = await this.twitterClient.getTweet(
-                        currentTweet.inReplyToStatusId
+                    await self.runtime.ensureConnection(
+                        userId,
+                        roomId,
+                        currentTweet.username,
+                        currentTweet.name,
+                        "twitter"
                     );
 
-                    if (parentTweet) {
-                        console.log("Found parent tweet:", {
-                            id: parentTweet.id,
-                            text: parentTweet.text?.slice(0, 50),
-                        });
-                        await processThread(parentTweet, depth + 1);
-                    } else {
-                        console.log(
-                            "No parent tweet found for:",
-                            currentTweet.inReplyToStatusId
-                        );
-                    }
-                } catch (error) {
-                    console.log("Error fetching parent tweet:", {
-                        tweetId: currentTweet.inReplyToStatusId,
-                        error,
+                    await self.runtime.messageManager.createMemory({
+                        id: stringToUuid(
+                            currentTweet.id + "-" + self.runtime.agentId
+                        ),
+                        agentId: self.runtime.agentId,
+                        content: {
+                            text: currentTweet.text,
+                            source: "twitter",
+                            url: currentTweet.permanentUrl,
+                            inReplyTo: currentTweet.inReplyToStatusId
+                                ? stringToUuid(
+                                      currentTweet.inReplyToStatusId +
+                                          "-" +
+                                          self.runtime.agentId
+                                  )
+                                : undefined,
+                        },
+                        createdAt: currentTweet.timestamp * 1000,
+                        roomId,
+                        userId:
+                            currentTweet.userId === self.twitterUserId
+                                ? self.runtime.agentId
+                                : stringToUuid(currentTweet.userId),
+                        embedding: embeddingZeroVector,
                     });
                 }
-            } else {
-                console.log("Reached end of reply chain at:", currentTweet.id);
+
+                if (visited.has(currentTweet.id)) {
+                    console.log("Already visited tweet:", currentTweet.id);
+                    return;
+                }
+
+                visited.add(currentTweet.id);
+                thread.unshift(currentTweet);
+
+                console.log("Current thread state:", {
+                    length: thread.length,
+                    currentDepth: depth,
+                    tweetId: currentTweet.id,
+                });
+
+                if (currentTweet.inReplyToStatusId) {
+                    console.log(
+                        "Fetching parent tweet:",
+                        currentTweet.inReplyToStatusId
+                    );
+                    try {
+                        const parentTweet = await self.twitterClient.getTweet(
+                            currentTweet.inReplyToStatusId
+                        );
+
+                        if (parentTweet) {
+                            console.log("Found parent tweet:", {
+                                id: parentTweet.id,
+                                text: parentTweet.text?.slice(0, 50),
+                            });
+                            await processThread(parentTweet, depth + 1);
+                        } else {
+                            console.log(
+                                "No parent tweet found for:",
+                                currentTweet.inReplyToStatusId
+                            );
+                        }
+                    } catch (error) {
+                        console.log("Error fetching parent tweet:", {
+                            tweetId: currentTweet.inReplyToStatusId,
+                            error,
+                        });
+                    }
+                } else {
+                    console.log("Reached end of reply chain at:", currentTweet.id);
+                }
+            } catch (error) {
+                console.error("Error processing tweet in thread:", {
+                    tweetId: currentTweet.id,
+                    error,
+                });
             }
         }
 
-        // Need to bind this context for the inner function
-        await processThread.bind(this)(tweet, 0);
+        await processThread(tweet, 0);
 
         console.log("Final thread built:", {
             totalTweets: thread.length,
