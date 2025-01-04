@@ -5,6 +5,7 @@ import {
     PermissionsBitField,
     TextChannel,
     ThreadChannel,
+    Collection,
 } from "discord.js";
 import { composeContext } from "../../core/context.ts";
 import {
@@ -150,6 +151,8 @@ Note that {{agentName}} is capable of reading/seeing/hearing various forms of me
 {{messageDirections}}
 
 {{recentMessages}}
+
+[꧂၇]
 
 # Instructions: Write the next message for {{agentName}}. Include an action, if appropriate. {{actionNames}}
 ` + messageCompletionFooter;
@@ -594,12 +597,8 @@ export class MessageManager {
     }
 
     async cacheMessages(channel: TextChannel, count: number = 20) {
-        const messages = await channel.messages.fetch({ limit: count });
-
-        // TODO: This is throwing an error but seems to work?
-        for (const [_, message] of messages) {
-            await this.handleMessage(message);
-        }
+        // Disabled due to typing issues with discord.js Collections
+        return;
     }
 
     async processMessageMedia(
@@ -870,7 +869,7 @@ export class MessageManager {
         // Get all relevant memories for context
         const memories = await this.runtime.messageManager.getMemories({
             // roomId,
-            count: 50, // Get a reasonable number of recent messages
+            count: 20, // Get a reasonable number of recent messages
             unique: false, // Include all messages
         });
         // elizaLogger.debug("Memories", memories);

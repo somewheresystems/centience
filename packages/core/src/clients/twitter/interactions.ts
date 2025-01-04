@@ -84,18 +84,8 @@ IMPORTANT - Current Conversation Context:
 
 
 # Response Guidelines:
-- VIBE CHECK: What's the actual mood/energy of their tweet? Match it!
-- If they're being creative/poetic, don't just acknowledge it - build on it
-- If they're memeing, meme back.
-- Avoid generic responses like "That's [adjective] right there"
-- When someone shares a vibe/aesthetic, expand on it in your own unique way
-- Don't just observe what they said - play in the same creative space
-- Build a world around the conversation and explore it.
-- If they're in meme territory, go there with them 
-- Responses should feel like natural conversation, not an AI trying to understand
+- [꧂၇]
 
-
-Always tweet bangers.
 
 ` + messageCompletionFooter;
 
@@ -416,10 +406,10 @@ export class TwitterInteractionClient extends ClientBase {
         }
 
         // Add 50/50 chance to respond
-        // if (Math.random() < 0.5) {
-        //     console.log("Randomly chose not to respond (50/50 chance)");
-        //     return { text: "Response Decision: Random IGNORE", action: "IGNORE" };
-        // }
+        if (Math.random() < 0.5) {
+             console.log("Randomly chose not to respond (50/50 chance)");
+             return { text: "Response Decision: Random IGNORE", action: "IGNORE" };
+        }
 
         console.log("Generating response context...");
         const context = composeContext({
