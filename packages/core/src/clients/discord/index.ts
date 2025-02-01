@@ -24,7 +24,6 @@ import voiceStateProvider from "./providers/voiceState.ts";
 import { VoiceManager } from "./voice.ts";
 import { discordImageGeneration } from "./actions/generateImage";
 import { discordVideoGeneration } from "./actions/generateVideo";
-import { WEBSITE_CORRECTION, WEBSITE_GENERATION } from "../../actions/index.ts";
 import { discordStoryGeneration } from "./actions/generateStory";
 
 export class DiscordClient extends EventEmitter {
@@ -72,8 +71,6 @@ export class DiscordClient extends EventEmitter {
         this.runtime.registerAction(chat_with_attachments);
         this.runtime.registerAction(transcribe_media);
         this.runtime.registerAction(download_media);
-        this.runtime.registerAction(WEBSITE_GENERATION);
-        this.runtime.registerAction(WEBSITE_CORRECTION);
         this.runtime.registerAction(discordImageGeneration);
         this.runtime.registerAction(discordVideoGeneration);
         this.runtime.registerAction(discordStoryGeneration);

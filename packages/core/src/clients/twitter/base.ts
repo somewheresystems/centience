@@ -306,40 +306,36 @@ export class ClientBase extends EventEmitter {
         );
 
         return homeTimeline
-            .filter((t) => t.__typename !== "TweetWithVisibilityResults")
-            .map((tweet) => {
+            .filter((t) => t.id)
+            .map((rawTweet: any) => {
                 // console.log("tweet is", tweet);
                 const obj = {
-                    id: tweet.rest_id,
-                    name:
-                        tweet.name ??
-                        tweet.core?.user_results?.result?.legacy.name,
-                    username:
-                        tweet.username ??
-                        tweet.core?.user_results?.result?.legacy.screen_name,
-                    text: tweet.text ?? tweet.legacy?.full_text,
+                    id: rawTweet.id,
+                    name: rawTweet.name ?? rawTweet.core?.user_results?.result?.legacy.name,
+                    username: rawTweet.username ?? rawTweet.core?.user_results?.result?.legacy.screen_name,
+                    text: rawTweet.text ?? rawTweet.legacy?.full_text,
                     inReplyToStatusId:
-                        tweet.inReplyToStatusId ??
-                        tweet.legacy?.in_reply_to_status_id_str,
-                    createdAt: tweet.createdAt ?? tweet.legacy?.created_at,
-                    userId: tweet.userId ?? tweet.legacy?.user_id_str,
+                        rawTweet.inReplyToStatusId ??
+                        rawTweet.legacy?.in_reply_to_status_id_str,
+                    createdAt: rawTweet.createdAt ?? rawTweet.legacy?.created_at,
+                    userId: rawTweet.userId ?? rawTweet.legacy?.user_id_str,
                     conversationId:
-                        tweet.conversationId ??
-                        tweet.legacy?.conversation_id_str,
-                    hashtags: tweet.hashtags ?? tweet.legacy?.entities.hashtags,
+                        rawTweet.conversationId ??
+                        rawTweet.legacy?.conversation_id_str,
+                    hashtags: rawTweet.hashtags ?? rawTweet.legacy?.entities.hashtags,
                     mentions:
-                        tweet.mentions ?? tweet.legacy?.entities.user_mentions,
+                        rawTweet.mentions ?? rawTweet.legacy?.entities.user_mentions,
                     photos:
-                        tweet.photos ??
-                        tweet.legacy?.entities.media?.filter(
+                        rawTweet.photos ??
+                        rawTweet.legacy?.entities.media?.filter(
                             (media) => media.type === "photo"
                         ) ??
                         [],
                     thread: [],
-                    urls: tweet.urls ?? tweet.legacy?.entities.urls,
+                    urls: rawTweet.urls ?? rawTweet.legacy?.entities.urls,
                     videos:
-                        tweet.videos ??
-                        tweet.legacy?.entities.media?.filter(
+                        rawTweet.videos ??
+                        rawTweet.legacy?.entities.media?.filter(
                             (media) => media.type === "video"
                         ) ??
                         [],

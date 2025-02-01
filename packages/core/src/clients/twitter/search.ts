@@ -1,4 +1,4 @@
-import { SearchMode } from "agent-twitter-client";
+import { SearchMode } from "goat-x";
 import fs from "fs";
 import { composeContext } from "../../core/context.ts";
 import {
@@ -134,7 +134,7 @@ export class TwitterSearchClient extends ClientBase {
             const recentTweets = await this.fetchSearchTweets(
                 `and min_faves:10000 since:${formattedDate}`,
                 20,
-                SearchMode.Top
+                SearchMode.Latest
             );
 
             elizaLogger.log(`Found ${recentTweets.tweets.length} viral tweets`);
@@ -394,7 +394,7 @@ export class TwitterSearchClient extends ClientBase {
             const recentTweets = await this.fetchSearchTweets(
                 searchTerm,
                 20,
-                SearchMode.Top
+                SearchMode.Latest
             );
             console.log("Search tweets fetched");
 

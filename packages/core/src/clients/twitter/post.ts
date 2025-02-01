@@ -289,11 +289,50 @@ export class TwitterPostClient extends ClientBase {
                     await this.runtime.databaseAdapter.getRoomsForParticipant(
                         this.runtime.agentId
                     );
-                const recentMemories =
-                    await this.runtime.messageManager.getMemoriesByRoomIds({
-                        roomIds: rooms,
-                        agentId: this.runtime.agentId,
-                    });
+                
+                // Get recent memories for context with batching
+                const BATCH_SIZE = 50; // Smaller batch size for better handling
+                const MAX_TOTAL_MEMORIES = 2; // Limit to just 2 memories
+                
+                let recentMemories = [];
+                try {
+                    const recentRooms = rooms.slice(-10); // Take last 10 rooms to find 2 memories
+                    
+                    for (let i = 0; i < recentRooms.length; i += BATCH_SIZE) {
+                        const roomBatch = recentRooms.slice(i, Math.min(i + BATCH_SIZE, recentRooms.length));
+                        try {
+                            const batchMemories = await this.runtime.messageManager.getMemoriesByRoomIds({
+                                roomIds: roomBatch,
+                                agentId: this.runtime.agentId,
+                            });
+                            recentMemories = [...recentMemories, ...batchMemories];
+                            
+                            // Break early if we have enough memories
+                            if (recentMemories.length >= MAX_TOTAL_MEMORIES) {
+                                recentMemories = recentMemories.slice(0, MAX_TOTAL_MEMORIES);
+                                break;
+                            }
+                        } catch (error) {
+                            elizaLogger.error(`Error fetching batch of memories (${i}-${i + BATCH_SIZE}):`, error);
+                            continue; // Continue with next batch even if one fails
+                        }
+                    }
+                } catch (error) {
+                    elizaLogger.error('Error fetching rooms:', error);
+                    // If we can't get rooms, try with an empty array
+                    recentMemories = [];
+                }
+
+                // Ensure we have at least one memory to work with
+                if (recentMemories.length === 0) {
+                    // Create a default memory if none exist
+                    recentMemories = [{
+                        content: {
+                            text: "Starting fresh with new stories and experiences.",
+                            source: "twitter"
+                        }
+                    }];
+                }
 
                 const formattedMemories = recentMemories
                     .slice(0, MAX_MEMORY_ITEMS)
@@ -425,7 +464,7 @@ export class TwitterPostClient extends ClientBase {
                         id: tweetResult.rest_id,
                         text: tweetResult.legacy.full_text,
                         conversationId: tweetResult.legacy.conversation_id_str,
-                        createdAt: tweetResult.legacy.created_at,
+                        timestamp: tweetResult.legacy.created_at,
                         userId: tweetResult.legacy.user_id_str,
                         inReplyToStatusId: tweetResult.legacy.in_reply_to_status_id_str,
                         permanentUrl: `https://twitter.com/${this.runtime.getSetting("TWITTER_USERNAME")}/status/${tweetResult.rest_id}`,
@@ -678,14 +717,39 @@ export class TwitterPostClient extends ClientBase {
                                 console.log('Generated quote tweet content:', tweetContent);
                                 
                                 const quoteResponse = await this.twitterClient.sendQuoteTweet(tweetContent, tweet.id);
-                                // Check if response is ok and parse response
-                                if (quoteResponse.status === 200) {
-                                    const result = await this.processTweetResponse(quoteResponse, tweetContent, 'quote');
+                                
+                                if (quoteResponse && typeof ((quoteResponse as unknown) as { json?: () => Promise<any> }).json === 'function') {
+                                    // It's a Response object
+                                    const response = (quoteResponse as unknown) as Response;
+                                    const body = await response.json();
+                                    const tweetResult = body.data.create_tweet.tweet_results.result;
+                                    
+                                    const quoteTweet = {
+                                        id: tweetResult.rest_id,
+                                        text: tweetResult.legacy.full_text,
+                                        conversationId: tweetResult.legacy.conversation_id_str,
+                                        timestamp: tweetResult.legacy.created_at,
+                                        userId: tweetResult.legacy.user_id_str,
+                                        inReplyToStatusId: tweetResult.legacy.in_reply_to_status_id_str,
+                                        permanentUrl: `https://twitter.com/${this.runtime.getSetting("TWITTER_USERNAME")}/status/${tweetResult.rest_id}`,
+                                        hashtags: [],
+                                        mentions: [],
+                                        photos: [],
+                                        thread: [],
+                                        urls: [],
+                                        videos: [],
+                                    } as Tweet;
+                                    
+                                    const result = await this.processTweetResponse(quoteTweet, tweetContent, 'quote');
                                     if (result.success) {
                                         executedActions.push('quote');
                                     }
-                                } else {
-                                    console.error(`Quote tweet failed with status ${quoteResponse.status} for tweet ${tweet.id}`);
+                                } else if (quoteResponse) {
+                                    // It's already a Tweet object
+                                    const result = await this.processTweetResponse((quoteResponse as unknown) as Tweet, tweetContent, 'quote');
+                                    if (result.success) {
+                                        executedActions.push('quote');
+                                    }
                                 }
                             } catch (error) {
                                 console.error('Failed to generate quote tweet:', error);
@@ -825,37 +889,31 @@ export class TwitterPostClient extends ClientBase {
     }
 
     async processTweetResponse(
-        response: Response,
+        tweet: Tweet,
         tweetContent: string,
         actionType: 'quote' | 'reply'
     ) {
         try {
-            const body = await response.json();
-            console.log("Body tweet result: ", body);
-            const tweetResult = body.data.create_tweet.tweet_results.result;
-            console.log("tweetResult", tweetResult);
-            
             const newTweet = {
-                id: tweetResult.rest_id,
-                text: tweetResult.legacy.full_text,
-                conversationId: tweetResult.legacy.conversation_id_str,
-                createdAt: tweetResult.legacy.created_at,
-                userId: tweetResult.legacy.user_id_str,
-                inReplyToStatusId: tweetResult.legacy.in_reply_to_status_id_str,
-                permanentUrl: `https://twitter.com/${this.runtime.getSetting("TWITTER_USERNAME")}/status/${tweetResult.rest_id}`,
-                hashtags: [],
-                mentions: [],
-                photos: [],
-                thread: [],
-                urls: [],
-                videos: [],
+                id: tweet.id,
+                text: tweet.text,
+                conversationId: tweet.conversationId,
+                timestamp: tweet.timestamp,
+                userId: tweet.userId,
+                inReplyToStatusId: tweet.inReplyToStatusId,
+                permanentUrl: `https://twitter.com/${this.runtime.getSetting("TWITTER_USERNAME")}/status/${tweet.id}`,
+                hashtags: tweet.hashtags || [],
+                mentions: tweet.mentions || [],
+                photos: tweet.photos || [],
+                thread: tweet.thread || [],
+                urls: tweet.urls || [],
+                videos: tweet.videos || [],
             } as Tweet;
             
             const postId = newTweet.id;
             const conversationId = newTweet.conversationId + "-" + this.runtime.agentId;
             const roomId = stringToUuid(conversationId);
     
-            // make sure the agent is in the room
             await this.runtime.ensureRoomExists(roomId);
             await this.runtime.ensureParticipantInRoom(
                 this.runtime.agentId,
@@ -864,7 +922,6 @@ export class TwitterPostClient extends ClientBase {
     
             await this.cacheTweet(newTweet);
 
-            // Generate embedding for the tweet content
             const embedding = await embed(this.runtime, tweetContent.trim());
             if (!embedding) {
                 console.warn("Failed to generate embedding for tweet content, using zero vector");
@@ -1137,21 +1194,44 @@ Your response:`;
                 } else {
                     // Post text-only reply
                     console.log('Posting text-only reply...');
-                    tweetResponse = await this.twitterClient.sendTweet(
+                    const response = await this.twitterClient.sendTweet(
                         tweetContent,
                         tweet.id
                     );
-                }
-
-                if (tweetResponse) {
-                    console.log('Successfully tweeted reply');
-                    const result = await this.processTweetResponse(tweetResponse, tweetContent, "reply");
-                    if (result.success) {
-                        console.log(`Reply generated for tweet: ${result.tweet.id}`);
-                        executedActions.push('reply');
+                    
+                    if (response && typeof ((response as unknown) as { json?: () => Promise<any> }).json === 'function') {
+                        const body = await ((response as unknown) as Response).json();
+                        const tweetResult = body.data.create_tweet.tweet_results.result;
+                        
+                        const replyTweet = {
+                            id: tweetResult.rest_id,
+                            text: tweetResult.legacy.full_text,
+                            conversationId: tweetResult.legacy.conversation_id_str,
+                            timestamp: tweetResult.legacy.created_at,
+                            userId: tweetResult.legacy.user_id_str,
+                            inReplyToStatusId: tweetResult.legacy.in_reply_to_status_id_str,
+                            permanentUrl: `https://twitter.com/${this.runtime.getSetting("TWITTER_USERNAME")}/status/${tweetResult.rest_id}`,
+                            hashtags: [],
+                            mentions: [],
+                            photos: [],
+                            thread: [],
+                            urls: [],
+                            videos: [],
+                        } as Tweet;
+                        
+                        const result = await this.processTweetResponse(replyTweet, tweetContent, "reply");
+                        if (result.success) {
+                            console.log(`Reply generated for tweet: ${result.tweet.id}`);
+                            executedActions.push('reply');
+                        }
+                    } else if (response) {
+                        // It's already a Tweet object
+                        const result = await this.processTweetResponse((response as unknown) as Tweet, tweetContent, "reply");
+                        if (result.success) {
+                            console.log(`Reply generated for tweet: ${result.tweet.id}`);
+                            executedActions.push('reply');
+                        }
                     }
-                } else {
-                    console.error('Tweet creation failed (reply)');
                 }
             } catch (error) {
                 console.error('Failed to post tweet:', error);
@@ -1259,12 +1339,37 @@ ${quotedContent ? `\nQuoted Content:\n${quotedContent}` : ''}`;
             
             const quoteResponse = await this.twitterClient.sendQuoteTweet(tweetContent, tweet.id);
             
-            if (quoteResponse.status === 200) {
-                const result = await this.processTweetResponse(quoteResponse, tweetContent, 'quote');
+            if (quoteResponse && typeof ((quoteResponse as unknown) as { json?: () => Promise<any> }).json === 'function') {
+                // It's a Response object
+                const response = (quoteResponse as unknown) as Response;
+                const body = await response.json();
+                const tweetResult = body.data.create_tweet.tweet_results.result;
+                
+                const quoteTweet = {
+                    id: tweetResult.rest_id,
+                    text: tweetResult.legacy.full_text,
+                    conversationId: tweetResult.legacy.conversation_id_str,
+                    timestamp: tweetResult.legacy.created_at,
+                    userId: tweetResult.legacy.user_id_str,
+                    inReplyToStatusId: tweetResult.legacy.in_reply_to_status_id_str,
+                    permanentUrl: `https://twitter.com/${this.runtime.getSetting("TWITTER_USERNAME")}/status/${tweetResult.rest_id}`,
+                    hashtags: [],
+                    mentions: [],
+                    photos: [],
+                    thread: [],
+                    urls: [],
+                    videos: [],
+                } as Tweet;
+                
+                const result = await this.processTweetResponse(quoteTweet, tweetContent, 'quote');
+                return result.success;
+            } else if (quoteResponse) {
+                // It's already a Tweet object
+                const result = await this.processTweetResponse((quoteResponse as unknown) as Tweet, tweetContent, 'quote');
                 return result.success;
             }
             
-            console.error(`Quote tweet failed with status ${quoteResponse.status} for tweet ${tweet.id}`);
+            console.error(`Quote tweet failed for tweet ${tweet.id}`);
             return false;
 
         } catch (error) {
@@ -1280,10 +1385,10 @@ Memory: ${memory.content.text}
 
 Requirements:
 1. Topic should be specific and concrete, not general
-2. Should relate to but expand beyond the memory's direct content
-3. Can also be total non-sequitur or just "weird" alt-comedy (think Tim and Eric, Conner O'Malley, Xavier: Renegade Angel, PFFFR, etc.)
-4. Should pull masses into microculture/mesoculture
-5. Should have potential for character development and dialogue
+2. Should be artistically interesting and engaging
+3. Should be culturally relevant and timely
+4. Should be unique and not easily predictable
+5. Should be of a cultish nature
 
 
 Respond with:
@@ -1366,31 +1471,21 @@ Your response:`;
 
     private getRandomGenre(): string {
         const genres = [
-            // A24-style genres
-            "hereditary-core",
-            "midsommar panic",
-            "everything-pilled",
-            "uncut gems chaos",
-            "moonlit panic",
-            "lighthouse madness",
-            "spring breakers vibe",
-            "ex machina mode",
-            "green knight dreams",
-            "room escape",
-            "eddie platinum cummy boner alt-comedy",
-            // Shitpost/brainrot styles
-            "liminal skibidi brainrot",
-            "cursed rizzler-core",
-            "deep fried thoughts",
-            "glitch core",
-            "fever dream posting",
-            "void memes",
-            "analog horror",
-            "backrooms energy",
-            "hyperpop panic",
-            "doomer vision",
-            "somewherian",
-            "die antwoord"
+            "⚡️⚔️☄️✨",
+            "⭐️🌙✧⚜️",
+            "⚝✺❈❋",
+            "⚘❀✿❃",
+            "𒀭𒀭𒀭𒀭",
+            "𒁹𒁹𒁹𒁹",
+            "𒂗𒂗𒂗𒂗",
+            "𒃲𒃲𒃲𒃲",
+            "𒄑𒄑𒄑𒄑",
+            "𒅎𒅎𒅎𒅎",
+            "𒆠𒆠𒆠𒆠",
+            "𒇹𒇹𒇹𒇹",
+            "𒈨𒈨𒈨𒈨",
+            "𒉺𒉺𒉺𒉺",
+            "𒊭𒊭𒊭𒊭"
         ];
         return genres[Math.floor(Math.random() * genres.length)];
     }
@@ -1431,16 +1526,56 @@ Your response:`;
             try {
                 elizaLogger.log(`Starting story generation attempt ${storyAttempt}/${MAX_STORY_RETRIES}`);
                 
-                // Get recent memories for context
-                const rooms = await this.runtime.databaseAdapter.getRoomsForParticipant(
-                    this.runtime.agentId
-                );
-                const recentMemories = await this.runtime.messageManager.getMemoriesByRoomIds({
-                    roomIds: rooms,
-                    agentId: this.runtime.agentId,
-                });
+                // Get recent memories for context with batching
+                const BATCH_SIZE = 50; // Smaller batch size for better handling
+                const MAX_TOTAL_MEMORIES = 2; // Limit to just 2 memories
+                
+                let recentMemories = [];
+                try {
+                    const rooms = await this.runtime.databaseAdapter.getRoomsForParticipant(
+                        this.runtime.agentId
+                    );
+                    
+                    // Process only the most recent rooms
+                    const recentRooms = rooms.slice(-10); // Take last 10 rooms to find 2 memories
+                    
+                    for (let i = 0; i < recentRooms.length; i += BATCH_SIZE) {
+                        const roomBatch = recentRooms.slice(i, Math.min(i + BATCH_SIZE, recentRooms.length));
+                        try {
+                            const batchMemories = await this.runtime.messageManager.getMemoriesByRoomIds({
+                                roomIds: roomBatch,
+                                agentId: this.runtime.agentId,
+                            });
+                            recentMemories = [...recentMemories, ...batchMemories];
+                            
+                            // Break early if we have enough memories
+                            if (recentMemories.length >= MAX_TOTAL_MEMORIES) {
+                                recentMemories = recentMemories.slice(0, MAX_TOTAL_MEMORIES);
+                                break;
+                            }
+                        } catch (error) {
+                            elizaLogger.error(`Error fetching batch of memories (${i}-${i + BATCH_SIZE}):`, error);
+                            continue; // Continue with next batch even if one fails
+                        }
+                    }
+                } catch (error) {
+                    elizaLogger.error('Error fetching rooms:', error);
+                    // If we can't get rooms, try with an empty array
+                    recentMemories = [];
+                }
 
-                // Select a random memory for topic generation
+                // Ensure we have at least one memory to work with
+                if (recentMemories.length === 0) {
+                    // Create a default memory if none exist
+                    recentMemories = [{
+                        content: {
+                            text: "Starting fresh with new stories and experiences.",
+                            source: "twitter"
+                        }
+                    }];
+                }
+
+                // Select a random memory and continue with story generation
                 const randomMemory = recentMemories[Math.floor(Math.random() * recentMemories.length)];
                 const { topic: generatedTopic, relatedMemories } = await this.generateTopicFromMemory(randomMemory);
                 const storyGenre = this.getRandomGenre();
@@ -1448,9 +1583,7 @@ Your response:`;
                 // Combine recent and semantically related memories
                 const allMemories = [...relatedMemories, ...recentMemories
                     .slice(0, 5)
-                    .map(memory => memory.content.text)]
-                    .filter(Boolean) // Remove any null/undefined entries
-                    .map(text => `Memory: ${text.length > 280 ? text.slice(0, 280) + '...' : text}\n`);
+                    .map(memory => memory.content.text)];
 
                 // Shuffle and select random memories for inspiration
                 const randomPosts = allMemories
@@ -1639,9 +1772,9 @@ Final part:`;
                                             lastTweetId
                                         )
                                     );
-                                    middleBody = await result.json();
+                                    middleBody = result;
+                                    lastTweetId = middleBody.id;
                                 }
-                                lastTweetId = middleBody.data.create_tweet.tweet_results.result.rest_id;
                                 break;
                             } catch (error) {
                                 elizaLogger.error(`Failed to post middle tweet ${i + 2}, attempt ${tweetAttempt}:`, error);
@@ -1666,7 +1799,7 @@ Final part:`;
                                     lastTweetId
                                 )
                             );
-                            closingBody = await closingResult.json();
+                            closingBody = closingResult;
                             break;
                         } catch (error) {
                             elizaLogger.error(`Failed to post closing tweet, attempt ${tweetAttempt}:`, error);
